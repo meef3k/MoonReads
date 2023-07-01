@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>739f87c7-8357-4c06-94ac-5d49fe3c777e</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
@@ -22,6 +23,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +34,8 @@
     <None Remove="Data\" />
     <None Remove="Interfaces\" />
     <None Remove="Repository\" />
+    <None Remove="Dto\" />
+    <None Remove="Helper\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -37,5 +43,7 @@
     <Folder Include="Data\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Repository\" />
+    <Folder Include="Dto\" />
+    <Folder Include="Helper\" />
   </ItemGroup>
 </Project>
