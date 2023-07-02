@@ -15,6 +15,20 @@ namespace MoonReads.Repository
             _context = context;
         }
 
+        public bool CreatePublisher(Publisher publisher)
+        {
+            _context.Add(publisher);
+
+            return Save();
+        }
+
+        public bool DeletePublisher(Publisher publisher)
+        {
+            _context.Remove(publisher);
+
+            return Save();
+        }
+
         public ICollection<Book> GetBookByPublisher(int publisherId)
         {
             return _context.Books.Where(b => b.Publisher.Id == publisherId).ToList();
@@ -38,6 +52,20 @@ namespace MoonReads.Repository
         public bool PublisherExists(int publisherId)
         {
             return _context.Publishers.Any(p => p.Id == publisherId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdatePublisher(Publisher publisher)
+        {
+            _context.Update(publisher);
+
+            return Save();
         }
     }
 }

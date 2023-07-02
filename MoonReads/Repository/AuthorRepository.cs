@@ -33,6 +33,34 @@ namespace MoonReads.Repository
         {
             return _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList();
         }
+
+        public bool CreateAuthor(Author author)
+        {
+            _context.Add(author);
+
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdateAuthor(Author author)
+        {
+            _context.Update(author);
+
+            return Save();
+        }
+
+        public bool DeleteAuthor(Author author)
+        {
+            _context.Remove(author);
+
+            return Save();
+        }
     }
 }
 

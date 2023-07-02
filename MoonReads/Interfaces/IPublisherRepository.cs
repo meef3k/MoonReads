@@ -10,5 +10,9 @@ namespace MoonReads.Interfaces
         Publisher GetPublisher(string name);
         ICollection<Book> GetBookByPublisher(int publisherId);
         bool PublisherExists(int publisherId);
+        bool CreatePublisher(Publisher publisher);
+        bool UpdatePublisher(Publisher publisher);
+        bool DeletePublisher(Publisher publisher);
+        bool Save();
     }
 }

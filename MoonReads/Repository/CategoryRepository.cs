@@ -20,6 +20,20 @@ namespace MoonReads.Repository
             return _context.Books.Any(c => c.Id == categoryId);
         }
 
+        public bool CreateCategory(Category category)
+        {
+            _context.Add(category);
+
+            return Save();
+        }
+
+        public bool DeleteCategory(Category category)
+        {
+            _context.Remove(category);
+
+            return Save();
+        }
+
         public ICollection<Author> GetAuthorByCategory(int categoryId)
         {
             return _context.AuthorCategories.Where(c => c.CategoryId == categoryId).Select(a => a.Author).ToList();
@@ -43,6 +57,20 @@ namespace MoonReads.Repository
         public Category GetCategory(string name)
         {
             return _context.Categories.Where(c => c.Name == name).FirstOrDefault();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdateCategory(Category category)
+        {
+            _context.Update(category);
+
+            return Save();
         }
     }
 }

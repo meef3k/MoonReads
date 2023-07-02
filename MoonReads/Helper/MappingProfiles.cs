@@ -9,10 +9,14 @@ namespace MoonReads.Helper
 	{
 		public MappingProfiles()
 		{
-			CreateMap<Book, BookDto>();
-			CreateMap<Author, AuthorDto>();
-			CreateMap<Category, CategoryDto>();
+            CreateMap<Author, AuthorDto>();
+            CreateMap<AuthorDto, Author>();
+            CreateMap<Book, BookDto>();
+			CreateMap<BookDto, Book>();
+            CreateMap<Category, CategoryDto>();
+			CreateMap<CategoryDto, Category>();
 			CreateMap<Publisher, PublisherDto>();
+			CreateMap<PublisherDto, Publisher>();
 		}
 	}
 }

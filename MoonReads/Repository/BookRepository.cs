@@ -7,7 +7,7 @@ using MoonReads.Models;
 
 namespace MoonReads.Repository
 {
-	public class BookRepository : IBookRepository
+    public class BookRepository : IBookRepository
 	{
 		private readonly DataContext _context;
 
@@ -34,6 +34,53 @@ namespace MoonReads.Repository
         public bool BookExists(int bookId)
         {
             return _context.Books.Any(b => b.Id == bookId);
+        }
+
+        public bool CreateBook(int authorId, int categoryId, Book book)
+        {
+            var author = _context.Authors.Where(a => a.Id == authorId).FirstOrDefault();
+            var category = _context.Categories.Where(c => c.Id == categoryId).FirstOrDefault();
+
+            var bookAuthor = new BookAuthor()
+            {
+                Author = author,
+                Book = book,
+            };
+
+            _context.Add(bookAuthor);
+
+            var bookCategory = new BookCategory()
+            {
+                Category = category,
+                Book = book,
+            };
+
+            _context.Add(bookCategory);
+
+            _context.Add(book);
+
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdateBook(int publisherId, int authorId, int categoryId, Book book)
+        {
+            _context.Update(book);
+
+            return Save();
+        }
+
+        public bool DeleteBook(Book book)
+        {
+            _context.Remove(book);
+
+            return Save();
         }
     }
 }
