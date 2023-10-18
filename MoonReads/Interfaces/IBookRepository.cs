@@ -1,11 +1,13 @@
 ﻿using System;
+using MoonReads.Dto;
 using MoonReads.Models;
 
 namespace MoonReads.Interfaces
 {
 	public interface IBookRepository
 	{
-		ICollection<Book> GetBooks();
+		ICollection<BookDetailDto> GetBooks();
+		BookDetailDto GetBookDetails(int id);
 		Book GetBook(int id);
 		Book GetBook(string name);
 		bool BookExists(int bookId);

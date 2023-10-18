@@ -18,17 +18,55 @@ namespace MoonReads.Repository
 
         public Book GetBook(int id)
         {
-            return _context.Books.Include(b => b.Publisher).Where(b => b.Id == id).FirstOrDefault();
+            return _context.Books.Where(b => b.Id == id).Include(b => b.Publisher).Include(b => b.BookAuthors).Include(b => b.BookCategories).FirstOrDefault();
         }
 
-        public Book GetBook(string name)
+        public Book GetBook(string title)
         {
-            return _context.Books.Where(b => b.Name == name).FirstOrDefault();
+            return _context.Books.Where(b => b.Title == title).Include(b => b.Publisher).Include(b => b.BookAuthors).Include(b => b.BookCategories).FirstOrDefault();
         }
 
-        public ICollection<Book> GetBooks()
+        public BookDetailDto GetBookDetails(int id)
+        {
+            return _context
+                .Books
+                .Select(b => new BookDetailDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    ReleaseDate = b.ReleaseDate.ToString(),
+                    Pages = b.Pages,
+                    ISBN = b.ISBN,
+                    Publisher = b.Publisher.Name,
+                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                    Authors = b.BookAuthors.Select(a => $"{a.Author.FirstName} {a.Author.LastName}").ToList(),
+                    Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
+                })
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
+        }
+
+        public ICollection<BookDetailDto> GetBooks()
 		{
-            return _context.Books.OrderBy(b => b.Id).ToList();
+            return _context
+                .Books
+                .Select(b => new BookDetailDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    ReleaseDate = b.ReleaseDate.ToString(),
+                    Pages = b.Pages,
+                    ISBN = b.ISBN,
+                    Publisher = b.Publisher.Name,
+                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                    Authors = b.BookAuthors.Select(a => $"{a.Author.FirstName} {a.Author.LastName}").ToList(),
+                    Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
+                })
+                .ToList();
 		}
 
         public bool BookExists(int bookId)

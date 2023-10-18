@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MoonReads.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MoonReads.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231018160432_addImageUrlFields")]
+    partial class addImageUrlFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,7 +268,7 @@ namespace MoonReads.Migrations
             modelBuilder.Entity("MoonReads.Models.Rating", b =>
                 {
                     b.HasOne("MoonReads.Models.Book", "Book")
-                        .WithMany("Rating")
+                        .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -285,8 +288,6 @@ namespace MoonReads.Migrations
                     b.Navigation("BookAuthors");
 
                     b.Navigation("BookCategories");
-
-                    b.Navigation("Rating");
                 });
 
             modelBuilder.Entity("MoonReads.Models.Category", b =>

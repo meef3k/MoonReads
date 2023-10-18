@@ -29,7 +29,7 @@ namespace MoonReads.Controllers
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
         public IActionResult GetBooks()
 		{
-			var books = _mapper.Map<List<BookDto>>(_bookRepository.GetBooks());
+			var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks());
 
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -45,7 +45,7 @@ namespace MoonReads.Controllers
 			if (!_bookRepository.BookExists(bookId))
 				return NotFound();
 
-			var book = _mapper.Map<BookDto>(_bookRepository.GetBook(bookId));
+			var book = _mapper.Map<BookDetailDto>(_bookRepository.GetBookDetails(bookId));
 
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -62,7 +62,7 @@ namespace MoonReads.Controllers
                 return BadRequest(ModelState);
 
             var books = _bookRepository.GetBooks()
-                .Where(b => b.Name.Trim().ToUpper() == bookCreate.Name.TrimEnd().ToUpper())
+                .Where(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper())
                 .FirstOrDefault();
 
             if (books != null)
@@ -80,7 +80,7 @@ namespace MoonReads.Controllers
 
             if (!_bookRepository.CreateBook(authorId, categoryId, bookMap))
             {
-                ModelState.AddModelError("", "Something went wrong while savin");
+                ModelState.AddModelError("", $"{bookMap}Something went wrong while savin");
                 return StatusCode(500, ModelState);
             }
 
