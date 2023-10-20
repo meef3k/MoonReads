@@ -41,7 +41,7 @@ namespace MoonReads.Repository
                     ISBN = b.ISBN,
                     Publisher = b.Publisher.Name,
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => $"{a.Author.FirstName} {a.Author.LastName}").ToList(),
+                    Authors = b.BookAuthors.Select(a => a.Author.Name).ToList(),
                     Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
                 })
                 .Where(b => b.Id == id)
@@ -63,7 +63,7 @@ namespace MoonReads.Repository
                     ISBN = b.ISBN,
                     Publisher = b.Publisher.Name,
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => $"{a.Author.FirstName} {a.Author.LastName}").ToList(),
+                    Authors = b.BookAuthors.Select(a => a.Author.Name).ToList(),
                     Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
                 })
                 .ToList();

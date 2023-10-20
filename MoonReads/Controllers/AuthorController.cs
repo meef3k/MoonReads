@@ -74,7 +74,7 @@ namespace MoonReads.Controllers
                 return BadRequest(ModelState);
 
             var author = _authorRepository.GetAuthors()
-                .Where(c => c.LastName.Trim().ToUpper() == authorCreate.LastName.TrimEnd().ToUpper())
+                .Where(c => c.Name.Trim().ToUpper() == authorCreate.Name.TrimEnd().ToUpper())
                 .FirstOrDefault();
 
             if (author != null)
