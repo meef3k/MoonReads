@@ -17,7 +17,7 @@ namespace MoonReads.Repository
 
         public bool CategoryExists(int categoryId)
         {
-            return _context.Books.Any(c => c.Id == categoryId);
+            return _context.Categories.Any(c => c.Id == categoryId);
         }
 
         public bool CreateCategory(Category category)
