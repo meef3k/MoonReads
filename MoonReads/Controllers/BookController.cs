@@ -84,7 +84,7 @@ namespace MoonReads.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Successfully created");
+            return NoContent();
         }
 
         [HttpPut("{bookId}")]
