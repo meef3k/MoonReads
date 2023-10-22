@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using MoonReads.Data;
+﻿using MoonReads.Data;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -27,13 +25,6 @@ namespace MoonReads.Repository
             return Save();
         }
 
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-
-            return saved > 0 ? true : false;
-        }
-
         public bool UpdateRating(Rating rating)
         {
             _context.Update(rating);
@@ -46,6 +37,13 @@ namespace MoonReads.Repository
             _context.Remove(rating);
 
             return Save();
+        }
+        
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0;
         }
     }
 }

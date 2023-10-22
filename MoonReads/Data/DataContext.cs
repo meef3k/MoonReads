@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MoonReads.Models;
 
 namespace MoonReads.Data
@@ -10,14 +9,14 @@ namespace MoonReads.Data
 		{
 		}
 
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Publisher> Publishers { get; set; }
-        public DbSet<AuthorCategory> AuthorCategories { get; set; }
-        public DbSet<BookAuthor> BookAuthors { get; set; }
-        public DbSet<BookCategory> BookCategories { get; set; }
-        public DbSet<Rating> Ratings { get; set; }
+        public required DbSet<Author> Authors { get; set; }
+        public required DbSet<Book> Books { get; set; }
+        public required DbSet<Category> Categories { get; set; }
+        public required DbSet<Publisher> Publishers { get; set; }
+        public required DbSet<AuthorCategory> AuthorCategories { get; set; }
+        public required DbSet<BookAuthor> BookAuthors { get; set; }
+        public required DbSet<BookCategory> BookCategories { get; set; }
+        public required DbSet<Rating> Ratings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using MoonReads.Data;
+﻿using MoonReads.Data;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -13,25 +12,25 @@ namespace MoonReads.Repository
         {
             _context = context;
         }
+        
+        public bool AuthorExists(int bookId)
+        {
+            return _context.Authors.Any(a => a.Id == bookId);
+        }
 
         public Author GetAuthor(int id)
         {
-            return _context.Authors.Where(a => a.Id == id).FirstOrDefault();
-        }      
+            return _context.Authors.FirstOrDefault(a => a.Id == id)!;
+        }
 
         public ICollection<Author> GetAuthors()
         {
             return _context.Authors.OrderBy(a => a.Id).ToList();
         }
 
-        public bool AuthorExists(int bookId)
-        {
-            return _context.Authors.Any(a => a.Id == bookId);
-        }
-
         public ICollection<Book> GetBookByAuthor(int authorId)
         {
-            return _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList();
+            return _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList()!;
         }
 
         public bool CreateAuthor(Author author)
@@ -45,7 +44,7 @@ namespace MoonReads.Repository
         {
             var saved = _context.SaveChanges();
 
-            return saved > 0 ? true : false;
+            return saved > 0;
         }
 
         public bool UpdateAuthor(Author author)

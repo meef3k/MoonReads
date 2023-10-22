@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -18,12 +17,24 @@ namespace MoonReads.Repository
 
         public Book GetBook(int id)
         {
-            return _context.Books.Where(b => b.Id == id).Include(b => b.Publisher).Include(b => b.BookAuthors).Include(b => b.BookCategories).FirstOrDefault();
+            return _context
+                .Books
+                .Where(b => b.Id == id)
+                .Include(b => b.Publisher)
+                .Include(b => b.BookAuthors)
+                .Include(b => b.BookCategories)
+                .FirstOrDefault()!;
         }
 
         public Book GetBook(string title)
         {
-            return _context.Books.Where(b => b.Title == title).Include(b => b.Publisher).Include(b => b.BookAuthors).Include(b => b.BookCategories).FirstOrDefault();
+            return _context
+                .Books
+                .Where(b => b.Title == title)
+                .Include(b => b.Publisher)
+                .Include(b => b.BookAuthors)
+                .Include(b => b.BookCategories)
+                .FirstOrDefault()!;
         }
 
         public BookDetailDto GetBookDetails(int id)
@@ -38,14 +49,13 @@ namespace MoonReads.Repository
                     ImageUrl = b.ImageUrl,
                     ReleaseDate = b.ReleaseDate.ToString(),
                     Pages = b.Pages,
-                    ISBN = b.ISBN,
+                    Isbn = b.Isbn,
                     Publisher = b.Publisher.Name,
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => a.Author.Name).ToList(),
-                    Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
+                    Authors = b.BookAuthors.Select(a => a.Author!.Name).ToList(),
+                    Categories = b.BookCategories.Select(c => c.Category!.Name).ToList()
                 })
-                .Where(b => b.Id == id)
-                .FirstOrDefault();
+                .FirstOrDefault(b => b.Id == id)!;
         }
 
         public ICollection<BookDetailDto> GetBooks()
@@ -60,24 +70,19 @@ namespace MoonReads.Repository
                     ImageUrl = b.ImageUrl,
                     ReleaseDate = b.ReleaseDate.ToString(),
                     Pages = b.Pages,
-                    ISBN = b.ISBN,
+                    Isbn = b.Isbn,
                     Publisher = b.Publisher.Name,
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => a.Author.Name).ToList(),
-                    Categories = b.BookCategories.Select(c => c.Category.Name).ToList()
+                    Authors = b.BookAuthors.Select(a => a.Author!.Name).ToList(),
+                    Categories = b.BookCategories.Select(c => c.Category!.Name).ToList()
                 })
                 .ToList();
 		}
 
-        public bool BookExists(int bookId)
-        {
-            return _context.Books.Any(b => b.Id == bookId);
-        }
-
         public bool CreateBook(int authorId, int categoryId, Book book)
         {
-            var author = _context.Authors.Where(a => a.Id == authorId).FirstOrDefault();
-            var category = _context.Categories.Where(c => c.Id == categoryId).FirstOrDefault();
+            var author = _context.Authors.FirstOrDefault(a => a.Id == authorId);
+            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
 
             var bookAuthor = new BookAuthor()
             {
@@ -100,13 +105,6 @@ namespace MoonReads.Repository
             return Save();
         }
 
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-
-            return saved > 0 ? true : false;
-        }
-
         public bool UpdateBook(int publisherId, int authorId, int categoryId, Book book)
         {
             _context.Update(book);
@@ -119,6 +117,18 @@ namespace MoonReads.Repository
             _context.Remove(book);
 
             return Save();
+        }
+        
+        public bool BookExists(int bookId)
+        {
+            return _context.Books.Any(b => b.Id == bookId);
+        }
+        
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0;
         }
     }
 }

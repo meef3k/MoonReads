@@ -1,18 +1,16 @@
-﻿using System;
-using MoonReads.Models;
+﻿using MoonReads.Models;
 
 namespace MoonReads.Interfaces
 {
     public interface IPublisherRepository
     {
-        ICollection<Publisher> GetPublishers();
         Publisher GetPublisher(int id);
-        Publisher GetPublisher(string name);
+        ICollection<Publisher> GetPublishers();
         ICollection<Book> GetBookByPublisher(int publisherId);
-        bool PublisherExists(int publisherId);
         bool CreatePublisher(Publisher publisher);
         bool UpdatePublisher(Publisher publisher);
         bool DeletePublisher(Publisher publisher);
+        bool PublisherExists(int publisherId);
         bool Save();
     }
 }

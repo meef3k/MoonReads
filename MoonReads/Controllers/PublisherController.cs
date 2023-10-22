@@ -1,10 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
-using MoonReads.Repository;
 
 namespace MoonReads.Controllers
 {
@@ -68,14 +66,14 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreatePublisher([FromBody] PublisherDto publisherCreate)
+        public IActionResult CreatePublisher([FromBody] PublisherDto? publisherCreate)
         {
             if (publisherCreate == null)
                 return BadRequest(ModelState);
 
-            var publisher = _publisherRepository.GetPublishers()
-                .Where(c => c.Name.Trim().ToUpper() == publisherCreate.Name.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var publisher = _publisherRepository
+                .GetPublishers()
+                .FirstOrDefault(c => c.Name.Trim().ToUpper() == publisherCreate.Name.TrimEnd().ToUpper());
 
             if (publisher != null)
             {
@@ -101,7 +99,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePublisher(int publisherId, [FromBody] PublisherDto updatedPublisher)
+        public IActionResult UpdatePublisher(int publisherId, [FromBody] PublisherDto? updatedPublisher)
         {
             if (updatedPublisher == null)
                 return BadRequest(ModelState);

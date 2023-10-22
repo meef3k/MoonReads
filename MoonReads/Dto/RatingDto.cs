@@ -1,5 +1,4 @@
-﻿using System;
-namespace MoonReads.Models
+﻿namespace MoonReads.Dto
 {
     public class RatingDto
     {

@@ -1,10 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
-using MoonReads.Repository;
 
 namespace MoonReads.Controllers
 {
@@ -84,14 +82,14 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCategory([FromBody] CategoryDto categoryCreate)
+        public IActionResult CreateCategory([FromBody] CategoryDto? categoryCreate)
         {
             if (categoryCreate == null)
                 return BadRequest(ModelState);
 
-            var category = _categoryRepository.GetCategories()
-                .Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var category = _categoryRepository
+                .GetCategories()
+                .FirstOrDefault(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper());
 
             if (category != null)
             {
@@ -117,7 +115,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto updatedCategory)
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto? updatedCategory)
         {
             if (updatedCategory == null)
                 return BadRequest(ModelState);

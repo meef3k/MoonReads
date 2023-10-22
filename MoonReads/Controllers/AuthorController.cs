@@ -1,10 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
-using MoonReads.Repository;
 
 namespace MoonReads.Controllers
 {
@@ -68,14 +66,14 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateAuthor([FromBody] AuthorDto authorCreate)
+        public IActionResult CreateAuthor([FromBody] AuthorDto? authorCreate)
         {
             if (authorCreate == null)
                 return BadRequest(ModelState);
 
-            var author = _authorRepository.GetAuthors()
-                .Where(c => c.Name.Trim().ToUpper() == authorCreate.Name.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var author = _authorRepository
+                .GetAuthors()
+                .FirstOrDefault(c => c.Name.Trim().ToUpper() == authorCreate.Name.TrimEnd().ToUpper());
 
             if (author != null)
             {
@@ -101,7 +99,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateAuthor(int authorId, [FromBody] AuthorDto updatedAuthor)
+        public IActionResult UpdateAuthor(int authorId, [FromBody] AuthorDto? updatedAuthor)
         {
             if (updatedAuthor == null)
                 return BadRequest(ModelState);

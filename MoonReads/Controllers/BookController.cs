@@ -1,10 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
-using MoonReads.Repository;
 
 namespace MoonReads.Controllers
 {
@@ -56,14 +54,14 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto bookCreate)
+        public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto? bookCreate)
         {
             if (bookCreate == null)
                 return BadRequest(ModelState);
 
-            var books = _bookRepository.GetBooks()
-                .Where(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var books = _bookRepository
+                .GetBooks()
+                .FirstOrDefault(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper());
 
             if (books != null)
             {
@@ -91,7 +89,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateBook(int bookId, [FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto updatedBook)
+        public IActionResult UpdateBook(int bookId, [FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto? updatedBook)
         {
             if (updatedBook == null)
                 return BadRequest(ModelState);

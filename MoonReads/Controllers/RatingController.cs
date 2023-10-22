@@ -1,9 +1,8 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
-using MoonReads.Repository;
 
 namespace MoonReads.Controllers
 {
@@ -27,7 +26,7 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateRating([FromQuery] int bookId, [FromBody] RatingDto ratingCreate)
+        public IActionResult CreateRating([FromQuery] int bookId, [FromBody] RatingDto? ratingCreate)
         {
             if (ratingCreate == null)
                 return BadRequest(ModelState);
@@ -39,11 +38,9 @@ namespace MoonReads.Controllers
 
             ratingMap.Book = _bookRepository.GetBook(bookId);
 
-            Console.WriteLine($"ERRRRRR {ratingMap}");
-
             if (!_ratingRepository.CreateRating(ratingMap))
             {
-                ModelState.AddModelError("", "Something went wrong while savin");
+                ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
             }
 
