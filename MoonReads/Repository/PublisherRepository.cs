@@ -56,6 +56,8 @@ namespace MoonReads.Repository
         
         public bool Save()
         {
+            _context.DataVersions.FirstOrDefault(d => d.Table == "Publishers")!.Version++;
+            
             var saved = _context.SaveChanges();
 
             return saved > 0;

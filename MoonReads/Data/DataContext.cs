@@ -17,6 +17,7 @@ namespace MoonReads.Data
         public required DbSet<BookAuthor> BookAuthors { get; set; }
         public required DbSet<BookCategory> BookCategories { get; set; }
         public required DbSet<Rating> Ratings { get; set; }
+        public required DbSet<DataVersion> DataVersions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +53,8 @@ namespace MoonReads.Data
                 .HasOne(a => a.Author)
                 .WithMany(ba => ba.BookAuthors)
                 .HasForeignKey(a => a.AuthorId);
+
+            modelBuilder.Seed();
         }
     }
 }

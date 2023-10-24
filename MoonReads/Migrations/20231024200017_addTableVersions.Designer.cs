@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MoonReads.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MoonReads.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231024200017_addTableVersions")]
+    partial class addTableVersions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,56 +170,6 @@ namespace MoonReads.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataVersions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Table = "Authors",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Table = "Books",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Table = "Categories",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Table = "Publishers",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Table = "AuthorCategories",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Table = "BookAuthors",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Table = "BookCategories",
-                            Version = 0
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Table = "Ratings",
-                            Version = 0
-                        });
                 });
 
             modelBuilder.Entity("MoonReads.Models.Publisher", b =>
