@@ -10,6 +10,8 @@ namespace MoonReads.Helper
 		{
             CreateMap<Author, AuthorDto>();
             CreateMap<AuthorDto, Author>();
+            CreateMap<Author, AuthorShortDto>();
+            CreateMap<AuthorShortDto, Author>();
             CreateMap<Book, BookDto>();
 			CreateMap<BookDto, Book>();
             CreateMap<Category, CategoryDto>();

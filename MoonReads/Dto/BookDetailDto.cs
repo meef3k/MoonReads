@@ -11,8 +11,8 @@
         public required string Isbn { get; set; }
         public required string Publisher { get; set; }
         public double Rating { get; set; }
-        public required List<string> Authors { get; set; }
-        public required List<string> Categories { get; set; }
+        public required List<AuthorShortDto> Authors { get; set; }
+        public required List<CategoryDto> Categories { get; set; }
     }
 }
 

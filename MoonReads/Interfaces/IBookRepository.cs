@@ -9,8 +9,8 @@ namespace MoonReads.Interfaces
 		Book GetBook(string name);
 		BookDetailDto GetBookDetails(int id);
 		ICollection<BookDetailDto> GetBooks();
-        bool CreateBook(int authorId, int categoryId, Book book);
-		bool UpdateBook(int publisherId, int authorId, int categoryId, Book book);
+        bool CreateBook(int[] authorsIds, int[] categoriesIds, Book book);
+		bool UpdateBook(int publisherId, int[] authorId, int[] categoryId, Book book);
 		bool DeleteBook(Book book);
 		bool BookExists(int bookId);
         bool Save();

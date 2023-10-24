@@ -54,7 +54,7 @@ namespace MoonReads.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto? bookCreate)
+        public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int[] authorsIds, [FromQuery] int[] categoriesIds, [FromBody] BookDto? bookCreate)
         {
             if (bookCreate == null)
                 return BadRequest(ModelState);
@@ -76,7 +76,7 @@ namespace MoonReads.Controllers
 
             bookMap.Publisher = _publisherRepository.GetPublisher(publisherId);
 
-            if (!_bookRepository.CreateBook(authorId, categoryId, bookMap))
+            if (!_bookRepository.CreateBook(authorsIds, categoriesIds, bookMap))
             {
                 ModelState.AddModelError("", $"{bookMap}Something went wrong while savin");
                 return StatusCode(500, ModelState);
@@ -89,7 +89,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateBook(int bookId, [FromQuery] int publisherId, [FromQuery] int authorId, [FromQuery] int categoryId, [FromBody] BookDto? updatedBook)
+        public IActionResult UpdateBook(int bookId, [FromQuery] int publisherId, [FromQuery] int[] authorsIds, [FromQuery] int[] categoriesIds, [FromBody] BookDto? updatedBook)
         {
             if (updatedBook == null)
                 return BadRequest(ModelState);
@@ -105,7 +105,7 @@ namespace MoonReads.Controllers
 
             var bookMap = _mapper.Map<Book>(updatedBook);
 
-            if (!_bookRepository.UpdateBook(publisherId, authorId, categoryId, bookMap))
+            if (!_bookRepository.UpdateBook(publisherId, authorsIds, categoriesIds, bookMap))
             {
                 ModelState.AddModelError("", "Something went wrong while updating");
                 return StatusCode(500, ModelState);
