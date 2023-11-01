@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -10,6 +11,8 @@ namespace MoonReads.Controllers
     [ApiController]
     public class PublisherController : Controller
     {
+        private const string DefaultDescription = "Ten wydawca nie ma jeszcze opisu";
+        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/512/10701/10701484.png";
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
 
@@ -83,6 +86,16 @@ namespace MoonReads.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
+            if (publisherCreate.Description.IsNullOrEmpty())
+            {
+                publisherCreate.Description = DefaultDescription;
+            }
+
+            if (publisherCreate.ImageUrl.IsNullOrEmpty())
+            {
+                publisherCreate.ImageUrl = DefaultImageUrl;
+            }
 
             var publisherMap = _mapper.Map<Publisher>(publisherCreate);
 
@@ -128,6 +141,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public IActionResult DeletePublisher(int publisherId)
         {
             if (!_publisherRepository.PublisherExists(publisherId))
@@ -137,6 +151,9 @@ namespace MoonReads.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
+            if (_publisherRepository.HasBooks(publisher))
+                return Conflict("Publisher cannot be deleted because have associated books.");
 
             if (!_publisherRepository.DeletePublisher(publisher))
             {

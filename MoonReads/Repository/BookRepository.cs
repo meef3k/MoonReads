@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
 using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -19,22 +19,7 @@ namespace MoonReads.Repository
         {
             return _context
                 .Books
-                .Where(b => b.Id == id)
-                .Include(b => b.Publisher)
-                .Include(b => b.BookAuthors)
-                .Include(b => b.BookCategories)
-                .FirstOrDefault()!;
-        }
-
-        public Book GetBook(string title)
-        {
-            return _context
-                .Books
-                .Where(b => b.Title == title)
-                .Include(b => b.Publisher)
-                .Include(b => b.BookAuthors)
-                .Include(b => b.BookCategories)
-                .FirstOrDefault()!;
+                .FirstOrDefault(b => b.Id == id)!;
         }
 
         public BookDetailDto GetBookDetails(int id)
@@ -47,10 +32,14 @@ namespace MoonReads.Repository
                     Title = b.Title,
                     Description = b.Description,
                     ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString(),
+                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
                     Pages = b.Pages,
                     Isbn = b.Isbn,
-                    Publisher = b.Publisher.Name,
+                    Publisher = new PublisherShortDto
+                    {
+                        Id = b.Publisher!.Id,
+                        Name = b.Publisher!.Name
+                    },
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
                     Authors = b.BookAuthors.Select(a => new AuthorShortDto
                     {
@@ -65,7 +54,7 @@ namespace MoonReads.Repository
                 })
                 .FirstOrDefault(b => b.Id == id)!;
         }
-
+        
         public ICollection<BookDetailDto> GetBooks()
 		{
             return _context
@@ -76,10 +65,14 @@ namespace MoonReads.Repository
                     Title = b.Title,
                     Description = b.Description,
                     ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString(),
+                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
                     Pages = b.Pages,
                     Isbn = b.Isbn,
-                    Publisher = b.Publisher.Name,
+                    Publisher = new PublisherShortDto
+                    {
+                        Id = b.Publisher!.Id,
+                        Name = b.Publisher!.Name
+                    },
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
                     Authors = b.BookAuthors.Select(a => new AuthorShortDto
                     {

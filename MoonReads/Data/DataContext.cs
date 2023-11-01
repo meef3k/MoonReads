@@ -53,8 +53,10 @@ namespace MoonReads.Data
                 .HasOne(a => a.Author)
                 .WithMany(ba => ba.BookAuthors)
                 .HasForeignKey(a => a.AuthorId);
-
-            modelBuilder.Seed();
+            
+            modelBuilder.SeedDataVersionTable();
+            
+            modelBuilder.SeedTables();
         }
     }
 }

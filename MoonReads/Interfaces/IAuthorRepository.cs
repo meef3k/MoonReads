@@ -1,4 +1,5 @@
-﻿using MoonReads.Models;
+﻿using MoonReads.Dto;
+using MoonReads.Models;
 
 namespace MoonReads.Interfaces
 {
@@ -6,11 +7,12 @@ namespace MoonReads.Interfaces
     {
         Author GetAuthor(int id);
         ICollection<Author> GetAuthors();
-        ICollection<Book> GetBookByAuthor(int authorId);
+        ICollection<BookDetailDto> GetBookByAuthor(int authorId);
         bool CreateAuthor(Author author);
         bool UpdateAuthor(Author author);
         bool DeleteAuthor(Author author);
         bool AuthorExists(int authorId);
         bool Save();
+        bool HasBooks(Author author);
     }
 }

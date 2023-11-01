@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -10,6 +11,8 @@ namespace MoonReads.Controllers
 	[ApiController]
 	public class BookController : Controller
 	{
+        private const string DefaultDescription = "Ta książka nie ma jeszcze opisu";
+        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/512/10701/10701484.png";
 		private readonly IBookRepository _bookRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
@@ -71,6 +74,16 @@ namespace MoonReads.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
+            if (bookCreate.Description.IsNullOrEmpty())
+            {
+                bookCreate.Description = DefaultDescription;
+            }
+
+            if (bookCreate.ImageUrl.IsNullOrEmpty())
+            {
+                bookCreate.ImageUrl = DefaultImageUrl;
+            }
 
             var bookMap = _mapper.Map<Book>(bookCreate);
 

@@ -1,10 +1,14 @@
-﻿namespace MoonReads.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MoonReads.Models
 {
 	public class Category
 	{
+		[Key]
 		public int Id { get; set; }
-		public required string Name { get; set; }
-		public required ICollection<BookCategory> BookCategories { get; set; }
-		public required ICollection<AuthorCategory> AuthorCategories { get; set; }
+		[Required]
+		public string Name { get; set; }
+		public ICollection<BookCategory> BookCategories { get; set; }
+		public ICollection<AuthorCategory> AuthorCategories { get; set; }
 	}
 }

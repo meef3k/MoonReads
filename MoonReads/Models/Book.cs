@@ -1,17 +1,29 @@
-﻿namespace MoonReads.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MoonReads.Models
 {
 	public class Book
 	{
+		[Key]
 		public int Id { get; set; }
-		public required string Title { get; set; }
-		public required string Description { get; set; }
-		public required string ImageUrl { get; set; }
-		public required DateOnly ReleaseDate { get; set; }
-		public required int Pages { get; set; }
-		public required string Isbn { get; set; }
-		public required Publisher Publisher { get; set; }
-		public required ICollection<Rating> Rating { get; set; }
-		public required ICollection<BookAuthor> BookAuthors { get; set; }
-		public required ICollection<BookCategory> BookCategories { get; set; }
+		[Required]
+		public string Title { get; set; }
+
+		public string Description { get; set; }
+		public string ImageUrl { get; set; }
+		[Required]
+		public DateOnly ReleaseDate { get; set; }
+
+		public int Pages { get; set; }
+		[Required, RegularExpression(@"^(?:\d{10}|\d{13})$")]
+		public string Isbn { get; set; }
+		[Required]
+		public int PublisherId { get; set; }
+		[ForeignKey("PublisherId")]
+		public Publisher Publisher { get; set; }
+		public ICollection<Rating> Rating { get; set; }
+		public ICollection<BookAuthor> BookAuthors { get; set; }
+		public ICollection<BookCategory> BookCategories { get; set; }
 	}
 }

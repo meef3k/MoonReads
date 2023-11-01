@@ -62,6 +62,11 @@ namespace MoonReads.Repository
 
             return saved > 0;
         }
+        
+        public bool HasBooks(Publisher publisher)
+        {
+            return _context.Books.Any(b => b.PublisherId == publisher.Id);
+        }
     }
 }
 

@@ -9,7 +9,7 @@
         public required string ReleaseDate { get; set; }
         public int Pages { get; set; }
         public required string Isbn { get; set; }
-        public required string Publisher { get; set; }
+        public PublisherShortDto Publisher { get; set; }
         public double Rating { get; set; }
         public required List<AuthorShortDto> Authors { get; set; }
         public required List<CategoryDto> Categories { get; set; }

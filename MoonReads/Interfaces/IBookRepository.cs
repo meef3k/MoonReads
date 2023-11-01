@@ -6,7 +6,6 @@ namespace MoonReads.Interfaces
 	public interface IBookRepository
 	{
 		Book GetBook(int id);
-		Book GetBook(string name);
 		BookDetailDto GetBookDetails(int id);
 		ICollection<BookDetailDto> GetBooks();
         bool CreateBook(int[] authorsIds, int[] categoriesIds, Book book);

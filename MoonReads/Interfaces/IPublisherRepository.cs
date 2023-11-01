@@ -12,5 +12,6 @@ namespace MoonReads.Interfaces
         bool DeletePublisher(Publisher publisher);
         bool PublisherExists(int publisherId);
         bool Save();
+        bool HasBooks(Publisher publisher);
     }
 }

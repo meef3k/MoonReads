@@ -55,7 +55,7 @@ namespace MoonReads.Controllers
             if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
-            var books = _mapper.Map<List<BookDto>>(_categoryRepository.GetBookByCategory(categoryId));
+            var books = _mapper.Map<List<BookDetailDto>>(_categoryRepository.GetBookByCategory(categoryId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -144,6 +144,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public IActionResult DeleteCategory(int categoryId)
         {
             if (!_categoryRepository.CategoryExists(categoryId))
@@ -153,6 +154,12 @@ namespace MoonReads.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            
+            if (_categoryRepository.HasBooks(category))
+                return Conflict("Category cannot be deleted because have associated books.");
+            
+            if (_categoryRepository.HasAuthors(category))
+                return Conflict("Category cannot be deleted because have associated authors.");
 
             if (!_categoryRepository.DeleteCategory(category))
             {

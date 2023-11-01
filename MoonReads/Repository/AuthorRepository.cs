@@ -1,4 +1,5 @@
 ﻿using MoonReads.Data;
+using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -28,9 +29,39 @@ namespace MoonReads.Repository
             return _context.Authors.OrderBy(a => a.Id).ToList();
         }
 
-        public ICollection<Book> GetBookByAuthor(int authorId)
+        public ICollection<BookDetailDto> GetBookByAuthor(int authorId)
         {
-            return _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList()!;
+            var books = _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book.Id).ToList();
+            return _context
+                .Books
+                .Where(b => books.Contains(b.Id))
+                .Select(b => new BookDetailDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
+                    Pages = b.Pages,
+                    Isbn = b.Isbn,
+                    Publisher = new PublisherShortDto
+                    {
+                        Id = b.Publisher!.Id,
+                        Name = b.Publisher!.Name
+                    },
+                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author!.Name
+                    }).ToList(),
+                    Categories = b.BookCategories.Select(c => new CategoryDto
+                    {
+                        Id = c.CategoryId,
+                        Name = c.Category!.Name
+                    }).ToList()
+                })
+                .ToList();
         }
 
         public bool CreateAuthor(Author author)
@@ -62,6 +93,11 @@ namespace MoonReads.Repository
             _context.Remove(author);
 
             return Save();
+        }
+
+        public bool HasBooks(Author author)
+        {
+            return _context.BookAuthors.Any(ba => ba.AuthorId == author.Id);
         }
     }
 }
