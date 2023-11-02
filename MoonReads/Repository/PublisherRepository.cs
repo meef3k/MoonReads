@@ -1,4 +1,5 @@
 ﻿using MoonReads.Data;
+using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -23,9 +24,39 @@ namespace MoonReads.Repository
             return _context.Publishers.OrderBy(p => p.Id).ToList();
         }
         
-        public ICollection<Book> GetBookByPublisher(int publisherId)
+        public ICollection<BookDetailDto> GetBookByPublisher(int publisherId)
         {
-            return _context.Books.Where(b => b.Publisher.Id == publisherId).ToList();
+            var books = _context.Books.Where(b => b.Publisher.Id == publisherId).Select(b => b.Id).ToList();
+            return _context
+                .Books
+                .Where(b => books.Contains(b.Id))
+                .Select(b => new BookDetailDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
+                    Pages = b.Pages,
+                    Isbn = b.Isbn,
+                    Publisher = new PublisherShortDto
+                    {
+                        Id = b.Publisher!.Id,
+                        Name = b.Publisher!.Name
+                    },
+                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author!.Name
+                    }).ToList(),
+                    Categories = b.BookCategories.Select(c => new CategoryDto
+                    {
+                        Id = c.CategoryId,
+                        Name = c.Category!.Name
+                    }).ToList()
+                })
+                .ToList();
         }
 
         public bool CreatePublisher(Publisher publisher)

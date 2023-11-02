@@ -1,4 +1,5 @@
-﻿using MoonReads.Models;
+﻿using MoonReads.Dto;
+using MoonReads.Models;
 
 namespace MoonReads.Interfaces
 {
@@ -6,7 +7,7 @@ namespace MoonReads.Interfaces
     {
         Publisher GetPublisher(int id);
         ICollection<Publisher> GetPublishers();
-        ICollection<Book> GetBookByPublisher(int publisherId);
+        ICollection<BookDetailDto> GetBookByPublisher(int publisherId);
         bool CreatePublisher(Publisher publisher);
         bool UpdatePublisher(Publisher publisher);
         bool DeletePublisher(Publisher publisher);

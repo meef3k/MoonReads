@@ -58,7 +58,7 @@ namespace MoonReads.Controllers
             if (!_publisherRepository.PublisherExists(publisherId))
                 return NotFound();
 
-            var books = _mapper.Map<List<BookDto>>(_publisherRepository.GetBookByPublisher(publisherId));
+            var books = _mapper.Map<List<BookDetailDto>>(_publisherRepository.GetBookByPublisher(publisherId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
