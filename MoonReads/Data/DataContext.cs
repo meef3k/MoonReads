@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MoonReads.Models;
 
 namespace MoonReads.Data
 {
-	public class DataContext : DbContext
+	public class DataContext : IdentityDbContext<User>
 	{
 		public DataContext(DbContextOptions<DataContext> options) : base(options)
 		{
@@ -21,6 +22,8 @@ namespace MoonReads.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<AuthorCategory>()
                 .HasKey(ac => new { ac.AuthorId, ac.CategoryId });
             modelBuilder.Entity<AuthorCategory>()

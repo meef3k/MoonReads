@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
@@ -54,6 +55,7 @@ namespace MoonReads.Controllers
 			return Ok(book);
 		}
 
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -98,6 +100,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut("{bookId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
@@ -127,6 +130,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpDelete("{bookId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]

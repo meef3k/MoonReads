@@ -17,10 +17,142 @@ namespace MoonReads.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
 
             modelBuilder.Entity("MoonReads.Models.Author", b =>
                 {
@@ -50,142 +182,142 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=414",
-                            Name = "Winfield Blanda"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=179",
+                            Name = "Stephan Gerlach"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=468",
-                            Name = "Danika Ritchie"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1075",
+                            Name = "Tony Hilll"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1015",
-                            Name = "Annette Torp"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1017",
+                            Name = "Carlos Bauch"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=537",
-                            Name = "Augustus Metz"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=599",
+                            Name = "Everette Leffler"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=939",
-                            Name = "Roxane Watsica"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=980",
+                            Name = "Elissa McDermott"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=130",
-                            Name = "Rubye Homenick"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=973",
+                            Name = "Emmanuel Kulas"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=70",
-                            Name = "Dock McLaughlin"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=682",
+                            Name = "Lupe Koepp"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=957",
-                            Name = "Roosevelt Jacobson"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=97",
+                            Name = "Geoffrey Kling"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=230",
-                            Name = "Talia Gusikowski"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=451",
+                            Name = "Keyon Leuschke"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1023",
-                            Name = "Eleanora Kemmer"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=328",
+                            Name = "Jovany Kertzmann"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1083",
-                            Name = "Elian Gutmann"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=53",
+                            Name = "Davon Purdy"
                         },
                         new
                         {
                             Id = 12,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=531",
-                            Name = "Levi Kassulke"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=993",
+                            Name = "Erich Dicki"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=583",
-                            Name = "Collin Stehr"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=881",
+                            Name = "Demario Kuvalis"
                         },
                         new
                         {
                             Id = 14,
                             Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=858",
-                            Name = "Ferne Hegmann"
+                            ImageUrl = "https://picsum.photos/350/500/?image=605",
+                            Name = "Elsa Konopelski"
                         },
                         new
                         {
                             Id = 15,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=778",
-                            Name = "Casper Davis"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=417",
+                            Name = "Marianne Haley"
                         },
                         new
                         {
                             Id = 16,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=126",
-                            Name = "Maximo Kovacek"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=745",
+                            Name = "Raina Mohr"
                         },
                         new
                         {
                             Id = 17,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=868",
-                            Name = "Genoveva Stamm"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=717",
+                            Name = "Sabryna Graham"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=61",
-                            Name = "Deion Leffler"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=132",
+                            Name = "Caitlyn Bergnaum"
                         },
                         new
                         {
                             Id = 19,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=289",
-                            Name = "Margarete Rogahn"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=784",
+                            Name = "Osborne Rau"
                         },
                         new
                         {
                             Id = 20,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=824",
-                            Name = "Rosalyn Donnelly"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=688",
+                            Name = "Andrew Ernser"
                         });
                 });
 
@@ -540,552 +672,552 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1063",
-                            Isbn = "5116426031",
-                            Pages = 539,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 4, 20),
-                            Title = "Rustic Rubber Car"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=709",
+                            Isbn = "5876265278",
+                            Pages = 571,
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2023, 7, 11),
+                            Title = "Awesome Soft Mouse"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=66",
-                            Isbn = "8076820884",
-                            Pages = 615,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 2, 28),
-                            Title = "Handcrafted Rubber Ball"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=558",
+                            Isbn = "2325691828",
+                            Pages = 105,
+                            PublisherId = 1,
+                            ReleaseDate = new DateOnly(2023, 10, 4),
+                            Title = "Fantastic Cotton Pants"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=95",
-                            Isbn = "2599686854",
-                            Pages = 305,
-                            PublisherId = 1,
-                            ReleaseDate = new DateOnly(2023, 5, 28),
-                            Title = "Fantastic Wooden Shoes"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=32",
+                            Isbn = "9214539889",
+                            Pages = 227,
+                            PublisherId = 10,
+                            ReleaseDate = new DateOnly(2022, 11, 29),
+                            Title = "Intelligent Fresh Chicken"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=268",
-                            Isbn = "7341218283",
-                            Pages = 480,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 10, 26),
-                            Title = "Rustic Fresh Ball"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=187",
+                            Isbn = "7438322983",
+                            Pages = 361,
+                            PublisherId = 8,
+                            ReleaseDate = new DateOnly(2023, 1, 31),
+                            Title = "Awesome Concrete Bike"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=623",
-                            Isbn = "1608789223",
-                            Pages = 507,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 5, 27),
-                            Title = "Practical Frozen Pizza"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=942",
+                            Isbn = "4052797290",
+                            Pages = 590,
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2022, 12, 5),
+                            Title = "Rustic Concrete Table"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=494",
-                            Isbn = "4838863203",
-                            Pages = 683,
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=311",
+                            Isbn = "7871363723",
+                            Pages = 300,
                             PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 3, 22),
-                            Title = "Small Frozen Pizza"
+                            ReleaseDate = new DateOnly(2023, 11, 8),
+                            Title = "Handmade Concrete Salad"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=244",
-                            Isbn = "4820678626",
-                            Pages = 317,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 7, 16),
-                            Title = "Fantastic Wooden Cheese"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=463",
+                            Isbn = "1608003857",
+                            Pages = 502,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 8, 16),
+                            Title = "Awesome Concrete Salad"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=408",
-                            Isbn = "3758518032",
-                            Pages = 899,
-                            PublisherId = 20,
-                            ReleaseDate = new DateOnly(2022, 12, 16),
-                            Title = "Fantastic Concrete Pants"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=532",
+                            Isbn = "8320410533",
+                            Pages = 900,
+                            PublisherId = 5,
+                            ReleaseDate = new DateOnly(2023, 5, 11),
+                            Title = "Fantastic Wooden Pizza"
                         },
                         new
                         {
                             Id = 9,
                             Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=959",
-                            Isbn = "7386787998",
-                            Pages = 814,
-                            PublisherId = 16,
-                            ReleaseDate = new DateOnly(2023, 8, 2),
-                            Title = "Gorgeous Plastic Pants"
+                            ImageUrl = "https://picsum.photos/350/500/?image=28",
+                            Isbn = "8814571823",
+                            Pages = 850,
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2022, 12, 25),
+                            Title = "Sleek Wooden Sausages"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=235",
-                            Isbn = "8591468301",
-                            Pages = 169,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 1, 18),
-                            Title = "Gorgeous Plastic Pizza"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=684",
+                            Isbn = "3876124976",
+                            Pages = 181,
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 2, 8),
+                            Title = "Practical Cotton Sausages"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=937",
-                            Isbn = "8158790465",
-                            Pages = 176,
-                            PublisherId = 5,
-                            ReleaseDate = new DateOnly(2022, 12, 2),
-                            Title = "Rustic Metal Pants"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=694",
+                            Isbn = "6749458697",
+                            Pages = 375,
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2023, 8, 14),
+                            Title = "Gorgeous Cotton Table"
                         },
                         new
                         {
                             Id = 12,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=495",
-                            Isbn = "1840870636",
-                            Pages = 363,
-                            PublisherId = 10,
-                            ReleaseDate = new DateOnly(2023, 3, 2),
-                            Title = "Incredible Steel Towels"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=644",
+                            Isbn = "9893135231",
+                            Pages = 740,
+                            PublisherId = 2,
+                            ReleaseDate = new DateOnly(2023, 8, 12),
+                            Title = "Ergonomic Granite Salad"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=140",
-                            Isbn = "4692203286",
-                            Pages = 228,
-                            PublisherId = 14,
-                            ReleaseDate = new DateOnly(2023, 10, 19),
-                            Title = "Fantastic Frozen Chicken"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=267",
+                            Isbn = "2397420416",
+                            Pages = 496,
+                            PublisherId = 17,
+                            ReleaseDate = new DateOnly(2023, 4, 13),
+                            Title = "Incredible Fresh Keyboard"
                         },
                         new
                         {
                             Id = 14,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=503",
-                            Isbn = "2322799178",
-                            Pages = 110,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 6, 20),
-                            Title = "Rustic Concrete Bacon"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=59",
+                            Isbn = "6706669335",
+                            Pages = 296,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 3, 3),
+                            Title = "Ergonomic Fresh Chair"
                         },
                         new
                         {
                             Id = 15,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=993",
-                            Isbn = "9544164996",
-                            Pages = 546,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2022, 12, 11),
-                            Title = "Gorgeous Fresh Keyboard"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=146",
+                            Isbn = "3661067701",
+                            Pages = 841,
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2023, 5, 22),
+                            Title = "Small Metal Shirt"
                         },
                         new
                         {
                             Id = 16,
                             Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=914",
-                            Isbn = "4770406926",
-                            Pages = 429,
-                            PublisherId = 10,
-                            ReleaseDate = new DateOnly(2023, 7, 31),
-                            Title = "Generic Granite Car"
+                            ImageUrl = "https://picsum.photos/350/500/?image=303",
+                            Isbn = "4176067537",
+                            Pages = 524,
+                            PublisherId = 18,
+                            ReleaseDate = new DateOnly(2023, 4, 13),
+                            Title = "Practical Wooden Shoes"
                         },
                         new
                         {
                             Id = 17,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=694",
-                            Isbn = "4623002707",
-                            Pages = 493,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 4, 30),
-                            Title = "Small Granite Shoes"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=796",
+                            Isbn = "9802943631",
+                            Pages = 737,
+                            PublisherId = 16,
+                            ReleaseDate = new DateOnly(2022, 12, 11),
+                            Title = "Rustic Fresh Bacon"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=174",
-                            Isbn = "7873691400",
-                            Pages = 782,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 1, 5),
-                            Title = "Rustic Wooden Computer"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=12",
+                            Isbn = "1064415683",
+                            Pages = 141,
+                            PublisherId = 1,
+                            ReleaseDate = new DateOnly(2022, 12, 23),
+                            Title = "Awesome Metal Hat"
                         },
                         new
                         {
                             Id = 19,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=14",
-                            Isbn = "6902603187",
-                            Pages = 633,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 7, 18),
-                            Title = "Handmade Cotton Ball"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=50",
+                            Isbn = "9194191807",
+                            Pages = 740,
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 8, 21),
+                            Title = "Handcrafted Concrete Salad"
                         },
                         new
                         {
                             Id = 20,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=522",
-                            Isbn = "1997162859",
-                            Pages = 819,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 2, 21),
-                            Title = "Refined Concrete Shoes"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=215",
+                            Isbn = "7583681214",
+                            Pages = 713,
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 9, 25),
+                            Title = "Ergonomic Soft Towels"
                         },
                         new
                         {
                             Id = 21,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=309",
-                            Isbn = "5911425368",
-                            Pages = 734,
-                            PublisherId = 20,
-                            ReleaseDate = new DateOnly(2023, 7, 23),
-                            Title = "Handmade Soft Shoes"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=442",
+                            Isbn = "1193584200",
+                            Pages = 123,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 9, 19),
+                            Title = "Generic Plastic Pants"
                         },
                         new
                         {
                             Id = 22,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=294",
-                            Isbn = "5680937265",
-                            Pages = 736,
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=692",
+                            Isbn = "3520023524",
+                            Pages = 823,
                             PublisherId = 6,
-                            ReleaseDate = new DateOnly(2023, 4, 18),
-                            Title = "Unbranded Cotton Bike"
+                            ReleaseDate = new DateOnly(2023, 5, 10),
+                            Title = "Fantastic Steel Towels"
                         },
                         new
                         {
                             Id = 23,
                             Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=362",
-                            Isbn = "5630229609",
-                            Pages = 242,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2022, 11, 21),
-                            Title = "Licensed Soft Chicken"
+                            ImageUrl = "https://picsum.photos/350/500/?image=841",
+                            Isbn = "8149567994",
+                            Pages = 250,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 5, 24),
+                            Title = "Handcrafted Steel Chicken"
                         },
                         new
                         {
                             Id = 24,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=759",
-                            Isbn = "9452938914",
-                            Pages = 259,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2023, 3, 19),
-                            Title = "Unbranded Soft Soap"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=468",
+                            Isbn = "6638390521",
+                            Pages = 803,
+                            PublisherId = 12,
+                            ReleaseDate = new DateOnly(2023, 5, 13),
+                            Title = "Gorgeous Fresh Towels"
                         },
                         new
                         {
                             Id = 25,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=507",
-                            Isbn = "2271572739",
-                            Pages = 755,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2022, 12, 26),
-                            Title = "Tasty Cotton Keyboard"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=182",
+                            Isbn = "6944971293",
+                            Pages = 601,
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 4, 20),
+                            Title = "Unbranded Granite Gloves"
                         },
                         new
                         {
                             Id = 26,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=877",
-                            Isbn = "4417043431",
-                            Pages = 184,
-                            PublisherId = 2,
-                            ReleaseDate = new DateOnly(2023, 6, 9),
-                            Title = "Practical Wooden Keyboard"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=0",
+                            Isbn = "7032019327",
+                            Pages = 725,
+                            PublisherId = 1,
+                            ReleaseDate = new DateOnly(2022, 12, 22),
+                            Title = "Gorgeous Steel Hat"
                         },
                         new
                         {
                             Id = 27,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=890",
-                            Isbn = "7418187669",
-                            Pages = 673,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 2, 7),
-                            Title = "Gorgeous Cotton Ball"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=637",
+                            Isbn = "6044952160",
+                            Pages = 565,
+                            PublisherId = 10,
+                            ReleaseDate = new DateOnly(2022, 12, 6),
+                            Title = "Fantastic Concrete Table"
                         },
                         new
                         {
                             Id = 28,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=724",
-                            Isbn = "4705722126",
-                            Pages = 301,
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=26",
+                            Isbn = "9504334468",
+                            Pages = 618,
                             PublisherId = 13,
-                            ReleaseDate = new DateOnly(2022, 11, 21),
-                            Title = "Incredible Plastic Car"
+                            ReleaseDate = new DateOnly(2023, 10, 3),
+                            Title = "Tasty Wooden Cheese"
                         },
                         new
                         {
                             Id = 29,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=747",
-                            Isbn = "3552133791",
-                            Pages = 645,
-                            PublisherId = 11,
-                            ReleaseDate = new DateOnly(2023, 6, 30),
-                            Title = "Generic Soft Cheese"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=708",
+                            Isbn = "5559070356",
+                            Pages = 849,
+                            PublisherId = 10,
+                            ReleaseDate = new DateOnly(2023, 11, 27),
+                            Title = "Small Soft Computer"
                         },
                         new
                         {
                             Id = 30,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=214",
-                            Isbn = "8681842440",
-                            Pages = 781,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 9, 17),
-                            Title = "Practical Metal Chair"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1053",
+                            Isbn = "1329933378",
+                            Pages = 861,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 2, 11),
+                            Title = "Unbranded Concrete Shoes"
                         },
                         new
                         {
                             Id = 31,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=297",
-                            Isbn = "6824089466",
-                            Pages = 241,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 9, 17),
-                            Title = "Gorgeous Metal Sausages"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=514",
+                            Isbn = "9843905751",
+                            Pages = 612,
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 8, 15),
+                            Title = "Fantastic Frozen Chair"
                         },
                         new
                         {
                             Id = 32,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=833",
-                            Isbn = "5691580443",
-                            Pages = 153,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 6, 19),
-                            Title = "Incredible Cotton Chicken"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=526",
+                            Isbn = "6386208676",
+                            Pages = 646,
+                            PublisherId = 2,
+                            ReleaseDate = new DateOnly(2023, 5, 24),
+                            Title = "Incredible Plastic Sausages"
                         },
                         new
                         {
                             Id = 33,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=753",
-                            Isbn = "6467909584",
-                            Pages = 643,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2023, 6, 27),
-                            Title = "Ergonomic Steel Soap"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=448",
+                            Isbn = "6160638403",
+                            Pages = 505,
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 7, 30),
+                            Title = "Handcrafted Fresh Sausages"
                         },
                         new
                         {
                             Id = 34,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=906",
-                            Isbn = "1703955766",
-                            Pages = 324,
-                            PublisherId = 6,
-                            ReleaseDate = new DateOnly(2023, 9, 16),
-                            Title = "Refined Steel Computer"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1035",
+                            Isbn = "1480052519",
+                            Pages = 579,
+                            PublisherId = 8,
+                            ReleaseDate = new DateOnly(2023, 6, 11),
+                            Title = "Refined Plastic Computer"
                         },
                         new
                         {
                             Id = 35,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=785",
-                            Isbn = "6711427050",
-                            Pages = 566,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2023, 5, 16),
-                            Title = "Generic Fresh Tuna"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=132",
+                            Isbn = "2091264857",
+                            Pages = 282,
+                            PublisherId = 7,
+                            ReleaseDate = new DateOnly(2023, 6, 11),
+                            Title = "Handcrafted Rubber Keyboard"
                         },
                         new
                         {
                             Id = 36,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=805",
-                            Isbn = "1291406998",
-                            Pages = 853,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 9, 19),
-                            Title = "Ergonomic Metal Tuna"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=205",
+                            Isbn = "3516856076",
+                            Pages = 681,
+                            PublisherId = 14,
+                            ReleaseDate = new DateOnly(2023, 2, 28),
+                            Title = "Gorgeous Fresh Computer"
                         },
                         new
                         {
                             Id = 37,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=392",
-                            Isbn = "6165651878",
-                            Pages = 489,
-                            PublisherId = 19,
-                            ReleaseDate = new DateOnly(2023, 1, 7),
-                            Title = "Rustic Metal Ball"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=56",
+                            Isbn = "4271775149",
+                            Pages = 142,
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 6, 23),
+                            Title = "Handcrafted Fresh Car"
                         },
                         new
                         {
                             Id = 38,
                             Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=497",
-                            Isbn = "4594825120",
-                            Pages = 569,
-                            PublisherId = 11,
-                            ReleaseDate = new DateOnly(2022, 12, 28),
-                            Title = "Licensed Frozen Chicken"
+                            ImageUrl = "https://picsum.photos/350/500/?image=285",
+                            Isbn = "2080387156",
+                            Pages = 638,
+                            PublisherId = 18,
+                            ReleaseDate = new DateOnly(2023, 5, 13),
+                            Title = "Handcrafted Cotton Salad"
                         },
                         new
                         {
                             Id = 39,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=622",
-                            Isbn = "3597209169",
-                            Pages = 488,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 7, 22),
-                            Title = "Handcrafted Plastic Bike"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=826",
+                            Isbn = "3646360144",
+                            Pages = 403,
+                            PublisherId = 13,
+                            ReleaseDate = new DateOnly(2023, 4, 11),
+                            Title = "Practical Wooden Car"
                         },
                         new
                         {
                             Id = 40,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=475",
-                            Isbn = "5265475934",
-                            Pages = 887,
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=770",
+                            Isbn = "1815379465",
+                            Pages = 599,
                             PublisherId = 11,
-                            ReleaseDate = new DateOnly(2023, 5, 4),
-                            Title = "Generic Frozen Ball"
+                            ReleaseDate = new DateOnly(2023, 5, 13),
+                            Title = "Gorgeous Frozen Fish"
                         },
                         new
                         {
                             Id = 41,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=479",
-                            Isbn = "9950206860",
-                            Pages = 843,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2022, 11, 22),
-                            Title = "Small Fresh Shirt"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=788",
+                            Isbn = "6680103695",
+                            Pages = 728,
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2022, 12, 16),
+                            Title = "Handmade Concrete Pants"
                         },
                         new
                         {
                             Id = 42,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1074",
-                            Isbn = "4549563358",
-                            Pages = 208,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2022, 12, 2),
-                            Title = "Gorgeous Wooden Keyboard"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=823",
+                            Isbn = "3839788592",
+                            Pages = 861,
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 4, 30),
+                            Title = "Rustic Plastic Pants"
                         },
                         new
                         {
                             Id = 43,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=798",
-                            Isbn = "8448548243",
-                            Pages = 242,
-                            PublisherId = 11,
-                            ReleaseDate = new DateOnly(2023, 8, 21),
-                            Title = "Fantastic Metal Chips"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1008",
+                            Isbn = "4396015913",
+                            Pages = 227,
+                            PublisherId = 20,
+                            ReleaseDate = new DateOnly(2023, 8, 18),
+                            Title = "Refined Rubber Pants"
                         },
                         new
                         {
                             Id = 44,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=153",
-                            Isbn = "2635244535",
-                            Pages = 143,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 7, 3),
-                            Title = "Small Granite Hat"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=727",
+                            Isbn = "1585067238",
+                            Pages = 557,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 10, 14),
+                            Title = "Awesome Wooden Towels"
                         },
                         new
                         {
                             Id = 45,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=234",
-                            Isbn = "6638308376",
-                            Pages = 162,
-                            PublisherId = 20,
-                            ReleaseDate = new DateOnly(2023, 5, 22),
-                            Title = "Tasty Metal Hat"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=98",
+                            Isbn = "3827292794",
+                            Pages = 886,
+                            PublisherId = 17,
+                            ReleaseDate = new DateOnly(2023, 10, 26),
+                            Title = "Ergonomic Rubber Chips"
                         },
                         new
                         {
                             Id = 46,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=336",
-                            Isbn = "7298738324",
-                            Pages = 357,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 10, 6),
-                            Title = "Fantastic Frozen Chair"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=289",
+                            Isbn = "4748030300",
+                            Pages = 361,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2022, 12, 13),
+                            Title = "Practical Soft Mouse"
                         },
                         new
                         {
                             Id = 47,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=814",
-                            Isbn = "8520282119",
-                            Pages = 177,
-                            PublisherId = 4,
-                            ReleaseDate = new DateOnly(2023, 8, 1),
-                            Title = "Awesome Metal Chips"
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=14",
+                            Isbn = "3007231702",
+                            Pages = 685,
+                            PublisherId = 20,
+                            ReleaseDate = new DateOnly(2023, 2, 2),
+                            Title = "Ergonomic Plastic Chips"
                         },
                         new
                         {
                             Id = 48,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=158",
-                            Isbn = "7657732813",
-                            Pages = 856,
-                            PublisherId = 5,
-                            ReleaseDate = new DateOnly(2023, 8, 18),
-                            Title = "Intelligent Rubber Shirt"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=703",
+                            Isbn = "3526826977",
+                            Pages = 626,
+                            PublisherId = 16,
+                            ReleaseDate = new DateOnly(2023, 2, 16),
+                            Title = "Fantastic Metal Gloves"
                         },
                         new
                         {
                             Id = 49,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=350",
-                            Isbn = "6305380749",
-                            Pages = 834,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 9, 27),
-                            Title = "Small Soft Fish"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=252",
+                            Isbn = "8466222887",
+                            Pages = 336,
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 4, 28),
+                            Title = "Tasty Steel Chair"
                         },
                         new
                         {
                             Id = 50,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=713",
-                            Isbn = "3283670460",
-                            Pages = 417,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 1, 17),
-                            Title = "Tasty Plastic Table"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=158",
+                            Isbn = "9255388104",
+                            Pages = 310,
+                            PublisherId = 7,
+                            ReleaseDate = new DateOnly(2023, 5, 3),
+                            Title = "Incredible Rubber Soap"
                         });
                 });
 
@@ -1995,102 +2127,102 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Shoes, Health & Automotive"
+                            Name = "Automotive, Tools & Health"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Games & Industrial"
+                            Name = "Kids & Sports"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Automotive"
+                            Name = "Shoes, Movies & Books"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Jewelery & Industrial"
+                            Name = "Health & Industrial"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Clothing & Home"
+                            Name = "Clothing & Books"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Books"
+                            Name = "Kids, Tools & Grocery"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Sports & Sports"
+                            Name = "Music & Sports"
                         },
                         new
                         {
                             Id = 8,
-                            Name = "Computers, Outdoors & Sports"
+                            Name = "Grocery & Outdoors"
                         },
                         new
                         {
                             Id = 9,
-                            Name = "Clothing & Garden"
+                            Name = "Tools & Sports"
                         },
                         new
                         {
                             Id = 10,
-                            Name = "Sports"
+                            Name = "Automotive, Computers & Toys"
                         },
                         new
                         {
                             Id = 11,
-                            Name = "Movies, Books & Outdoors"
+                            Name = "Tools"
                         },
                         new
                         {
                             Id = 12,
-                            Name = "Baby"
+                            Name = "Baby & Kids"
                         },
                         new
                         {
                             Id = 13,
-                            Name = "Jewelery, Grocery & Industrial"
+                            Name = "Jewelery & Outdoors"
                         },
                         new
                         {
                             Id = 14,
-                            Name = "Grocery, Baby & Outdoors"
+                            Name = "Home"
                         },
                         new
                         {
                             Id = 15,
-                            Name = "Movies, Automotive & Outdoors"
+                            Name = "Home"
                         },
                         new
                         {
                             Id = 16,
-                            Name = "Outdoors, Movies & Movies"
+                            Name = "Outdoors, Garden & Industrial"
                         },
                         new
                         {
                             Id = 17,
-                            Name = "Grocery, Baby & Sports"
+                            Name = "Books & Baby"
                         },
                         new
                         {
                             Id = 18,
-                            Name = "Music, Outdoors & Garden"
+                            Name = "Tools"
                         },
                         new
                         {
                             Id = 19,
-                            Name = "Automotive"
+                            Name = "Sports"
                         },
                         new
                         {
                             Id = 20,
-                            Name = "Beauty, Toys & Grocery"
+                            Name = "Games, Books & Automotive"
                         });
                 });
 
@@ -2192,142 +2324,142 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=554",
-                            Name = "Murray, Mayert and Davis"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=439",
+                            Name = "Buckridge Inc"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=23",
-                            Name = "Cummerata, Zieme and Roob"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=206",
+                            Name = "Emard, O'Kon and Hills"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=325",
-                            Name = "Ebert - Auer"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=369",
+                            Name = "Rosenbaum, Hickle and Cremin"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=339",
-                            Name = "Dickinson - Lakin"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=475",
+                            Name = "Gaylord and Sons"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=481",
-                            Name = "Osinski Inc"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=590",
+                            Name = "Leannon, Osinski and Jones"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=631",
-                            Name = "Kiehn - Vandervort"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=890",
+                            Name = "Harris and Sons"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=148",
-                            Name = "Pagac, Barton and Rempel"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=293",
+                            Name = "Corwin Group"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=958",
-                            Name = "Windler, Wolf and Kuhlman"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=705",
+                            Name = "Willms Inc"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=70",
-                            Name = "Kreiger Group"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=904",
+                            Name = "Lesch and Sons"
                         },
                         new
                         {
                             Id = 10,
                             Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=132",
-                            Name = "Harber - Welch"
+                            ImageUrl = "https://picsum.photos/350/500/?image=262",
+                            Name = "Stoltenberg, Pollich and Connelly"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=341",
-                            Name = "Terry Inc"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=807",
+                            Name = "Schinner, Hettinger and Brekke"
                         },
                         new
                         {
                             Id = 12,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=721",
-                            Name = "Greenholt, Ward and Douglas"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=211",
+                            Name = "Fay, Flatley and D'Amore"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1016",
-                            Name = "Ward - Sauer"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=614",
+                            Name = "Kreiger, Stracke and Bins"
                         },
                         new
                         {
                             Id = 14,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=399",
-                            Name = "Hayes Group"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=248",
+                            Name = "Mills, Hilpert and Hickle"
                         },
                         new
                         {
                             Id = 15,
                             Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=351",
-                            Name = "Rice - Grant"
+                            ImageUrl = "https://picsum.photos/350/500/?image=163",
+                            Name = "Goldner, Pacocha and Fahey"
                         },
                         new
                         {
                             Id = 16,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=707",
-                            Name = "Bailey - Goodwin"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=845",
+                            Name = "Tremblay, Gutmann and Senger"
                         },
                         new
                         {
                             Id = 17,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=191",
-                            Name = "Hane - Rosenbaum"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=963",
+                            Name = "Bruen Inc"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=363",
-                            Name = "Zieme, Conn and Larkin"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=124",
+                            Name = "Kunde - Collier"
                         },
                         new
                         {
                             Id = 19,
                             Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=543",
-                            Name = "Konopelski, Cartwright and Kreiger"
+                            ImageUrl = "https://picsum.photos/350/500/?image=631",
+                            Name = "Lemke, Abshire and McKenzie"
                         },
                         new
                         {
                             Id = 20,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=780",
-                            Name = "Gulgowski, Rippin and Kuhic"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1059",
+                            Name = "Stiedemann Inc"
                         });
                 });
 
@@ -2355,512 +2487,512 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            BookId = 33,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BookId = 33,
+                            BookId = 31,
                             Rate = 3
                         },
                         new
                         {
+                            Id = 2,
+                            BookId = 9,
+                            Rate = 1
+                        },
+                        new
+                        {
                             Id = 3,
-                            BookId = 50,
+                            BookId = 17,
                             Rate = 4
                         },
                         new
                         {
                             Id = 4,
-                            BookId = 13,
+                            BookId = 29,
                             Rate = 3
                         },
                         new
                         {
                             Id = 5,
-                            BookId = 1,
-                            Rate = 1
+                            BookId = 9,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 6,
-                            BookId = 24,
+                            BookId = 39,
                             Rate = 2
                         },
                         new
                         {
                             Id = 7,
-                            BookId = 24,
-                            Rate = 2
+                            BookId = 38,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 8,
-                            BookId = 25,
+                            BookId = 50,
                             Rate = 1
                         },
                         new
                         {
                             Id = 9,
-                            BookId = 46,
-                            Rate = 2
+                            BookId = 16,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 10,
-                            BookId = 16,
+                            BookId = 8,
                             Rate = 4
                         },
                         new
                         {
                             Id = 11,
-                            BookId = 33,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 12,
-                            BookId = 50,
+                            BookId = 21,
                             Rate = 1
                         },
                         new
                         {
+                            Id = 12,
+                            BookId = 36,
+                            Rate = 2
+                        },
+                        new
+                        {
                             Id = 13,
-                            BookId = 31,
-                            Rate = 4
+                            BookId = 25,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 14,
                             BookId = 23,
-                            Rate = 3
+                            Rate = 2
                         },
                         new
                         {
                             Id = 15,
-                            BookId = 34,
+                            BookId = 35,
                             Rate = 2
                         },
                         new
                         {
                             Id = 16,
-                            BookId = 16,
-                            Rate = 3
+                            BookId = 44,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 17,
-                            BookId = 34,
+                            BookId = 19,
                             Rate = 1
                         },
                         new
                         {
                             Id = 18,
-                            BookId = 33,
-                            Rate = 3
+                            BookId = 36,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 19,
-                            BookId = 22,
-                            Rate = 4
+                            BookId = 15,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 20,
                             BookId = 7,
-                            Rate = 3
+                            Rate = 1
                         },
                         new
                         {
                             Id = 21,
-                            BookId = 28,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 22,
-                            BookId = 8,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 23,
-                            BookId = 30,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 24,
-                            BookId = 37,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 25,
-                            BookId = 15,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 26,
-                            BookId = 37,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 27,
-                            BookId = 45,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 28,
-                            BookId = 2,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 29,
-                            BookId = 31,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 30,
-                            BookId = 50,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 31,
-                            BookId = 3,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 32,
-                            BookId = 34,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 33,
-                            BookId = 23,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 34,
-                            BookId = 38,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 35,
-                            BookId = 41,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 36,
-                            BookId = 22,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 37,
-                            BookId = 50,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 38,
-                            BookId = 25,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 39,
-                            BookId = 19,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 40,
-                            BookId = 9,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 41,
-                            BookId = 38,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 42,
-                            BookId = 17,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 43,
-                            BookId = 4,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 44,
-                            BookId = 14,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 45,
-                            BookId = 28,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 46,
-                            BookId = 17,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 47,
-                            BookId = 23,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 48,
-                            BookId = 29,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 49,
-                            BookId = 41,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 50,
-                            BookId = 45,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 51,
-                            BookId = 17,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 52,
-                            BookId = 32,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 53,
-                            BookId = 9,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 54,
-                            BookId = 8,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 55,
-                            BookId = 23,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 56,
                             BookId = 18,
                             Rate = 1
                         },
                         new
                         {
-                            Id = 57,
-                            BookId = 34,
+                            Id = 22,
+                            BookId = 48,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 23,
+                            BookId = 36,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 24,
+                            BookId = 45,
                             Rate = 3
                         },
                         new
                         {
-                            Id = 58,
-                            BookId = 1,
+                            Id = 25,
+                            BookId = 39,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 59,
-                            BookId = 20,
-                            Rate = 4
+                            Id = 26,
+                            BookId = 49,
+                            Rate = 1
                         },
                         new
                         {
-                            Id = 60,
-                            BookId = 45,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 61,
-                            BookId = 9,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 62,
-                            BookId = 14,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 63,
-                            BookId = 47,
+                            Id = 27,
+                            BookId = 44,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 64,
-                            BookId = 34,
-                            Rate = 5
+                            Id = 28,
+                            BookId = 4,
+                            Rate = 4
                         },
                         new
                         {
-                            Id = 65,
+                            Id = 29,
+                            BookId = 15,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 30,
                             BookId = 33,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 66,
-                            BookId = 39,
+                            Id = 31,
+                            BookId = 26,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 32,
+                            BookId = 49,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 33,
+                            BookId = 49,
                             Rate = 4
                         },
                         new
                         {
-                            Id = 67,
-                            BookId = 10,
-                            Rate = 3
+                            Id = 34,
+                            BookId = 19,
+                            Rate = 4
                         },
                         new
                         {
-                            Id = 68,
-                            BookId = 42,
+                            Id = 35,
+                            BookId = 13,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 36,
+                            BookId = 14,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 37,
+                            BookId = 24,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 38,
+                            BookId = 8,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 39,
+                            BookId = 22,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 40,
+                            BookId = 33,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 41,
+                            BookId = 8,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 69,
-                            BookId = 11,
+                            Id = 42,
+                            BookId = 4,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 43,
+                            BookId = 1,
                             Rate = 4
                         },
                         new
                         {
-                            Id = 70,
+                            Id = 44,
+                            BookId = 17,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 45,
+                            BookId = 37,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 46,
+                            BookId = 50,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 47,
+                            BookId = 50,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 48,
+                            BookId = 35,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 49,
+                            BookId = 23,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 50,
+                            BookId = 3,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 51,
+                            BookId = 4,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 52,
+                            BookId = 33,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 53,
+                            BookId = 33,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 54,
+                            BookId = 18,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 55,
+                            BookId = 42,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 56,
+                            BookId = 32,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 57,
+                            BookId = 7,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 58,
+                            BookId = 9,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 59,
+                            BookId = 30,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 60,
+                            BookId = 11,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 61,
+                            BookId = 14,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 62,
                             BookId = 25,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 71,
-                            BookId = 13,
+                            Id = 63,
+                            BookId = 35,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 72,
-                            BookId = 30,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 73,
-                            BookId = 6,
+                            Id = 64,
+                            BookId = 38,
                             Rate = 4
                         },
                         new
                         {
-                            Id = 74,
-                            BookId = 14,
+                            Id = 65,
+                            BookId = 19,
                             Rate = 2
                         },
                         new
                         {
+                            Id = 66,
+                            BookId = 34,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 67,
+                            BookId = 30,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 68,
+                            BookId = 46,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 69,
+                            BookId = 30,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 70,
+                            BookId = 49,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 71,
+                            BookId = 35,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 72,
+                            BookId = 11,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 73,
+                            BookId = 46,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 74,
+                            BookId = 2,
+                            Rate = 3
+                        },
+                        new
+                        {
                             Id = 75,
-                            BookId = 27,
+                            BookId = 39,
                             Rate = 3
                         },
                         new
                         {
                             Id = 76,
-                            BookId = 9,
+                            BookId = 11,
                             Rate = 3
                         },
                         new
                         {
                             Id = 77,
-                            BookId = 28,
-                            Rate = 2
+                            BookId = 12,
+                            Rate = 3
                         },
                         new
                         {
                             Id = 78,
-                            BookId = 27,
-                            Rate = 4
+                            BookId = 25,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 79,
-                            BookId = 5,
+                            BookId = 35,
                             Rate = 3
                         },
                         new
                         {
                             Id = 80,
-                            BookId = 45,
-                            Rate = 5
+                            BookId = 47,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 81,
-                            BookId = 34,
-                            Rate = 2
+                            BookId = 21,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 82,
-                            BookId = 29,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 83,
-                            BookId = 32,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 84,
-                            BookId = 41,
+                            BookId = 26,
                             Rate = 3
                         },
                         new
                         {
+                            Id = 83,
+                            BookId = 8,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 84,
+                            BookId = 8,
+                            Rate = 1
+                        },
+                        new
+                        {
                             Id = 85,
-                            BookId = 7,
-                            Rate = 2
+                            BookId = 49,
+                            Rate = 5
                         },
                         new
                         {
@@ -2871,687 +3003,820 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 87,
-                            BookId = 37,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 88,
-                            BookId = 7,
+                            BookId = 21,
                             Rate = 2
                         },
                         new
                         {
+                            Id = 88,
+                            BookId = 45,
+                            Rate = 5
+                        },
+                        new
+                        {
                             Id = 89,
-                            BookId = 11,
-                            Rate = 3
+                            BookId = 28,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 90,
-                            BookId = 6,
-                            Rate = 3
+                            BookId = 30,
+                            Rate = 1
                         },
                         new
                         {
                             Id = 91,
-                            BookId = 4,
+                            BookId = 34,
                             Rate = 1
                         },
                         new
                         {
                             Id = 92,
-                            BookId = 28,
+                            BookId = 26,
                             Rate = 5
                         },
                         new
                         {
                             Id = 93,
-                            BookId = 38,
-                            Rate = 4
+                            BookId = 15,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 94,
-                            BookId = 24,
-                            Rate = 3
+                            BookId = 40,
+                            Rate = 4
                         },
                         new
                         {
                             Id = 95,
-                            BookId = 19,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 96,
-                            BookId = 30,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 97,
-                            BookId = 44,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 98,
-                            BookId = 40,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 99,
-                            BookId = 18,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 100,
-                            BookId = 32,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 101,
-                            BookId = 22,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 102,
-                            BookId = 33,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 103,
-                            BookId = 20,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 104,
-                            BookId = 37,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 105,
-                            BookId = 42,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 106,
-                            BookId = 9,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 107,
-                            BookId = 40,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 108,
-                            BookId = 30,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 109,
-                            BookId = 12,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 110,
-                            BookId = 39,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 111,
-                            BookId = 25,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 112,
-                            BookId = 45,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 113,
-                            BookId = 1,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 114,
-                            BookId = 42,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 115,
-                            BookId = 10,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 116,
-                            BookId = 2,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 117,
-                            BookId = 6,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 118,
-                            BookId = 33,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 119,
-                            BookId = 31,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 120,
-                            BookId = 32,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 121,
-                            BookId = 24,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 122,
-                            BookId = 2,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 123,
-                            BookId = 27,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 124,
-                            BookId = 20,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 125,
-                            BookId = 2,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 126,
-                            BookId = 3,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 127,
-                            BookId = 1,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 128,
-                            BookId = 42,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 129,
-                            BookId = 42,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 130,
-                            BookId = 4,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 131,
-                            BookId = 2,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 132,
-                            BookId = 26,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 133,
-                            BookId = 25,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 134,
-                            BookId = 39,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 135,
-                            BookId = 4,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 136,
-                            BookId = 27,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 137,
-                            BookId = 9,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 138,
-                            BookId = 38,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 139,
                             BookId = 5,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 140,
-                            BookId = 16,
+                            Id = 96,
+                            BookId = 48,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 97,
+                            BookId = 2,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 98,
+                            BookId = 23,
                             Rate = 3
                         },
                         new
                         {
-                            Id = 141,
-                            BookId = 44,
+                            Id = 99,
+                            BookId = 7,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 142,
-                            BookId = 45,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 143,
-                            BookId = 36,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 144,
-                            BookId = 36,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 145,
-                            BookId = 28,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 146,
-                            BookId = 19,
+                            Id = 100,
+                            BookId = 14,
                             Rate = 4
                         },
                         new
                         {
-                            Id = 147,
+                            Id = 101,
+                            BookId = 22,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 102,
+                            BookId = 24,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 103,
+                            BookId = 48,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 104,
+                            BookId = 24,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 105,
+                            BookId = 27,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 106,
+                            BookId = 6,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 107,
+                            BookId = 47,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 108,
+                            BookId = 39,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 109,
+                            BookId = 15,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 110,
                             BookId = 29,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 148,
+                            Id = 111,
+                            BookId = 16,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 112,
+                            BookId = 50,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 113,
+                            BookId = 48,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 114,
+                            BookId = 6,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 115,
+                            BookId = 49,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 116,
                             BookId = 40,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 149,
-                            BookId = 25,
-                            Rate = 5
+                            Id = 117,
+                            BookId = 33,
+                            Rate = 4
                         },
                         new
                         {
-                            Id = 150,
-                            BookId = 12,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 151,
-                            BookId = 17,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 152,
-                            BookId = 10,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 153,
-                            BookId = 30,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 154,
-                            BookId = 12,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 155,
-                            BookId = 17,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 156,
-                            BookId = 18,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 157,
-                            BookId = 38,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 158,
-                            BookId = 11,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 159,
-                            BookId = 2,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 160,
+                            Id = 118,
                             BookId = 39,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 161,
-                            BookId = 22,
+                            Id = 119,
+                            BookId = 7,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 120,
+                            BookId = 18,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 121,
+                            BookId = 6,
                             Rate = 3
                         },
                         new
                         {
-                            Id = 162,
-                            BookId = 28,
+                            Id = 122,
+                            BookId = 20,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 123,
+                            BookId = 10,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 163,
-                            BookId = 21,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 164,
+                            Id = 124,
                             BookId = 27,
-                            Rate = 5
+                            Rate = 4
                         },
                         new
                         {
-                            Id = 165,
-                            BookId = 37,
+                            Id = 125,
+                            BookId = 50,
                             Rate = 3
                         },
                         new
                         {
-                            Id = 166,
-                            BookId = 37,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 167,
-                            BookId = 27,
+                            Id = 126,
+                            BookId = 31,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 168,
-                            BookId = 21,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 169,
-                            BookId = 49,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 170,
-                            BookId = 14,
+                            Id = 127,
+                            BookId = 31,
                             Rate = 1
                         },
                         new
                         {
-                            Id = 171,
-                            BookId = 49,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 172,
-                            BookId = 19,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 173,
+                            Id = 128,
                             BookId = 6,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 129,
+                            BookId = 38,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 130,
+                            BookId = 48,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 131,
+                            BookId = 5,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 132,
+                            BookId = 13,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 133,
+                            BookId = 48,
                             Rate = 5
                         },
                         new
                         {
-                            Id = 174,
+                            Id = 134,
+                            BookId = 2,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 135,
+                            BookId = 13,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 136,
+                            BookId = 42,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 137,
+                            BookId = 28,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 138,
+                            BookId = 9,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 139,
+                            BookId = 34,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 140,
+                            BookId = 40,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 141,
+                            BookId = 31,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 142,
+                            BookId = 11,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 143,
+                            BookId = 24,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 144,
+                            BookId = 16,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 145,
+                            BookId = 48,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 146,
+                            BookId = 30,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 147,
+                            BookId = 18,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 148,
+                            BookId = 2,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 149,
+                            BookId = 43,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 150,
+                            BookId = 33,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 151,
                             BookId = 31,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 175,
+                            Id = 152,
                             BookId = 12,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 176,
-                            BookId = 2,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 177,
-                            BookId = 17,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 178,
-                            BookId = 9,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 179,
-                            BookId = 15,
-                            Rate = 5
-                        },
-                        new
-                        {
-                            Id = 180,
-                            BookId = 40,
-                            Rate = 4
-                        },
-                        new
-                        {
-                            Id = 181,
-                            BookId = 40,
                             Rate = 2
                         },
                         new
                         {
-                            Id = 182,
-                            BookId = 45,
+                            Id = 153,
+                            BookId = 14,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 154,
+                            BookId = 30,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 155,
+                            BookId = 43,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 156,
+                            BookId = 46,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 157,
+                            BookId = 18,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 158,
+                            BookId = 18,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 159,
+                            BookId = 6,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 160,
+                            BookId = 43,
                             Rate = 4
                         },
                         new
                         {
+                            Id = 161,
+                            BookId = 23,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 162,
+                            BookId = 45,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 163,
+                            BookId = 26,
+                            Rate = 2
+                        },
+                        new
+                        {
+                            Id = 164,
+                            BookId = 39,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 165,
+                            BookId = 26,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 166,
+                            BookId = 18,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 167,
+                            BookId = 13,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 168,
+                            BookId = 25,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 169,
+                            BookId = 5,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 170,
+                            BookId = 2,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 171,
+                            BookId = 31,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 172,
+                            BookId = 39,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 173,
+                            BookId = 7,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 174,
+                            BookId = 3,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 175,
+                            BookId = 40,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 176,
+                            BookId = 20,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 177,
+                            BookId = 6,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 178,
+                            BookId = 20,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 179,
+                            BookId = 30,
+                            Rate = 3
+                        },
+                        new
+                        {
+                            Id = 180,
+                            BookId = 29,
+                            Rate = 1
+                        },
+                        new
+                        {
+                            Id = 181,
+                            BookId = 42,
+                            Rate = 4
+                        },
+                        new
+                        {
+                            Id = 182,
+                            BookId = 5,
+                            Rate = 2
+                        },
+                        new
+                        {
                             Id = 183,
-                            BookId = 36,
+                            BookId = 18,
                             Rate = 2
                         },
                         new
                         {
                             Id = 184,
-                            BookId = 21,
-                            Rate = 5
+                            BookId = 47,
+                            Rate = 3
                         },
                         new
                         {
                             Id = 185,
-                            BookId = 48,
+                            BookId = 34,
                             Rate = 1
                         },
                         new
                         {
                             Id = 186,
-                            BookId = 34,
+                            BookId = 8,
                             Rate = 2
                         },
                         new
                         {
                             Id = 187,
-                            BookId = 18,
-                            Rate = 1
-                        },
-                        new
-                        {
-                            Id = 188,
-                            BookId = 18,
-                            Rate = 2
-                        },
-                        new
-                        {
-                            Id = 189,
-                            BookId = 34,
+                            BookId = 21,
                             Rate = 3
                         },
                         new
                         {
+                            Id = 188,
+                            BookId = 9,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 189,
+                            BookId = 38,
+                            Rate = 1
+                        },
+                        new
+                        {
                             Id = 190,
-                            BookId = 50,
+                            BookId = 21,
                             Rate = 4
                         },
                         new
                         {
                             Id = 191,
-                            BookId = 45,
+                            BookId = 16,
                             Rate = 3
                         },
                         new
                         {
                             Id = 192,
+                            BookId = 16,
+                            Rate = 5
+                        },
+                        new
+                        {
+                            Id = 193,
                             BookId = 35,
                             Rate = 1
                         },
                         new
                         {
-                            Id = 193,
-                            BookId = 9,
-                            Rate = 2
-                        },
-                        new
-                        {
                             Id = 194,
-                            BookId = 4,
+                            BookId = 48,
                             Rate = 2
                         },
                         new
                         {
                             Id = 195,
-                            BookId = 48,
-                            Rate = 4
+                            BookId = 42,
+                            Rate = 2
                         },
                         new
                         {
                             Id = 196,
-                            BookId = 13,
-                            Rate = 3
+                            BookId = 46,
+                            Rate = 5
                         },
                         new
                         {
                             Id = 197,
-                            BookId = 12,
-                            Rate = 3
+                            BookId = 25,
+                            Rate = 5
                         },
                         new
                         {
                             Id = 198,
-                            BookId = 3,
-                            Rate = 3
-                        },
-                        new
-                        {
-                            Id = 199,
                             BookId = 36,
                             Rate = 1
                         },
                         new
                         {
+                            Id = 199,
+                            BookId = 12,
+                            Rate = 4
+                        },
+                        new
+                        {
                             Id = 200,
-                            BookId = 28,
-                            Rate = 1
+                            BookId = 10,
+                            Rate = 3
                         });
+                });
+
+            modelBuilder.Entity("MoonReads.Models.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("MoonReads.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("MoonReads.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MoonReads.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("MoonReads.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MoonReads.Models.AuthorCategory", b =>

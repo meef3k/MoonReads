@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -79,6 +80,7 @@ namespace MoonReads.Controllers
             return Ok(authors);
         }
 
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -111,6 +113,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPut("{categoryId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
@@ -140,6 +143,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpDelete("{categoryId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
