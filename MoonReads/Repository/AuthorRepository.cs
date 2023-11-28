@@ -23,10 +23,40 @@ namespace MoonReads.Repository
         {
             return _context.Authors.FirstOrDefault(a => a.Id == id)!;
         }
-
-        public ICollection<Author> GetAuthors()
+        
+        public AuthorDto GetAuthorDetail(int id)
         {
-            return _context.Authors.OrderBy(a => a.Id).ToList();
+            var query = _context.Authors
+                .Where(a => a.Id == id)
+                .SelectMany(a => a.BookAuthors)
+                .SelectMany(ba => ba.Book.Rating);
+            return _context
+                .Authors
+                .Select(a=> new AuthorDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    ImageUrl = a.ImageUrl,
+                    Rating = query.Any() ? query.Average(r => r.Rate) : 0
+                })
+                .FirstOrDefault(a => a.Id == id)!;
+        }
+
+        public ICollection<AuthorDto> GetAuthors()
+        {
+            return _context
+                .Authors
+                .OrderBy(a => a.Id)
+                .Select(a=> new AuthorDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    ImageUrl = a.ImageUrl,
+                    Rating = a.BookAuthors.SelectMany(ba => ba.Book.Rating).Any() ? a.BookAuthors.SelectMany(ba => ba.Book.Rating).Average(r => r.Rate) : 0
+                })
+                .ToList();
         }
 
         public ICollection<BookDetailDto> GetBookByAuthor(int authorId)

@@ -6,7 +6,8 @@ namespace MoonReads.Interfaces
     public interface IAuthorRepository
     {
         Author GetAuthor(int id);
-        ICollection<Author> GetAuthors();
+        AuthorDto GetAuthorDetail(int id);
+        ICollection<AuthorDto> GetAuthors();
         ICollection<BookDetailDto> GetBookByAuthor(int authorId);
         bool CreateAuthor(Author author);
         bool UpdateAuthor(Author author);

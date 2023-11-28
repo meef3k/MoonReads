@@ -43,7 +43,7 @@ namespace MoonReads.Controllers
             if (!_authorRepository.AuthorExists(authorId))
                 return NotFound();
 
-            var author = _mapper.Map<AuthorDto>(_authorRepository.GetAuthor(authorId));
+            var author = _mapper.Map<AuthorDto>(_authorRepository.GetAuthorDetail(authorId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
