@@ -20,21 +20,13 @@ namespace MoonReads.Repository
 
         public bool CreateRating(Rating rating)
         {
+            var ratingExist = _context.Ratings.Where(b => b.Book == rating.Book)
+                .FirstOrDefault(u => u.User == rating.User);
+            if (ratingExist != null)
+            {
+                _context.Remove(ratingExist);
+            }
             _context.Add(rating);
-
-            return Save();
-        }
-
-        public bool UpdateRating(Rating rating)
-        {
-            _context.Update(rating);
-
-            return Save();
-        }
-
-        public bool DeleteRating(Rating rating)
-        {
-            _context.Remove(rating);
 
             return Save();
         }

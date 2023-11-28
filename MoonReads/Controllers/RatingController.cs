@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -14,21 +16,24 @@ namespace MoonReads.Controllers
         private readonly IRatingRepository _ratingRepository;
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
         public RatingController(IRatingRepository ratingRepository,
             IBookRepository bookRepository,
-            IMapper mapper)
+            IMapper mapper,
+            UserManager<User> userManager)
         {
             _ratingRepository = ratingRepository;
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [Authorize]
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateRating([FromQuery] int bookId, [FromBody] RatingDto? ratingCreate)
+        public async Task<IActionResult> CreateRating([FromQuery] int bookId, [FromBody] RatingDto? ratingCreate)
         {
             if (ratingCreate == null)
                 return BadRequest(ModelState);
@@ -36,9 +41,16 @@ namespace MoonReads.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Rating ratingMap = _mapper.Map<Rating>(ratingCreate);
+            var ratingMap = _mapper.Map<Rating>(ratingCreate);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
 
-            ratingMap.Book = _bookRepository.GetBook(bookId);
+            var book = _bookRepository.GetBook(bookId);
+            
+            ratingMap.Book = book;
+            ratingMap.User = user;
 
             if (!_ratingRepository.CreateRating(ratingMap))
             {

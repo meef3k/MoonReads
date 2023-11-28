@@ -12,5 +12,7 @@ namespace MoonReads.Models
 		public int BookId { get; set; }
 		[ForeignKey("BookId")]
 		public Book? Book { get; set; }
+		[ForeignKey("UserId")]
+		public User? User { get; set; }
 	}
 }
