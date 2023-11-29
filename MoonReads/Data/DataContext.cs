@@ -19,6 +19,8 @@ namespace MoonReads.Data
         public required DbSet<BookCategory> BookCategories { get; set; }
         public required DbSet<Rating> Ratings { get; set; }
         public required DbSet<DataVersion> DataVersions { get; set; }
+        public required DbSet<Review> Reviews { get; set; }
+        public required DbSet<ReviewRating> ReviewRatings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

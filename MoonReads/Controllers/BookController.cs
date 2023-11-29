@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
@@ -17,15 +19,24 @@ namespace MoonReads.Controllers
 		private readonly IBookRepository _bookRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
+        private readonly IReviewRepository _reviewRepository;
+        private readonly UserManager<User> _userManager;
+        private readonly IReviewRatingRepository _reviewRatingRepository;
 
         public BookController(IBookRepository bookRepository,
             IPublisherRepository publisherRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IReviewRepository reviewRepository,
+            UserManager<User> userManager,
+            IReviewRatingRepository reviewRatingRepository)
 		{
 			_bookRepository = bookRepository;
             _publisherRepository = publisherRepository;
             _mapper = mapper;
-		}
+            _reviewRepository = reviewRepository;
+            _userManager = userManager;
+            _reviewRatingRepository = reviewRatingRepository;
+        }
 
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
@@ -146,6 +157,265 @@ namespace MoonReads.Controllers
                 return BadRequest(ModelState);
 
             if (!_bookRepository.DeleteBook(book))
+            {
+                ModelState.AddModelError("", "Something went wrong while deleting");
+            }
+
+            return NoContent();
+        }
+        
+        [HttpGet("{bookId}/review")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
+        public IActionResult GetReviews(int bookId)
+        {
+            var reviews = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetReviews(bookId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(reviews);
+        }
+        
+        [Authorize]
+        [HttpPost("{bookId}/review")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateReview(int bookId, [FromBody] ReviewDto? reviewCreate)
+        {
+            if (reviewCreate == null)
+                return BadRequest(ModelState);
+
+            var book = _bookRepository.GetBook(bookId);
+
+            if (book.Id == 0)
+            {
+                ModelState.AddModelError("", "Book does not exist");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewMap = _mapper.Map<Review>(reviewCreate);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            reviewMap.Book = book;
+            reviewMap.User = user;
+
+            if (!_reviewRepository.CreateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpPut("{bookId}/review/{reviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UpdateReview(int bookId, int reviewId, [FromBody] ReviewDto? updatedReview)
+        {
+            if (updatedReview == null)
+                return BadRequest(ModelState);
+
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var reviewMap = _mapper.Map<Review>(updatedReview);
+            
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+
+            reviewMap.Id = reviewId;
+            reviewMap.Book = book;
+            reviewMap.User = user;
+
+            if (!_reviewRepository.UpdateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while updating");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpDelete("{bookId}/review/{reviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        public async Task<IActionResult> DeleteReview(int bookId, int reviewId)
+        {
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound();
+
+            var review = _reviewRepository.GetReview(reviewId);
+            
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (review.Book != book)
+            {
+                ModelState.AddModelError("", "Book does not have this review");
+                return StatusCode(422, ModelState);
+            }
+            
+            if (review.User != user)
+            {
+                ModelState.AddModelError("", "Wrong user");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_reviewRepository.DeleteReview(review))
+            {
+                ModelState.AddModelError("", "Something went wrong while deleting");
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpPost("bookId/review/{reviewId}/rating")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateReviewRating(int reviewId, [FromBody] ReviewRatingDto? reviewRatingCreate)
+        {
+            if (reviewRatingCreate == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            if (!_reviewRepository.ReviewExists(reviewId))
+            {
+                ModelState.AddModelError("", "Review does not exist");
+                return StatusCode(422, ModelState);
+            }
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Wrong user");
+                return StatusCode(422, ModelState);
+            }
+            
+            var reviewRatingMap = _mapper.Map<ReviewRating>(reviewRatingCreate);
+
+            var review = _reviewRepository.GetReview(reviewId);
+            
+            reviewRatingMap.Review = review;
+            reviewRatingMap.User = user;
+
+            if (!_reviewRatingRepository.CreateReviewRating(reviewRatingMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpPut("bookId/review/{reviewId}/rating/{reviewRatingId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UpdateReviewRating(int reviewId, int reviewRatingId, [FromBody] ReviewRatingDto? updatedReviewRating)
+        {
+            if (updatedReviewRating == null)
+                return BadRequest(ModelState);
+
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound();
+            
+            if (!_reviewRatingRepository.ReviewRatingExists(reviewRatingId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Wrong user");
+                return StatusCode(422, ModelState);
+            }
+
+            var reviewRatingMap = _mapper.Map<ReviewRating>(updatedReviewRating);
+            
+            var review = _reviewRepository.GetReview(reviewId);
+            
+            reviewRatingMap.Id = reviewId;
+            reviewRatingMap.Review = review;
+            reviewRatingMap.User = user;
+
+            if (!_reviewRatingRepository.UpdateReviewRating(reviewRatingMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while updating");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpDelete("bookId/review/{reviewId}/rating/{reviewRatingId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        public async Task<IActionResult> DeleteReviewRating(int reviewId, int reviewRatingId)
+        {
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound();
+            
+            var reviewRating = _reviewRatingRepository.GetReviewRating(reviewRatingId);
+
+            var review = _reviewRepository.GetReview(reviewId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (reviewRating.Review != review)
+            {
+                ModelState.AddModelError("", "Book does not have this review");
+                return StatusCode(422, ModelState);
+            }
+            
+            if (reviewRating.User != user)
+            {
+                ModelState.AddModelError("", "Wrong user");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_reviewRatingRepository.DeleteReviewRating(reviewRating))
             {
                 ModelState.AddModelError("", "Something went wrong while deleting");
             }

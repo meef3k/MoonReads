@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -15,17 +16,25 @@ namespace MoonReads.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserController> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IReviewRepository _reviewRepository;
 
-        public UserController(IUserRepository userRepository, ILogger<UserController> logger, IConfiguration configuration, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserController(
+            IUserRepository userRepository,
+            ILogger<UserController> logger,
+            IMapper mapper,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IReviewRepository reviewRepository)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _configuration = configuration;
+            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
+            _reviewRepository = reviewRepository;
         }
 
         [HttpPost]
@@ -117,7 +126,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPost("signout")]
+        [HttpPost("logout")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> SignOutUser()
         {
@@ -201,6 +210,23 @@ namespace MoonReads.Controllers
             await _signInManager.SignOutAsync();
 
             return Ok();
+        }
+        
+        [Authorize]
+        [HttpGet("review")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
+        public async Task<IActionResult> GetReviews()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var categories = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetUserReviews(user!));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(categories);
         }
     }
 }

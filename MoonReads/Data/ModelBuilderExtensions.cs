@@ -17,7 +17,9 @@ namespace MoonReads.Data
                     new DataVersion { Id = 5, Table = "AuthorCategories", Version = 0 },
                     new DataVersion { Id = 6, Table = "BookAuthors", Version = 0 },
                     new DataVersion { Id = 7, Table = "BookCategories", Version = 0 },
-                    new DataVersion { Id = 8, Table = "Ratings", Version = 0 }
+                    new DataVersion { Id = 8, Table = "Ratings", Version = 0 },
+                    new DataVersion { Id = 9, Table = "Review", Version = 0 },
+                    new DataVersion { Id = 10, Table = "ReviewRatings", Version = 0 }
                 );
         }
         

@@ -24,6 +24,10 @@ namespace MoonReads.Helper
 			CreateMap<BookDetailDto, Book>();
 			CreateMap<DataVersion, DataVersionDto>();
 			CreateMap<DataVersionDto, DataVersion>();
+			CreateMap<ReviewDto, Review>();
+			CreateMap<Review, ReviewDto>();
+			CreateMap<ReviewRatingDto, ReviewRating>();
+			CreateMap<ReviewRating, ReviewRatingDto>();
 		}
 	}
 }
