@@ -18,6 +18,7 @@ namespace MoonReads.Models
 		public int Pages { get; set; }
 		[Required, RegularExpression(@"^(?:\d{10}|\d{13})$")]
 		public string Isbn { get; set; }
+		public bool Pending { get; set; }
 		[Required]
 		public int PublisherId { get; set; }
 		[ForeignKey("PublisherId")]

@@ -39,10 +39,10 @@ namespace MoonReads.Controllers
         }
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
+		[ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
         public IActionResult GetBooks()
 		{
-			var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks());
+			var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(false));
 
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -51,7 +51,7 @@ namespace MoonReads.Controllers
 		}
 
         [HttpGet("{bookId}")]
-        [ProducesResponseType(200, Type = typeof(Book))]
+        [ProducesResponseType(200, Type = typeof(BookDetailDto))]
 		[ProducesResponseType(400)]
 		public IActionResult GetBook(int bookId)
 		{
@@ -65,6 +65,42 @@ namespace MoonReads.Controllers
 
 			return Ok(book);
 		}
+        
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
+        [HttpGet("pending")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
+        public IActionResult GetPendingBooks()
+        {
+            var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(true));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(books);
+        }
+        
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
+        [HttpPut("{bookId}/accept")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
+        public IActionResult AcceptPendingBook(int bookId)
+        {
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var book = _bookRepository.GetBook(bookId);
+            book.Pending = false;
+
+            if (!_bookRepository.UpdateBookStatus(book))
+            {
+                ModelState.AddModelError("", "Something went wrong while updating");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
 
         [Authorize]
         [HttpPost]
@@ -76,7 +112,7 @@ namespace MoonReads.Controllers
                 return BadRequest(ModelState);
 
             var books = _bookRepository
-                .GetBooks()
+                .GetBooks(false)
                 .FirstOrDefault(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper());
 
             if (books != null)
@@ -101,6 +137,7 @@ namespace MoonReads.Controllers
             var bookMap = _mapper.Map<Book>(bookCreate);
 
             bookMap.Publisher = _publisherRepository.GetPublisher(publisherId);
+            bookMap.Pending = true;
 
             if (!_bookRepository.CreateBook(authorsIds, categoriesIds, bookMap))
             {
@@ -131,6 +168,7 @@ namespace MoonReads.Controllers
                 return BadRequest();
 
             var bookMap = _mapper.Map<Book>(updatedBook);
+            bookMap.Pending = true;
 
             if (!_bookRepository.UpdateBook(publisherId, authorsIds, categoriesIds, bookMap))
             {

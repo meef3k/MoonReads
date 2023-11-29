@@ -23,19 +23,30 @@ namespace MoonReads.Repository
         {
             return _context
                 .Reviews
-                .Where(r => r.Book!.Id == bookId).OrderByDescending(r => r.Id)
+                .Where(r => r.Book!.Id == bookId)
                 .Select(r => new ReviewDto
                 {
                     Id = r.Id,
                     Description = r.Description,
                     Rate = r.ReviewRatings.Count(rr => rr.Rate == true) - r.ReviewRatings.Count(rr => rr.Rate == false)
                 })
+                .OrderByDescending(r => r.Rate)
                 .ToList();
         }
         
-        public ICollection<Review> GetUserReviews(User user)
+        public ICollection<ReviewDto> GetUserReviews(User user)
         {
-            return _context.Reviews.Where(r => r.User == user).OrderByDescending(r => r.Id).ToList();
+            return _context
+                .Reviews
+                .Where(r => r.User == user)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    Description = r.Description,
+                    Rate = r.ReviewRatings.Count(rr => rr.Rate == true) - r.ReviewRatings.Count(rr => rr.Rate == false)
+                })
+                .OrderByDescending(r => r.Rate)
+                .ToList();
         }
 
         public bool CreateReview(Review review)
@@ -66,7 +77,7 @@ namespace MoonReads.Repository
         
         public bool Save()
         {
-            _context.DataVersions.FirstOrDefault(d => d.Table == "Review")!.Version++;
+            _context.DataVersions.FirstOrDefault(d => d.Table == "Reviews")!.Version++;
             
             var saved = _context.SaveChanges();
 

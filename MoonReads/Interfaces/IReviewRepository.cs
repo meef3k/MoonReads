@@ -7,7 +7,7 @@ namespace MoonReads.Interfaces
     {
         Review GetReview(int id);
         ICollection<ReviewDto> GetReviews(int bookId);
-        ICollection<Review> GetUserReviews(User user);
+        ICollection<ReviewDto> GetUserReviews(User user);
         bool CreateReview(Review review);
         bool UpdateReview(Review review);
         bool DeleteReview(Review review);

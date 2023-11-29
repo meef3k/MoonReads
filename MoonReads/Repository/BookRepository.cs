@@ -55,10 +55,11 @@ namespace MoonReads.Repository
                 .FirstOrDefault(b => b.Id == id)!;
         }
         
-        public ICollection<BookDetailDto> GetBooks()
+        public ICollection<BookDetailDto> GetBooks(bool pending)
 		{
             return _context
                 .Books
+                .Where(b => b.Pending == pending)
                 .Select(b => new BookDetailDto
                 {
                     Id = b.Id,
@@ -113,6 +114,13 @@ namespace MoonReads.Repository
 
             book.Publisher = publisher!;
 
+            _context.Update(book);
+
+            return Save();
+        }
+        
+        public bool UpdateBookStatus(Book book)
+        {
             _context.Update(book);
 
             return Save();
