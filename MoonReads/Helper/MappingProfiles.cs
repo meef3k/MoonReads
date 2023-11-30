@@ -28,6 +28,12 @@ namespace MoonReads.Helper
 			CreateMap<Review, ReviewDto>();
 			CreateMap<ReviewRatingDto, ReviewRating>();
 			CreateMap<ReviewRating, ReviewRatingDto>();
+			CreateMap<AuthorCategoryDto, AuthorCategory>();
+			CreateMap<AuthorCategory, AuthorCategoryDto>();
+			CreateMap<BookAuthorDto, BookAuthor>();
+			CreateMap<BookAuthor, BookAuthorDto>();
+			CreateMap<BookCategoryDto, BookCategory>();
+			CreateMap<BookCategory, BookCategoryDto>();
 		}
 	}
 }
