@@ -94,6 +94,8 @@ namespace MoonReads.Repository
                 userTokenDto.StatusMessage = "Invalid access token or refresh token";
                 return userTokenDto;
             }
+            
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
             {
@@ -101,6 +103,9 @@ namespace MoonReads.Repository
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+            
+            authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+            
             var newAccessToken = GenerateToken(authClaims);
             var newRefreshToken = GenerateRefreshToken();
 
