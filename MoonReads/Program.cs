@@ -71,19 +71,20 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTKey:Secret"]!))
         };
     });
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        corsPolicyBuilder =>
-        {
-            corsPolicyBuilder
-            .AllowAnyOrigin()
+    options.AddPolicy("allowedPorts", policy =>
+    {
+        policy.WithOrigins(allowedOrigins!)
             .AllowAnyHeader()
             .AllowAnyMethod();
-        });
+    });
 });
 
 var app = builder.Build();
+
+app.UseCors("allowedPorts");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -97,8 +98,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseCors();
 
 app.MapControllers();
 
