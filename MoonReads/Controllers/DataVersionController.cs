@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -26,7 +27,7 @@ namespace MoonReads.Controllers
             var publishers = _mapper.Map<List<DataVersionDto>>(_dataVersionRepository.GetDataVersions());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(publishers);
         }
@@ -42,7 +43,7 @@ namespace MoonReads.Controllers
             var dataVersion = _mapper.Map<DataVersionDto>(_dataVersionRepository.GetDataVersion(dataVersionTable));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(dataVersion);
         }

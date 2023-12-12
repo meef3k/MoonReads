@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -46,7 +46,7 @@ namespace MoonReads.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Invalid payload");
+                    return BadRequest(InternalStatusCodes.InvalidPayload);
                 var result = await _userRepository.Login(user);
                 if (result.StatusCode == 0)
                     return BadRequest(result.StatusMessage);
@@ -64,7 +64,7 @@ namespace MoonReads.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException?.Message);
             }
         }
 
@@ -79,8 +79,8 @@ namespace MoonReads.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Invalid payload");
-                var (status, message) = await _userRepository.Register(user, user.Role);
+                    return BadRequest(InternalStatusCodes.InvalidPayload);
+                var (status, message) = await _userRepository.Register(user, "User");
                 if (status == 0)
                     return BadRequest(message);
                 return CreatedAtAction(nameof(Register), user);
@@ -149,8 +149,6 @@ namespace MoonReads.Controllers
             {
                 user!.UserName,
                 user.Email,
-                user.FirstName,
-                user.LastName,
                 user.Description,
                 user.Avatar
             };
@@ -170,8 +168,6 @@ namespace MoonReads.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             
             user!.UserName = userEdit.UserName;
-            user.FirstName = userEdit.FirstName;
-            user.LastName = userEdit.LastName;
             user.Description = userEdit.Description;
             user.Avatar = userEdit.Avatar;
             
@@ -182,7 +178,66 @@ namespace MoonReads.Controllers
                 return NoContent();
             }
 
-            return BadRequest();
+            return BadRequest(InternalStatusCodes.EditError);
+        }
+        
+        [Authorize]
+        [HttpPut("details/password")]
+        public async Task<IActionResult> EditUserPassword([FromBody] UserDetailPasswordDto userPassword)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var passwordSignInResult = await _signInManager.CheckPasswordSignInAsync(user!, userPassword.Password, false);
+
+            if (!passwordSignInResult.Succeeded)
+            {
+                return BadRequest(InternalStatusCodes.InvalidPassword);
+            }
+
+            if (userPassword.NewPassword != userPassword.ConfirmNewPassword)
+            {
+                return BadRequest(InternalStatusCodes.PasswordsNotEqual);
+            }
+            
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
+
+            var result = await _userManager.ResetPasswordAsync(user!, token, userPassword.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(InternalStatusCodes.EditError);
+        }
+        
+        [Authorize]
+        [HttpPut("details/email")]
+        public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var passwordSignInResult = await _signInManager.CheckPasswordSignInAsync(user!, userEmail.Password, false);
+
+            if (!passwordSignInResult.Succeeded)
+            {
+                return BadRequest(InternalStatusCodes.InvalidPassword);
+            }
+            
+            user!.Email = userEmail.NewEmail;
+            
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(InternalStatusCodes.EditError);
         }
         
         [Authorize]
@@ -201,12 +256,12 @@ namespace MoonReads.Controllers
 
             if (!passwordSignInResult.Succeeded)
             {
-                return BadRequest("Invalid password");
+                return BadRequest(InternalStatusCodes.InvalidPassword);
             }
             
             var result = await _userManager.DeleteAsync(user!);
 
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded) return BadRequest(InternalStatusCodes.DeleteError);
             await _signInManager.SignOutAsync();
 
             return Ok();
@@ -224,7 +279,7 @@ namespace MoonReads.Controllers
             var categories = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetUserReviews(user!));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(categories);
         }

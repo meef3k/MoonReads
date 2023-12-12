@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -45,7 +46,7 @@ namespace MoonReads.Controllers
 			var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(false));
 
 			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
+				return BadRequest(InternalStatusCodes.InvalidPayload);
 
 			return Ok(books);
 		}
@@ -61,7 +62,7 @@ namespace MoonReads.Controllers
 			var book = _mapper.Map<BookDetailDto>(_bookRepository.GetBookDetails(bookId));
 
 			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
+				return BadRequest(InternalStatusCodes.InvalidPayload);
 
 			return Ok(book);
 		}
@@ -74,7 +75,7 @@ namespace MoonReads.Controllers
             var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(true));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(books);
         }
@@ -88,15 +89,14 @@ namespace MoonReads.Controllers
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var book = _bookRepository.GetBook(bookId);
             book.Pending = false;
 
             if (!_bookRepository.UpdateBookStatus(book))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -109,7 +109,7 @@ namespace MoonReads.Controllers
         public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int[] authorsIds, [FromQuery] int[] categoriesIds, [FromBody] BookDto? bookCreate)
         {
             if (bookCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var books = _bookRepository
                 .GetBooks(false)
@@ -117,12 +117,11 @@ namespace MoonReads.Controllers
 
             if (books != null)
             {
-                ModelState.AddModelError("", "Book already exists");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.EntityExist);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (bookCreate.Description.IsNullOrEmpty())
             {
@@ -135,14 +134,14 @@ namespace MoonReads.Controllers
             }
 
             var bookMap = _mapper.Map<Book>(bookCreate);
+            
+            bookMap.Pending = User.IsInRole(UserRoles.User);
 
             bookMap.Publisher = _publisherRepository.GetPublisher(publisherId);
-            bookMap.Pending = true;
 
             if (!_bookRepository.CreateBook(authorsIds, categoriesIds, bookMap))
             {
-                ModelState.AddModelError("", $"{bookMap}Something went wrong while savin");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -156,24 +155,23 @@ namespace MoonReads.Controllers
         public IActionResult UpdateBook(int bookId, [FromQuery] int publisherId, [FromQuery] int[] authorsIds, [FromQuery] int[] categoriesIds, [FromBody] BookDto? updatedBook)
         {
             if (updatedBook == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (bookId != updatedBook.Id)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_bookRepository.BookExists(bookId))
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var bookMap = _mapper.Map<Book>(updatedBook);
             bookMap.Pending = true;
 
             if (!_bookRepository.UpdateBook(publisherId, authorsIds, categoriesIds, bookMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -192,11 +190,11 @@ namespace MoonReads.Controllers
             var book = _bookRepository.GetBook(bookId);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_bookRepository.DeleteBook(book))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();
@@ -209,7 +207,7 @@ namespace MoonReads.Controllers
             var reviews = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetReviews(bookId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(reviews);
         }
@@ -221,15 +219,9 @@ namespace MoonReads.Controllers
         public async Task<IActionResult> CreateReview(int bookId, [FromBody] ReviewDto? reviewCreate)
         {
             if (reviewCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var book = _bookRepository.GetBook(bookId);
-
-            if (book.Id == 0)
-            {
-                ModelState.AddModelError("", "Book does not exist");
-                return StatusCode(422, ModelState);
-            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -245,8 +237,7 @@ namespace MoonReads.Controllers
 
             if (!_reviewRepository.CreateReview(reviewMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -260,13 +251,13 @@ namespace MoonReads.Controllers
         public async Task<IActionResult> UpdateReview(int bookId, int reviewId, [FromBody] ReviewDto? updatedReview)
         {
             if (updatedReview == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_reviewRepository.ReviewExists(reviewId))
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var reviewMap = _mapper.Map<Review>(updatedReview);
             
@@ -282,8 +273,7 @@ namespace MoonReads.Controllers
 
             if (!_reviewRepository.UpdateReview(reviewMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -310,22 +300,20 @@ namespace MoonReads.Controllers
             
             if (review.Book != book)
             {
-                ModelState.AddModelError("", "Book does not have this review");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
             }
             
             if (review.User != user)
             {
-                ModelState.AddModelError("", "Wrong user");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_reviewRepository.DeleteReview(review))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();
@@ -338,15 +326,14 @@ namespace MoonReads.Controllers
         public async Task<IActionResult> CreateReviewRating(int reviewId, [FromBody] ReviewRatingDto? reviewRatingCreate)
         {
             if (reviewRatingCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (!_reviewRepository.ReviewExists(reviewId))
             {
-                ModelState.AddModelError("", "Review does not exist");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.EntityNotExist);
             }
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -354,8 +341,7 @@ namespace MoonReads.Controllers
             
             if (user == null)
             {
-                ModelState.AddModelError("", "Wrong user");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.InvalidUser);
             }
             
             var reviewRatingMap = _mapper.Map<ReviewRating>(reviewRatingCreate);
@@ -367,8 +353,7 @@ namespace MoonReads.Controllers
 
             if (!_reviewRatingRepository.CreateReviewRating(reviewRatingMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -382,7 +367,7 @@ namespace MoonReads.Controllers
         public async Task<IActionResult> UpdateReviewRating(int reviewId, int reviewRatingId, [FromBody] ReviewRatingDto? updatedReviewRating)
         {
             if (updatedReviewRating == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_reviewRepository.ReviewExists(reviewId))
                 return NotFound();
@@ -391,15 +376,14 @@ namespace MoonReads.Controllers
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var user = await _userManager.FindByIdAsync(userId);
             
             if (user == null)
             {
-                ModelState.AddModelError("", "Wrong user");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.InvalidUser);
             }
 
             var reviewRatingMap = _mapper.Map<ReviewRating>(updatedReviewRating);
@@ -412,8 +396,7 @@ namespace MoonReads.Controllers
 
             if (!_reviewRatingRepository.UpdateReviewRating(reviewRatingMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -440,22 +423,20 @@ namespace MoonReads.Controllers
             
             if (reviewRating.Review != review)
             {
-                ModelState.AddModelError("", "Book does not have this review");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
             }
             
             if (reviewRating.User != user)
             {
-                ModelState.AddModelError("", "Wrong user");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.InvalidUser);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_reviewRatingRepository.DeleteReviewRating(reviewRating))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();

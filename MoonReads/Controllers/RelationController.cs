@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 
 namespace MoonReads.Controllers
@@ -32,7 +33,7 @@ namespace MoonReads.Controllers
             var authorsCategories = _mapper.Map<List<AuthorCategoryDto>>(_authorCategoryRepository.GetAuthorsCategories());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(authorsCategories);
         }
@@ -44,7 +45,7 @@ namespace MoonReads.Controllers
             var booksAuthors = _mapper.Map<List<BookAuthorDto>>(_bookAuthorRepository.GetBooksAuthors());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(booksAuthors);
         }
@@ -56,7 +57,7 @@ namespace MoonReads.Controllers
             var booksCategories = _mapper.Map<List<BookCategoryDto>>(_bookCategoryRepository.GetBooksCategories());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(booksCategories);
         }

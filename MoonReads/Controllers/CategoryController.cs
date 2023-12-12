@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -27,7 +28,7 @@ namespace MoonReads.Controllers
             var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(categories);
         }
@@ -43,7 +44,7 @@ namespace MoonReads.Controllers
             var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(categoryId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(category);
         }
@@ -59,7 +60,7 @@ namespace MoonReads.Controllers
             var books = _mapper.Map<List<BookDetailDto>>(_categoryRepository.GetBookByCategory(categoryId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(books);
         }
@@ -75,7 +76,7 @@ namespace MoonReads.Controllers
             var authors = _mapper.Map<List<AuthorDto>>(_categoryRepository.GetAuthorByCategory(categoryId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(authors);
         }
@@ -87,7 +88,7 @@ namespace MoonReads.Controllers
         public IActionResult CreateCategory([FromBody] CategoryDto? categoryCreate)
         {
             if (categoryCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var category = _categoryRepository
                 .GetCategories()
@@ -95,19 +96,17 @@ namespace MoonReads.Controllers
 
             if (category != null)
             {
-                ModelState.AddModelError("", "Category already exists");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.EntityExist);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var categoryMap = _mapper.Map<Category>(categoryCreate);
 
             if (!_categoryRepository.CreateCategory(categoryMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -121,10 +120,10 @@ namespace MoonReads.Controllers
         public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto? updatedCategory)
         {
             if (updatedCategory == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (categoryId != updatedCategory.Id)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
@@ -136,8 +135,7 @@ namespace MoonReads.Controllers
 
             if (!_categoryRepository.UpdateCategory(categoryMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -157,17 +155,17 @@ namespace MoonReads.Controllers
             var category = _categoryRepository.GetCategory(categoryId);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (_categoryRepository.HasBooks(category))
-                return Conflict("Category cannot be deleted because have associated books.");
+                return Conflict(InternalStatusCodes.CannotDeleteEntity);
             
             if (_categoryRepository.HasAuthors(category))
-                return Conflict("Category cannot be deleted because have associated authors.");
+                return Conflict(InternalStatusCodes.CannotDeleteEntity);
 
             if (!_categoryRepository.DeleteCategory(category))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();

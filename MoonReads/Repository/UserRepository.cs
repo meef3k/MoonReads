@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -27,30 +28,30 @@ namespace MoonReads.Repository
         public async Task<(int, string)> Register(UserRegisterDto user, string role)
         {
             if (await UserExists(user.UserName))
-                return (0, "User already exists");
+                return (0, InternalStatusCodes.EntityExist);
 
-            if (await CreateUser(user, role))
-                return (1, "User successfully created");
+            if (await CreateUser(user))
+                return (1, InternalStatusCodes.UserCreated);
             
-            return (0, "Something went wrong while creating");
+            return (0, InternalStatusCodes.CreateError);
         }
 
         public async Task<UserTokenDto> Login(UserLoginDto user)
         {
             UserTokenDto userTokenDto = new();
-            var userLogin = await _userManager.FindByNameAsync(user.UserName);
+            var userLogin = await _userManager.FindByNameAsync(user.UserName) ?? await _userManager.FindByEmailAsync(user.UserName);
             
             if (userLogin == null)
             {
                 userTokenDto.StatusCode = 0;
-                userTokenDto.StatusMessage = "Invalid username";
+                userTokenDto.StatusMessage = InternalStatusCodes.InvalidLogin;
                 return userTokenDto;
             }
 
             if (!await _userManager.CheckPasswordAsync(userLogin, user.Password))
             {
                 userTokenDto.StatusCode = 0;
-                userTokenDto.StatusMessage = "Invalid password";
+                userTokenDto.StatusMessage = InternalStatusCodes.InvalidPassword;
                 return userTokenDto;
             }
 
@@ -69,7 +70,7 @@ namespace MoonReads.Repository
             userTokenDto.AccessToken = GenerateToken(authClaims);
             userTokenDto.RefreshToken = GenerateRefreshToken();
             userTokenDto.StatusCode = 1;
-            userTokenDto.StatusMessage = "Success";
+            userTokenDto.StatusMessage = InternalStatusCodes.Success;
             userTokenDto.AccessTokenExpiresTimeInHours = Convert.ToInt32(_configuration["JWTKey:TokenExpiryTimeInHours"]);
             userTokenDto.RefreshTokenExpiresTimeInDays = Convert.ToInt32(_configuration["JWTKey:RefreshTokenExpiryTimeInDays"]);
             
@@ -91,7 +92,7 @@ namespace MoonReads.Repository
                 user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
                 userTokenDto.StatusCode = 0;
-                userTokenDto.StatusMessage = "Invalid access token or refresh token";
+                userTokenDto.StatusMessage = InternalStatusCodes.InvalidRefreshToken;
                 return userTokenDto;
             }
             
@@ -113,7 +114,7 @@ namespace MoonReads.Repository
             await _userManager.UpdateAsync(user);
 
             userTokenDto.StatusCode = 1;
-            userTokenDto.StatusMessage = "Success";
+            userTokenDto.StatusMessage = InternalStatusCodes.Success;
             userTokenDto.AccessToken = newAccessToken;
             userTokenDto.RefreshToken = newRefreshToken;
             userTokenDto.AccessTokenExpiresTimeInHours = Convert.ToInt32(_configuration["JWTKey:TokenExpiryTimeInHours"]);
@@ -128,20 +129,18 @@ namespace MoonReads.Repository
             return userExists != null;
         }
 
-        public async Task<bool> CreateUser(UserRegisterDto user, string role)
+        public async Task<bool> CreateUser(UserRegisterDto user)
         {
             var createUser = new User
             {
                 Email = user.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName
+                UserName = user.UserName
             };
 
             var createUserResult = await _userManager.CreateAsync(createUser, user.Password);
             if (!createUserResult.Succeeded) return false;
-            return await AddToRole(createUser, role);
+            return await AddToRole(createUser, "User");
         }
 
         public async Task<bool> AddToRole(User user, string role)

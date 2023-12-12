@@ -1,6 +1,6 @@
-namespace MoonReads.Models
+namespace MoonReads.Helper
 {
-    public class UserRoles
+    public struct UserRoles
     {
         public const string Admin = "Admin";
         public const string Moderator = "Moderator";

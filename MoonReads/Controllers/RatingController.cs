@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -36,10 +37,10 @@ namespace MoonReads.Controllers
         public async Task<IActionResult> CreateRating([FromQuery] int bookId, [FromBody] RatingDto? ratingCreate)
         {
             if (ratingCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var ratingMap = _mapper.Map<Rating>(ratingCreate);
             
@@ -54,8 +55,7 @@ namespace MoonReads.Controllers
 
             if (!_ratingRepository.CreateRating(ratingMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();

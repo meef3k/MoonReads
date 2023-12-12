@@ -30,28 +30,19 @@ namespace MoonReads.Data
                 {
                     Email = "admin@moonreads.com",
                     UserName = "Admin",
-                    FirstName = "Admin",
-                    LastName = "Admin",
-                    Password = "Admin1234!",
-                    Role = "Admin"
+                    Password = "Admin1234!"
                 },
                 new()
                 {
                     Email = "moderator@moonreads.com",
                     UserName = "Moderator",
-                    FirstName = "Moderator",
-                    LastName = "Moderator",
-                    Password = "Moderator1234!",
-                    Role = "Moderator"
+                    Password = "Moderator1234!"
                 },
                 new()
                 {
                     Email = "user@moonreads.com",
                     UserName = "User",
-                    FirstName = "User",
-                    LastName = "User",
-                    Password = "User1234!",
-                    Role = "User"
+                    Password = "User1234!"
                 }
             };
 
@@ -62,13 +53,22 @@ namespace MoonReads.Data
                 {
                     Email = userSeed.Email,
                     UserName = userSeed.UserName,
-                    FirstName = userSeed.FirstName,
-                    LastName = userSeed.LastName
                 };
 
                 await userManager.CreateAsync(user, userSeed.Password);
 
-                await userManager.AddToRoleAsync(user, userSeed.Role);
+                switch (userSeed.UserName)
+                {
+                    case "Admin":
+                        await userManager.AddToRoleAsync(user, "Admin");
+                        break;
+                    case "Moderator":
+                        await userManager.AddToRoleAsync(user, "Moderator");
+                        break;
+                    case "User":
+                        await userManager.AddToRoleAsync(user, "User");
+                        break;
+                }
             }
         }
     }

@@ -41,7 +41,4 @@
     <None Remove="Dto\" />
     <None Remove="Helper\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
 </Project>

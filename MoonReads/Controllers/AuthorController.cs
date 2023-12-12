@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -30,7 +31,7 @@ namespace MoonReads.Controllers
             var authors = _mapper.Map<List<AuthorDto>>(_authorRepository.GetAuthors());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(authors);
         }
@@ -46,7 +47,7 @@ namespace MoonReads.Controllers
             var author = _mapper.Map<AuthorDto>(_authorRepository.GetAuthorDetail(authorId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(author);
         }
@@ -62,7 +63,7 @@ namespace MoonReads.Controllers
             var books = _mapper.Map<List<BookDetailDto>>(_authorRepository.GetBookByAuthor(authorId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(books);
         }
@@ -74,7 +75,7 @@ namespace MoonReads.Controllers
         public IActionResult CreateAuthor([FromBody] AuthorDto? authorCreate)
         {
             if (authorCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var author = _authorRepository
                 .GetAuthors()
@@ -82,12 +83,11 @@ namespace MoonReads.Controllers
 
             if (author != null)
             {
-                ModelState.AddModelError("", "Author already exists");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.EntityExist);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (authorCreate.Description.IsNullOrEmpty())
             {
@@ -103,8 +103,7 @@ namespace MoonReads.Controllers
 
             if (!_authorRepository.CreateAuthor(authorMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -118,23 +117,22 @@ namespace MoonReads.Controllers
         public IActionResult UpdateAuthor(int authorId, [FromBody] AuthorDto? updatedAuthor)
         {
             if (updatedAuthor == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (authorId != updatedAuthor.Id)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_authorRepository.AuthorExists(authorId))
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var authorMap = _mapper.Map<Author>(updatedAuthor);
 
             if (!_authorRepository.UpdateAuthor(authorMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -154,14 +152,14 @@ namespace MoonReads.Controllers
             var author = _authorRepository.GetAuthor(authorId);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (_authorRepository.HasBooks(author))
-                return Conflict("Author cannot be deleted because have associated books.");
+                return Conflict(InternalStatusCodes.CannotDeleteEntity);
 
             if (!_authorRepository.DeleteAuthor(author))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();

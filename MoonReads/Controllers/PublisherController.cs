@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -30,7 +31,7 @@ namespace MoonReads.Controllers
             var publishers = _mapper.Map<List<PublisherDto>>(_publisherRepository.GetPublishers());
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(publishers);
         }
@@ -46,7 +47,7 @@ namespace MoonReads.Controllers
             var publisher = _mapper.Map<PublisherDto>(_publisherRepository.GetPublisher(publisherId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(publisher);
         }
@@ -62,7 +63,7 @@ namespace MoonReads.Controllers
             var books = _mapper.Map<List<BookDetailDto>>(_publisherRepository.GetBookByPublisher(publisherId));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             return Ok(books);
         }
@@ -74,7 +75,7 @@ namespace MoonReads.Controllers
         public IActionResult CreatePublisher([FromBody] PublisherDto? publisherCreate)
         {
             if (publisherCreate == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var publisher = _publisherRepository
                 .GetPublishers()
@@ -82,12 +83,11 @@ namespace MoonReads.Controllers
 
             if (publisher != null)
             {
-                ModelState.AddModelError("", "Publisher already exists");
-                return StatusCode(422, ModelState);
+                return StatusCode(422, InternalStatusCodes.EntityExist);
             }
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (publisherCreate.Description.IsNullOrEmpty())
             {
@@ -103,8 +103,7 @@ namespace MoonReads.Controllers
 
             if (!_publisherRepository.CreatePublisher(publisherMap))
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.CreateError);
             }
 
             return NoContent();
@@ -118,23 +117,22 @@ namespace MoonReads.Controllers
         public IActionResult UpdatePublisher(int publisherId, [FromBody] PublisherDto? updatedPublisher)
         {
             if (updatedPublisher == null)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (publisherId != updatedPublisher.Id)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_publisherRepository.PublisherExists(publisherId))
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var publisherMap = _mapper.Map<Publisher>(updatedPublisher);
 
             if (!_publisherRepository.UpdatePublisher(publisherMap))
             {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
             return NoContent();
@@ -154,14 +152,14 @@ namespace MoonReads.Controllers
             var publisher = _publisherRepository.GetPublisher(publisherId);
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (_publisherRepository.HasBooks(publisher))
-                return Conflict("Publisher cannot be deleted because have associated books.");
+                return Conflict(InternalStatusCodes.CannotDeleteEntity);
 
             if (!_publisherRepository.DeletePublisher(publisher))
             {
-                ModelState.AddModelError("", "Something went wrong while deleting");
+                return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();
