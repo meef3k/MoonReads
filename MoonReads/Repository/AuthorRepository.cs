@@ -24,7 +24,7 @@ namespace MoonReads.Repository
             return _context.Authors.FirstOrDefault(a => a.Id == id)!;
         }
         
-        public AuthorDto GetAuthorDetail(int id)
+        public AuthorDetailDto GetAuthorDetail(int id)
         {
             var query = _context.Authors
                 .Where(a => a.Id == id)
@@ -32,7 +32,7 @@ namespace MoonReads.Repository
                 .SelectMany(ba => ba.Book.Rating);
             return _context
                 .Authors
-                .Select(a=> new AuthorDto
+                .Select(a=> new AuthorDetailDto
                 {
                     Id = a.Id,
                     Name = a.Name,
@@ -43,12 +43,12 @@ namespace MoonReads.Repository
                 .FirstOrDefault(a => a.Id == id)!;
         }
 
-        public ICollection<AuthorDto> GetAuthors()
+        public ICollection<AuthorDetailDto> GetAuthors()
         {
             return _context
                 .Authors
                 .OrderBy(a => a.Id)
-                .Select(a=> new AuthorDto
+                .Select(a=> new AuthorDetailDto
                 {
                     Id = a.Id,
                     Name = a.Name,

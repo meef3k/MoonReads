@@ -8,9 +8,7 @@ namespace MoonReads.Models
 		public int Id { get; set; }
 		[Required]
 		public string Name { get; set; }
-
 		public string Description { get; set; }
-		[Url]
 		public string ImageUrl { get; set; }
 		public ICollection<AuthorCategory> AuthorCategories { get; set; }
 		public ICollection<BookAuthor> BookAuthors { get; set; }

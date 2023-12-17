@@ -25,10 +25,10 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Author>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDetailDto>))]
         public IActionResult GetAuthors()
         {
-            var authors = _mapper.Map<List<AuthorDto>>(_authorRepository.GetAuthors());
+            var authors = _authorRepository.GetAuthors();
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -37,14 +37,14 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet("{authorId}")]
-        [ProducesResponseType(200, Type = typeof(Author))]
+        [ProducesResponseType(200, Type = typeof(AuthorDetailDto))]
         [ProducesResponseType(400)]
         public IActionResult GetAuthor(int authorId)
         {
             if (!_authorRepository.AuthorExists(authorId))
                 return NotFound();
 
-            var author = _mapper.Map<AuthorDto>(_authorRepository.GetAuthorDetail(authorId));
+            var author = _authorRepository.GetAuthorDetail(authorId);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
