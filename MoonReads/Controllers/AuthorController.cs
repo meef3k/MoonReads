@@ -109,7 +109,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
-        [Authorize]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPut("{authorId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]

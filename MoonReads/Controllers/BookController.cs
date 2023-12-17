@@ -147,7 +147,7 @@ namespace MoonReads.Controllers
             return NoContent();
         }
 
-        [Authorize]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPut("{bookId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
@@ -167,7 +167,7 @@ namespace MoonReads.Controllers
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
             var bookMap = _mapper.Map<Book>(updatedBook);
-            bookMap.Pending = true;
+            bookMap.Pending = false;
 
             if (!_bookRepository.UpdateBook(publisherId, authorsIds, categoriesIds, bookMap))
             {
