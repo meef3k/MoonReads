@@ -20,7 +20,7 @@ namespace MoonReads.Data
         public required DbSet<Rating> Ratings { get; set; }
         public required DbSet<DataVersion> DataVersions { get; set; }
         public required DbSet<Review> Reviews { get; set; }
-        public required DbSet<ReviewRating> ReviewRatings { get; set; }
+        public required DbSet<Reaction> Reactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,10 @@ namespace MoonReads.Data
                 .HasOne(a => a.Author)
                 .WithMany(ba => ba.BookAuthors)
                 .HasForeignKey(a => a.AuthorId);
+
+            modelBuilder.Entity<Rating>()
+                .Property(r => r.ReviewId)
+                .IsRequired(false);
             
             modelBuilder.SeedDataVersionTable();
             

@@ -8,7 +8,6 @@ namespace MoonReads.Models
         public string? Avatar { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
-        public ICollection<ReviewRating> ReviewRatings { get; set; }
     }
 }
 

@@ -2,8 +2,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -20,23 +22,29 @@ namespace MoonReads.Controllers
 		private readonly IBookRepository _bookRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
-        private readonly IReviewRepository _reviewRepository;
         private readonly UserManager<User> _userManager;
-        private readonly IReviewRatingRepository _reviewRatingRepository;
+        private readonly IRatingRepository _ratingRepository;
+        private readonly IReviewRepository _reviewRepository;
+        private readonly IReactionRepository _reactionRepository;
+        private readonly DataContext _context;
 
         public BookController(IBookRepository bookRepository,
             IPublisherRepository publisherRepository,
             IMapper mapper,
-            IReviewRepository reviewRepository,
             UserManager<User> userManager,
-            IReviewRatingRepository reviewRatingRepository)
+            IRatingRepository ratingRepository,
+            IReviewRepository reviewRepository,
+            IReactionRepository reactionRepository,
+            DataContext context)
 		{
 			_bookRepository = bookRepository;
             _publisherRepository = publisherRepository;
             _mapper = mapper;
-            _reviewRepository = reviewRepository;
             _userManager = userManager;
-            _reviewRatingRepository = reviewRatingRepository;
+            _ratingRepository = ratingRepository;
+            _reviewRepository = reviewRepository;
+            _reactionRepository = reactionRepository;
+            _context = context;
         }
 
 		[HttpGet]
@@ -50,7 +58,7 @@ namespace MoonReads.Controllers
 
 			return Ok(books);
 		}
-
+        
         [HttpGet("{bookId}")]
         [ProducesResponseType(200, Type = typeof(BookDetailDto))]
 		[ProducesResponseType(400)]
@@ -200,42 +208,63 @@ namespace MoonReads.Controllers
             return NoContent();
         }
         
-        [HttpGet("{bookId}/review")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
-        public IActionResult GetReviews(int bookId)
-        {
-            var reviews = _mapper.Map<List<ReviewDto>>(_reviewRepository.GetReviews(bookId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(reviews);
-        }
-        
         [Authorize]
-        [HttpPost("{bookId}/review")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateReview(int bookId, [FromBody] ReviewDto? reviewCreate)
+        [HttpGet("{bookId}/rate/user")]
+        [ProducesResponseType(200, Type = typeof(RatingShortDto))]
+        public IActionResult GetUserRating(int bookId)
         {
-            if (reviewCreate == null)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            var book = _bookRepository.GetBook(bookId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var reviewMap = _mapper.Map<Review>(reviewCreate);
-            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            reviewMap.Book = book;
-            reviewMap.User = user;
+            var rating = _ratingRepository.GetUserRating(bookId, userId);
 
-            if (!_reviewRepository.CreateReview(reviewMap))
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            return Ok(rating);
+        }
+
+        [HttpGet("{bookId}/rate")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<RatingDetailDto>))]
+        public IActionResult GetRatings(int bookId)
+        {
+            var ratings = _ratingRepository.GetRatings(bookId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            return Ok(ratings);
+        }
+
+        [Authorize]
+        [HttpPost("{bookId}/rate")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateRating(int bookId, [FromBody] RatingDto? ratingCreate)
+        {
+            if (ratingCreate == null)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (_ratingRepository.UserBookRatingExists(bookId, userId))
+                return BadRequest(InternalStatusCodes.EntityExist);
+
+            var ratingMap = _mapper.Map<Rating>(ratingCreate);
+
+            ratingMap.User = user!;
+            ratingMap.Book = book;
+            
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            if (!_ratingRepository.CreateRating(ratingMap))
             {
                 return StatusCode(500, InternalStatusCodes.CreateError);
             }
@@ -244,34 +273,34 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("{bookId}/review/{reviewId}")]
+        [HttpPatch("rate/{rateId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateReview(int bookId, int reviewId, [FromBody] ReviewDto? updatedReview)
+        public async Task<IActionResult> UpdateRating(int rateId, [FromBody] JsonPatchDocument<Rating>? updatedRating)
         {
-            if (updatedReview == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var rating = _ratingRepository.GetRating(rateId);
+            
+            if (updatedRating == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            if (!_reviewRepository.ReviewExists(reviewId))
-                return NotFound();
+            
+            if (!_ratingRepository.RatingExists(rateId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+            
+            if (await _userManager.IsInRoleAsync(user!, UserRoles.User))
+            {
+                if (rating.UserId != userId)
+                    return BadRequest(InternalStatusCodes.InvalidUser);
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var reviewMap = _mapper.Map<Review>(updatedReview);
-            
-            var book = _bookRepository.GetBook(bookId);
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            
-            var user = await _userManager.FindByIdAsync(userId);
-
-            reviewMap.Id = reviewId;
-            reviewMap.Book = book;
-            reviewMap.User = user;
-
-            if (!_reviewRepository.UpdateReview(reviewMap))
+            if (!_ratingRepository.UpdateRating(updatedRating, rating))
             {
                 return StatusCode(500, InternalStatusCodes.EditError);
             }
@@ -280,78 +309,68 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpDelete("{bookId}/review/{reviewId}")]
+        [HttpDelete("rate/{rateId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(409)]
-        public async Task<IActionResult> DeleteReview(int bookId, int reviewId)
+        public async Task<IActionResult> DeleteRating(int rateId)
         {
-            if (!_reviewRepository.ReviewExists(reviewId))
-                return NotFound();
-
-            var review = _reviewRepository.GetReview(reviewId);
-            
-            var book = _bookRepository.GetBook(bookId);
-            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             
             var user = await _userManager.FindByIdAsync(userId);
             
-            if (review.Book != book)
-            {
-                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
-            }
+            var rating = _ratingRepository.GetRating(rateId);
             
-            if (review.User != user)
+            if (!_ratingRepository.RatingExists(rateId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+            
+            if (await _userManager.IsInRoleAsync(user!, UserRoles.User))
             {
-                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
+                if (rating.UserId != userId)
+                    return BadRequest(InternalStatusCodes.InvalidUser);
             }
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            if (!_reviewRepository.DeleteReview(review))
+            if (!_ratingRepository.DeleteRating(rating))
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }
 
             return NoContent();
         }
-        
+
         [Authorize]
-        [HttpPost("bookId/review/{reviewId}/rating")]
+        [HttpPost("rate/review/{reviewId}/reaction")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateReviewRating(int reviewId, [FromBody] ReviewRatingDto? reviewRatingCreate)
+        public async Task<IActionResult> CreateReaction([FromRoute] int reviewId, [FromBody] ReactionDto? reactionCreate)
         {
-            if (reviewRatingCreate == null)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            if (!ModelState.IsValid)
+            if (reactionCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
             
             if (!_reviewRepository.ReviewExists(reviewId))
-            {
-                return StatusCode(422, InternalStatusCodes.EntityNotExist);
-            }
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            if (user == null)
-            {
-                return StatusCode(422, InternalStatusCodes.InvalidUser);
-            }
-            
-            var reviewRatingMap = _mapper.Map<ReviewRating>(reviewRatingCreate);
+                return NotFound(InternalStatusCodes.EntityNotExist);
 
             var review = _reviewRepository.GetReview(reviewId);
             
-            reviewRatingMap.Review = review;
-            reviewRatingMap.User = user;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            if (!_reviewRatingRepository.CreateReviewRating(reviewRatingMap))
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (_reactionRepository.ReactionExists(reviewId, userId))
+                return BadRequest(InternalStatusCodes.EntityExist);
+
+            var reactionMap = _mapper.Map<Reaction>(reactionCreate);
+
+            reactionMap.Review = review;
+            reactionMap.User = user;
+            
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!_reactionRepository.CreateReaction(reactionMap))
             {
                 return StatusCode(500, InternalStatusCodes.CreateError);
             }
@@ -360,41 +379,26 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("bookId/review/{reviewId}/rating/{reviewRatingId}")]
+        [HttpPut("rate/review/{reviewId}/reaction")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateReviewRating(int reviewId, int reviewRatingId, [FromBody] ReviewRatingDto? updatedReviewRating)
+        public IActionResult UpdateReaction(int reviewId, [FromBody] ReactionDto? updatedReaction)
         {
-            if (updatedReviewRating == null)
+            if (updatedReaction == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_reviewRepository.ReviewExists(reviewId))
-                return NotFound();
-            
-            if (!_reviewRatingRepository.ReviewRatingExists(reviewRatingId))
-                return NotFound();
+                return NotFound(InternalStatusCodes.EntityNotExist);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            if (user == null)
-            {
-                return StatusCode(422, InternalStatusCodes.InvalidUser);
-            }
 
-            var reviewRatingMap = _mapper.Map<ReviewRating>(updatedReviewRating);
-            
-            var review = _reviewRepository.GetReview(reviewId);
-            
-            reviewRatingMap.Id = reviewId;
-            reviewRatingMap.Review = review;
-            reviewRatingMap.User = user;
+            var reactionMap = _mapper.Map<Reaction>(updatedReaction);
 
-            if (!_reviewRatingRepository.UpdateReviewRating(reviewRatingMap))
+            if (!_reactionRepository.UpdateReaction(reactionMap, reviewId, userId))
             {
                 return StatusCode(500, InternalStatusCodes.EditError);
             }
@@ -403,38 +407,24 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpDelete("bookId/review/{reviewId}/rating/{reviewRatingId}")]
+        [HttpDelete("rate/review/{reviewId}/reaction")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(409)]
-        public async Task<IActionResult> DeleteReviewRating(int reviewId, int reviewRatingId)
+        public IActionResult DeleteReaction(int reviewId)
         {
             if (!_reviewRepository.ReviewExists(reviewId))
-                return NotFound();
-            
-            var reviewRating = _reviewRatingRepository.GetReviewRating(reviewRatingId);
-
-            var review = _reviewRepository.GetReview(reviewId);
+                return NotFound(InternalStatusCodes.EntityNotExist);
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            if (reviewRating.Review != review)
-            {
-                return StatusCode(422, InternalStatusCodes.CannotDeleteEntity);
-            }
-            
-            if (reviewRating.User != user)
-            {
-                return StatusCode(422, InternalStatusCodes.InvalidUser);
-            }
+            if (!_reactionRepository.ReactionExists(reviewId, userId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            if (!_reviewRatingRepository.DeleteReviewRating(reviewRating))
+            if (!_reactionRepository.DeleteReaction(reviewId, userId))
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }

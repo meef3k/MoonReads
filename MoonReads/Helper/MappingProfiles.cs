@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 using MoonReads.Dto;
 using MoonReads.Models;
 
@@ -18,16 +20,10 @@ namespace MoonReads.Helper
 			CreateMap<CategoryDto, Category>();
 			CreateMap<Publisher, PublisherDto>();
 			CreateMap<PublisherDto, Publisher>();
-			CreateMap<Rating, RatingDto>();
-			CreateMap<RatingDto, Rating>();
 			CreateMap<Book, BookDetailDto>();
 			CreateMap<BookDetailDto, Book>();
 			CreateMap<DataVersion, DataVersionDto>();
 			CreateMap<DataVersionDto, DataVersion>();
-			CreateMap<ReviewDto, Review>();
-			CreateMap<Review, ReviewDto>();
-			CreateMap<ReviewRatingDto, ReviewRating>();
-			CreateMap<ReviewRating, ReviewRatingDto>();
 			CreateMap<AuthorCategoryDto, AuthorCategory>();
 			CreateMap<AuthorCategory, AuthorCategoryDto>();
 			CreateMap<BookAuthorDto, BookAuthor>();
@@ -36,6 +32,20 @@ namespace MoonReads.Helper
 			CreateMap<BookCategory, BookCategoryDto>();
 			CreateMap<AuthorDetailDto, Author>();
 			CreateMap<Author, AuthorDetailDto>();
+			CreateMap<RatingDto, Rating>();
+			CreateMap<Rating, RatingDto>();
+			CreateMap<RatingDetailDto, Rating>();
+			CreateMap<Rating, RatingDetailDto>();
+			CreateMap<ReviewDto, Review>();
+			CreateMap<Review, ReviewDto>();
+			CreateMap<ReviewDetailDto, Review>();
+			CreateMap<Review, ReviewDetailDto>();
+			CreateMap<ReactionDto, Reaction>();
+			CreateMap<Reaction, ReactionDto>();
+			CreateMap<RatingShortDto, Rating>();
+			CreateMap<Rating, RatingShortDto>();
+			CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
+			CreateMap(typeof(Operation<>), typeof(Operation<>));
 		}
 	}
 }

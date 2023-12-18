@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MoonReads.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MoonReads.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231217163656_Initialize")]
+    partial class Initialize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,142 +185,142 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=75",
-                            Name = "Lenna Cartwright"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=749",
+                            Name = "Kaylin Hirthe"
                         },
                         new
                         {
                             Id = 2,
                             Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=475",
-                            Name = "Giles Rippin"
+                            ImageUrl = "https://picsum.photos/350/500/?image=297",
+                            Name = "Deborah Sauer"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=660",
-                            Name = "Jaylan Daugherty"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=679",
+                            Name = "Patrick Weimann"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=224",
-                            Name = "Marvin Boyle"
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=719",
+                            Name = "Jackie Green"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=563",
-                            Name = "Carroll Dickinson"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=837",
+                            Name = "Antonia Waters"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=898",
-                            Name = "Maida Emard"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=49",
+                            Name = "Bertha Marvin"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=322",
-                            Name = "Ambrose Daniel"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=763",
+                            Name = "Susan Littel"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=414",
-                            Name = "Loyal O'Keefe"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=988",
+                            Name = "Jaycee Larkin"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=351",
-                            Name = "Darrion Casper"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=63",
+                            Name = "Rasheed Hyatt"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=870",
-                            Name = "Eddie O'Reilly"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=345",
+                            Name = "Lue Gibson"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=231",
-                            Name = "Juston Fisher"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1007",
+                            Name = "Rowena Schulist"
                         },
                         new
                         {
                             Id = 12,
                             Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=771",
-                            Name = "Elmore Goodwin"
+                            ImageUrl = "https://picsum.photos/350/500/?image=687",
+                            Name = "Vince Mills"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=215",
-                            Name = "Jackeline Rippin"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=732",
+                            Name = "Eugenia Stokes"
                         },
                         new
                         {
                             Id = 14,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=880",
-                            Name = "Jarrett Howe"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1073",
+                            Name = "Shanie MacGyver"
                         },
                         new
                         {
                             Id = 15,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=730",
-                            Name = "Keanu Shanahan"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=278",
+                            Name = "Daniela Bartoletti"
                         },
                         new
                         {
                             Id = 16,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=193",
-                            Name = "Jameson Steuber"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=234",
+                            Name = "Libby Spencer"
                         },
                         new
                         {
                             Id = 17,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=529",
-                            Name = "Nigel Marks"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=74",
+                            Name = "Roberta Ritchie"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=610",
-                            Name = "Jessie Kassulke"
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=620",
+                            Name = "Demarcus Brown"
                         },
                         new
                         {
                             Id = 19,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=499",
-                            Name = "Johann Parker"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=690",
+                            Name = "Isai Schmitt"
                         },
                         new
                         {
                             Id = 20,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=710",
-                            Name = "Beth Rutherford"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=531",
+                            Name = "Noble Harvey"
                         });
                 });
 
@@ -675,602 +678,602 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=990",
-                            Isbn = "8295662816",
-                            Pages = 838,
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=466",
+                            Isbn = "6030298605",
+                            Pages = 348,
                             Pending = false,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 5, 26),
-                            Title = "Incredible Wooden Pizza"
+                            PublisherId = 18,
+                            ReleaseDate = new DateOnly(2023, 2, 12),
+                            Title = "Ergonomic Fresh Towels"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=825",
-                            Isbn = "4017414471",
-                            Pages = 182,
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=919",
+                            Isbn = "1514012349",
+                            Pages = 482,
                             Pending = false,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2023, 4, 19),
-                            Title = "Ergonomic Steel Pizza"
+                            PublisherId = 7,
+                            ReleaseDate = new DateOnly(2023, 10, 7),
+                            Title = "Generic Cotton Chips"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=667",
-                            Isbn = "2401392678",
-                            Pages = 744,
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=723",
+                            Isbn = "1765247628",
+                            Pages = 875,
                             Pending = false,
-                            PublisherId = 2,
-                            ReleaseDate = new DateOnly(2023, 1, 30),
-                            Title = "Incredible Rubber Chips"
+                            PublisherId = 11,
+                            ReleaseDate = new DateOnly(2023, 2, 24),
+                            Title = "Fantastic Concrete Table"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=462",
-                            Isbn = "4143229587",
-                            Pages = 833,
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1051",
+                            Isbn = "7569506372",
+                            Pages = 439,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 6, 3),
-                            Title = "Small Rubber Shirt"
+                            PublisherId = 8,
+                            ReleaseDate = new DateOnly(2023, 2, 6),
+                            Title = "Tasty Cotton Table"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=836",
-                            Isbn = "3967121541",
-                            Pages = 203,
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=56",
+                            Isbn = "6098951446",
+                            Pages = 452,
                             Pending = false,
-                            PublisherId = 14,
-                            ReleaseDate = new DateOnly(2023, 3, 23),
-                            Title = "Sleek Frozen Table"
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 11, 11),
+                            Title = "Tasty Fresh Bike"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=298",
-                            Isbn = "1281880349",
-                            Pages = 230,
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=625",
+                            Isbn = "1073590732",
+                            Pages = 534,
                             Pending = false,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 8, 28),
-                            Title = "Intelligent Metal Chicken"
+                            PublisherId = 8,
+                            ReleaseDate = new DateOnly(2023, 2, 25),
+                            Title = "Handmade Concrete Salad"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=801",
-                            Isbn = "9427323733",
-                            Pages = 557,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=414",
+                            Isbn = "1092020648",
+                            Pages = 249,
                             Pending = false,
                             PublisherId = 5,
-                            ReleaseDate = new DateOnly(2023, 5, 31),
-                            Title = "Rustic Steel Chicken"
+                            ReleaseDate = new DateOnly(2023, 8, 14),
+                            Title = "Practical Wooden Ball"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=499",
-                            Isbn = "7623957898",
-                            Pages = 333,
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=547",
+                            Isbn = "7428364844",
+                            Pages = 455,
                             Pending = false,
-                            PublisherId = 19,
-                            ReleaseDate = new DateOnly(2023, 11, 8),
-                            Title = "Unbranded Cotton Cheese"
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2023, 7, 6),
+                            Title = "Ergonomic Metal Soap"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=92",
-                            Isbn = "9397224729",
-                            Pages = 631,
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=240",
+                            Isbn = "9949631255",
+                            Pages = 121,
                             Pending = false,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 3, 22),
-                            Title = "Licensed Soft Mouse"
+                            PublisherId = 20,
+                            ReleaseDate = new DateOnly(2023, 4, 28),
+                            Title = "Handmade Fresh Bacon"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=912",
-                            Isbn = "4524557073",
-                            Pages = 882,
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=341",
+                            Isbn = "9273179588",
+                            Pages = 619,
                             Pending = false,
-                            PublisherId = 4,
-                            ReleaseDate = new DateOnly(2023, 2, 6),
-                            Title = "Refined Steel Shoes"
+                            PublisherId = 20,
+                            ReleaseDate = new DateOnly(2023, 4, 2),
+                            Title = "Gorgeous Metal Sausages"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=761",
-                            Isbn = "3631262931",
-                            Pages = 693,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=520",
+                            Isbn = "2669592026",
+                            Pages = 719,
                             Pending = false,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 3, 2),
-                            Title = "Fantastic Soft Fish"
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2023, 9, 27),
+                            Title = "Awesome Plastic Bike"
                         },
                         new
                         {
                             Id = 12,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=293",
-                            Isbn = "5891154956",
-                            Pages = 572,
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=974",
+                            Isbn = "5591813704",
+                            Pages = 287,
                             Pending = false,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 1, 3),
-                            Title = "Intelligent Concrete Ball"
+                            PublisherId = 14,
+                            ReleaseDate = new DateOnly(2023, 10, 31),
+                            Title = "Intelligent Wooden Keyboard"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=610",
-                            Isbn = "3299275144",
-                            Pages = 751,
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=102",
+                            Isbn = "5316171938",
+                            Pages = 648,
                             Pending = false,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 3, 25),
-                            Title = "Generic Metal Gloves"
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 7, 31),
+                            Title = "Small Concrete Shoes"
                         },
                         new
                         {
                             Id = 14,
                             Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=521",
-                            Isbn = "9348181315",
-                            Pages = 857,
+                            ImageUrl = "https://picsum.photos/350/500/?image=123",
+                            Isbn = "7631378459",
+                            Pages = 520,
                             Pending = false,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 7, 9),
-                            Title = "Small Fresh Keyboard"
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 10, 4),
+                            Title = "Incredible Plastic Shoes"
                         },
                         new
                         {
                             Id = 15,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=897",
-                            Isbn = "5383764441",
-                            Pages = 209,
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=74",
+                            Isbn = "5216664203",
+                            Pages = 476,
                             Pending = false,
-                            PublisherId = 20,
-                            ReleaseDate = new DateOnly(2023, 3, 6),
-                            Title = "Sleek Rubber Bacon"
+                            PublisherId = 8,
+                            ReleaseDate = new DateOnly(2023, 3, 25),
+                            Title = "Tasty Soft Towels"
                         },
                         new
                         {
                             Id = 16,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=332",
-                            Isbn = "3492808600",
-                            Pages = 427,
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=893",
+                            Isbn = "4859256632",
+                            Pages = 353,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 4, 17),
-                            Title = "Gorgeous Rubber Towels"
+                            PublisherId = 12,
+                            ReleaseDate = new DateOnly(2023, 5, 5),
+                            Title = "Generic Soft Table"
                         },
                         new
                         {
                             Id = 17,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=877",
-                            Isbn = "4048430814",
-                            Pages = 435,
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=49",
+                            Isbn = "5604270359",
+                            Pages = 242,
                             Pending = false,
-                            PublisherId = 5,
-                            ReleaseDate = new DateOnly(2023, 8, 12),
-                            Title = "Incredible Wooden Chicken"
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 5, 10),
+                            Title = "Tasty Wooden Pizza"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=83",
-                            Isbn = "7301717593",
-                            Pages = 746,
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=194",
+                            Isbn = "4253805954",
+                            Pages = 829,
                             Pending = false,
-                            PublisherId = 17,
-                            ReleaseDate = new DateOnly(2023, 12, 10),
-                            Title = "Handcrafted Metal Keyboard"
+                            PublisherId = 18,
+                            ReleaseDate = new DateOnly(2023, 2, 4),
+                            Title = "Small Frozen Sausages"
                         },
                         new
                         {
                             Id = 19,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=935",
-                            Isbn = "6104630139",
-                            Pages = 607,
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1035",
+                            Isbn = "3626200130",
+                            Pages = 811,
                             Pending = false,
-                            PublisherId = 5,
-                            ReleaseDate = new DateOnly(2023, 9, 18),
-                            Title = "Handmade Wooden Mouse"
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 11, 23),
+                            Title = "Small Granite Mouse"
                         },
                         new
                         {
                             Id = 20,
                             Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=505",
-                            Isbn = "8589412547",
-                            Pages = 267,
+                            ImageUrl = "https://picsum.photos/350/500/?image=223",
+                            Isbn = "1083828989",
+                            Pages = 590,
                             Pending = false,
-                            PublisherId = 1,
-                            ReleaseDate = new DateOnly(2023, 8, 23),
-                            Title = "Awesome Plastic Pants"
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 3, 24),
+                            Title = "Handmade Wooden Shoes"
                         },
                         new
                         {
                             Id = 21,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=231",
-                            Isbn = "6607467900",
-                            Pages = 817,
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=17",
+                            Isbn = "8085228730",
+                            Pages = 234,
                             Pending = false,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 3, 6),
-                            Title = "Handmade Steel Chicken"
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 6, 18),
+                            Title = "Practical Fresh Soap"
                         },
                         new
                         {
                             Id = 22,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=618",
-                            Isbn = "1090916919",
-                            Pages = 602,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=581",
+                            Isbn = "7814881124",
+                            Pages = 543,
                             Pending = false,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 1, 10),
-                            Title = "Ergonomic Frozen Fish"
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 5, 28),
+                            Title = "Unbranded Cotton Car"
                         },
                         new
                         {
                             Id = 23,
                             Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=860",
-                            Isbn = "3111782126",
-                            Pages = 281,
+                            ImageUrl = "https://picsum.photos/350/500/?image=540",
+                            Isbn = "6468451297",
+                            Pages = 385,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 9, 20),
-                            Title = "Awesome Fresh Shoes"
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 9, 4),
+                            Title = "Tasty Metal Chips"
                         },
                         new
                         {
                             Id = 24,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=330",
-                            Isbn = "6725404049",
-                            Pages = 632,
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=460",
+                            Isbn = "8419990175",
+                            Pages = 884,
                             Pending = false,
-                            PublisherId = 15,
-                            ReleaseDate = new DateOnly(2023, 8, 6),
-                            Title = "Handmade Steel Tuna"
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 3, 28),
+                            Title = "Fantastic Metal Bike"
                         },
                         new
                         {
                             Id = 25,
                             Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=444",
-                            Isbn = "2080827621",
-                            Pages = 853,
+                            ImageUrl = "https://picsum.photos/350/500/?image=909",
+                            Isbn = "1345479458",
+                            Pages = 416,
                             Pending = false,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 8, 9),
-                            Title = "Practical Cotton Ball"
+                            PublisherId = 11,
+                            ReleaseDate = new DateOnly(2023, 6, 11),
+                            Title = "Licensed Plastic Ball"
                         },
                         new
                         {
                             Id = 26,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=124",
-                            Isbn = "3545492641",
-                            Pages = 266,
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=516",
+                            Isbn = "3387416626",
+                            Pages = 205,
                             Pending = false,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 4, 9),
-                            Title = "Intelligent Plastic Pizza"
+                            PublisherId = 1,
+                            ReleaseDate = new DateOnly(2023, 7, 24),
+                            Title = "Gorgeous Metal Shoes"
                         },
                         new
                         {
                             Id = 27,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1036",
-                            Isbn = "5041763659",
-                            Pages = 674,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=340",
+                            Isbn = "4257881849",
+                            Pages = 747,
                             Pending = false,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 2, 5),
-                            Title = "Awesome Frozen Soap"
+                            PublisherId = 2,
+                            ReleaseDate = new DateOnly(2023, 6, 15),
+                            Title = "Small Metal Tuna"
                         },
                         new
                         {
                             Id = 28,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=745",
-                            Isbn = "7783022275",
-                            Pages = 764,
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=587",
+                            Isbn = "6622099832",
+                            Pages = 118,
                             Pending = false,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 7, 30),
-                            Title = "Rustic Soft Bike"
+                            PublisherId = 10,
+                            ReleaseDate = new DateOnly(2023, 12, 4),
+                            Title = "Generic Cotton Salad"
                         },
                         new
                         {
                             Id = 29,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=139",
-                            Isbn = "2378371821",
-                            Pages = 624,
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1006",
+                            Isbn = "3553060187",
+                            Pages = 177,
                             Pending = false,
-                            PublisherId = 13,
-                            ReleaseDate = new DateOnly(2023, 10, 29),
-                            Title = "Awesome Cotton Gloves"
+                            PublisherId = 5,
+                            ReleaseDate = new DateOnly(2023, 8, 19),
+                            Title = "Unbranded Soft Tuna"
                         },
                         new
                         {
                             Id = 30,
                             Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1034",
-                            Isbn = "5093057104",
-                            Pages = 116,
+                            ImageUrl = "https://picsum.photos/350/500/?image=862",
+                            Isbn = "5027154350",
+                            Pages = 190,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 7, 29),
-                            Title = "Small Soft Chair"
+                            PublisherId = 13,
+                            ReleaseDate = new DateOnly(2023, 2, 22),
+                            Title = "Refined Rubber Sausages"
                         },
                         new
                         {
                             Id = 31,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=955",
-                            Isbn = "6147389120",
-                            Pages = 294,
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=962",
+                            Isbn = "2258455548",
+                            Pages = 652,
                             Pending = false,
-                            PublisherId = 15,
-                            ReleaseDate = new DateOnly(2023, 8, 16),
-                            Title = "Small Soft Chair"
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 9, 26),
+                            Title = "Incredible Plastic Tuna"
                         },
                         new
                         {
                             Id = 32,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=663",
-                            Isbn = "2649295327",
-                            Pages = 434,
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=895",
+                            Isbn = "7841428666",
+                            Pages = 714,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 6, 1),
-                            Title = "Intelligent Concrete Sausages"
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 3, 10),
+                            Title = "Handcrafted Rubber Ball"
                         },
                         new
                         {
                             Id = 33,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=898",
-                            Isbn = "2611244732",
-                            Pages = 305,
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=381",
+                            Isbn = "8360017949",
+                            Pages = 881,
                             Pending = false,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 4, 22),
-                            Title = "Sleek Granite Fish"
+                            PublisherId = 17,
+                            ReleaseDate = new DateOnly(2023, 12, 13),
+                            Title = "Fantastic Frozen Pants"
                         },
                         new
                         {
                             Id = 34,
-                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-                            ImageUrl = "https://picsum.photos/350/500/?image=768",
-                            Isbn = "9732576425",
-                            Pages = 164,
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=625",
+                            Isbn = "3086704550",
+                            Pages = 495,
                             Pending = false,
-                            PublisherId = 14,
-                            ReleaseDate = new DateOnly(2023, 6, 13),
-                            Title = "Ergonomic Steel Chips"
+                            PublisherId = 16,
+                            ReleaseDate = new DateOnly(2023, 5, 9),
+                            Title = "Refined Rubber Pizza"
                         },
                         new
                         {
                             Id = 35,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=740",
-                            Isbn = "5371024675",
-                            Pages = 476,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=253",
+                            Isbn = "5471498158",
+                            Pages = 623,
                             Pending = false,
-                            PublisherId = 20,
-                            ReleaseDate = new DateOnly(2023, 7, 4),
-                            Title = "Generic Rubber Soap"
+                            PublisherId = 7,
+                            ReleaseDate = new DateOnly(2023, 3, 20),
+                            Title = "Handcrafted Frozen Bacon"
                         },
                         new
                         {
                             Id = 36,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=509",
-                            Isbn = "9240141925",
-                            Pages = 316,
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=752",
+                            Isbn = "5509140806",
+                            Pages = 630,
                             Pending = false,
-                            PublisherId = 18,
-                            ReleaseDate = new DateOnly(2023, 10, 7),
-                            Title = "Ergonomic Concrete Hat"
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 1, 12),
+                            Title = "Fantastic Wooden Pants"
                         },
                         new
                         {
                             Id = 37,
                             Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=729",
-                            Isbn = "3707351659",
-                            Pages = 620,
+                            ImageUrl = "https://picsum.photos/350/500/?image=201",
+                            Isbn = "2677045551",
+                            Pages = 548,
                             Pending = false,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 2, 25),
-                            Title = "Rustic Granite Chair"
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2023, 4, 22),
+                            Title = "Handmade Frozen Chair"
                         },
                         new
                         {
                             Id = 38,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=519",
-                            Isbn = "9568866888",
-                            Pages = 752,
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=271",
+                            Isbn = "3613177107",
+                            Pages = 585,
                             Pending = false,
-                            PublisherId = 9,
-                            ReleaseDate = new DateOnly(2023, 7, 24),
-                            Title = "Practical Concrete Sausages"
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2023, 5, 9),
+                            Title = "Rustic Wooden Hat"
                         },
                         new
                         {
                             Id = 39,
                             Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=148",
-                            Isbn = "4164959370",
-                            Pages = 290,
+                            ImageUrl = "https://picsum.photos/350/500/?image=1017",
+                            Isbn = "4522412013",
+                            Pages = 707,
                             Pending = false,
-                            PublisherId = 3,
-                            ReleaseDate = new DateOnly(2023, 3, 20),
-                            Title = "Handmade Cotton Chair"
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 12, 2),
+                            Title = "Refined Wooden Table"
                         },
                         new
                         {
                             Id = 40,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=6",
-                            Isbn = "6634237547",
-                            Pages = 520,
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=111",
+                            Isbn = "9512215388",
+                            Pages = 691,
                             Pending = false,
-                            PublisherId = 14,
-                            ReleaseDate = new DateOnly(2023, 7, 6),
-                            Title = "Rustic Concrete Cheese"
+                            PublisherId = 15,
+                            ReleaseDate = new DateOnly(2023, 2, 11),
+                            Title = "Handmade Concrete Tuna"
                         },
                         new
                         {
                             Id = 41,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=287",
-                            Isbn = "5508269232",
-                            Pages = 201,
+                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1061",
+                            Isbn = "7370871067",
+                            Pages = 144,
                             Pending = false,
-                            PublisherId = 8,
-                            ReleaseDate = new DateOnly(2023, 6, 19),
-                            Title = "Handmade Steel Pizza"
+                            PublisherId = 6,
+                            ReleaseDate = new DateOnly(2023, 9, 15),
+                            Title = "Handmade Frozen Towels"
                         },
                         new
                         {
                             Id = 42,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=672",
-                            Isbn = "4963743103",
-                            Pages = 186,
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=571",
+                            Isbn = "8499552444",
+                            Pages = 556,
                             Pending = false,
-                            PublisherId = 15,
-                            ReleaseDate = new DateOnly(2023, 12, 10),
-                            Title = "Handcrafted Cotton Keyboard"
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 9, 3),
+                            Title = "Small Wooden Shirt"
                         },
                         new
                         {
                             Id = 43,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=654",
-                            Isbn = "7247213297",
-                            Pages = 367,
+                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1053",
+                            Isbn = "3716152315",
+                            Pages = 835,
                             Pending = false,
-                            PublisherId = 10,
-                            ReleaseDate = new DateOnly(2023, 1, 14),
-                            Title = "Rustic Granite Table"
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2023, 1, 11),
+                            Title = "Handmade Granite Ball"
                         },
                         new
                         {
                             Id = 44,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=597",
-                            Isbn = "6654502624",
-                            Pages = 287,
+                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
+                            ImageUrl = "https://picsum.photos/350/500/?image=828",
+                            Isbn = "2119415494",
+                            Pages = 398,
                             Pending = false,
-                            PublisherId = 11,
-                            ReleaseDate = new DateOnly(2023, 7, 21),
-                            Title = "Ergonomic Frozen Chips"
+                            PublisherId = 9,
+                            ReleaseDate = new DateOnly(2023, 4, 14),
+                            Title = "Rustic Plastic Car"
                         },
                         new
                         {
                             Id = 45,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=515",
-                            Isbn = "2195126880",
-                            Pages = 441,
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=56",
+                            Isbn = "3484624791",
+                            Pages = 207,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 9, 21),
-                            Title = "Unbranded Metal Soap"
+                            PublisherId = 3,
+                            ReleaseDate = new DateOnly(2023, 6, 23),
+                            Title = "Gorgeous Granite Keyboard"
                         },
                         new
                         {
                             Id = 46,
-                            Description = "The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",
-                            ImageUrl = "https://picsum.photos/350/500/?image=183",
-                            Isbn = "6757005228",
-                            Pages = 833,
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1073",
+                            Isbn = "2841467811",
+                            Pages = 574,
                             Pending = false,
-                            PublisherId = 12,
-                            ReleaseDate = new DateOnly(2023, 6, 18),
-                            Title = "Rustic Soft Pizza"
+                            PublisherId = 10,
+                            ReleaseDate = new DateOnly(2023, 1, 26),
+                            Title = "Fantastic Concrete Pants"
                         },
                         new
                         {
                             Id = 47,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=894",
-                            Isbn = "2070925474",
-                            Pages = 425,
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=297",
+                            Isbn = "3474679719",
+                            Pages = 144,
                             Pending = false,
-                            PublisherId = 2,
-                            ReleaseDate = new DateOnly(2023, 2, 15),
-                            Title = "Gorgeous Steel Fish"
+                            PublisherId = 19,
+                            ReleaseDate = new DateOnly(2023, 1, 19),
+                            Title = "Generic Rubber Mouse"
                         },
                         new
                         {
                             Id = 48,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=359",
-                            Isbn = "5970143231",
-                            Pages = 320,
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=785",
+                            Isbn = "6194044358",
+                            Pages = 440,
                             Pending = false,
-                            PublisherId = 11,
-                            ReleaseDate = new DateOnly(2023, 7, 26),
-                            Title = "Sleek Granite Pizza"
+                            PublisherId = 16,
+                            ReleaseDate = new DateOnly(2023, 7, 18),
+                            Title = "Tasty Rubber Cheese"
                         },
                         new
                         {
                             Id = 49,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=476",
-                            Isbn = "7517941036",
-                            Pages = 368,
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=951",
+                            Isbn = "3429046523",
+                            Pages = 565,
                             Pending = false,
-                            PublisherId = 16,
-                            ReleaseDate = new DateOnly(2023, 3, 25),
-                            Title = "Refined Plastic Computer"
+                            PublisherId = 4,
+                            ReleaseDate = new DateOnly(2022, 12, 30),
+                            Title = "Awesome Plastic Ball"
                         },
                         new
                         {
                             Id = 50,
-                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
-                            ImageUrl = "https://picsum.photos/350/500/?image=852",
-                            Isbn = "8854140843",
-                            Pages = 565,
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=356",
+                            Isbn = "8553736980",
+                            Pages = 880,
                             Pending = false,
-                            PublisherId = 7,
-                            ReleaseDate = new DateOnly(2023, 3, 14),
-                            Title = "Intelligent Fresh Towels"
+                            PublisherId = 2,
+                            ReleaseDate = new DateOnly(2023, 11, 23),
+                            Title = "Generic Wooden Sausages"
                         });
                 });
 
@@ -2180,102 +2183,102 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Computers, Industrial & Grocery"
+                            Name = "Industrial, Jewelery & Grocery"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Games"
+                            Name = "Jewelery & Sports"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Health"
+                            Name = "Computers"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Music"
+                            Name = "Sports"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Home, Shoes & Outdoors"
+                            Name = "Clothing, Electronics & Industrial"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Jewelery & Jewelery"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Automotive"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Games, Home & Baby"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Outdoors, Industrial & Books"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Jewelery, Books & Jewelery"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Garden, Jewelery & Grocery"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Name = "Music & Music"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Name = "Tools & Sports"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Name = "Music"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Name = "Baby"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Name = "Games & Movies"
-                        },
-                        new
-                        {
-                            Id = 17,
                             Name = "Shoes"
                         },
                         new
                         {
+                            Id = 7,
+                            Name = "Clothing"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Clothing & Beauty"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Kids & Kids"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Sports & Tools"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Home & Games"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Shoes, Toys & Books"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Jewelery & Outdoors"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "Toys & Health"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "Music"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "Home & Outdoors"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "Industrial, Electronics & Grocery"
+                        },
+                        new
+                        {
                             Id = 18,
-                            Name = "Health, Games & Home"
+                            Name = "Garden"
                         },
                         new
                         {
                             Id = 19,
-                            Name = "Games, Toys & Movies"
+                            Name = "Computers"
                         },
                         new
                         {
                             Id = 20,
-                            Name = "Automotive"
+                            Name = "Garden, Books & Jewelery"
                         });
                 });
 
@@ -2389,142 +2392,142 @@ namespace MoonReads.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=157",
-                            Name = "Spencer, Dooley and Stiedemann"
+                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
+                            ImageUrl = "https://picsum.photos/350/500/?image=1039",
+                            Name = "Prosacco - Kuvalis"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1051",
-                            Name = "Price, Rosenbaum and Nolan"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=521",
+                            Name = "Collins - Wilkinson"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=571",
-                            Name = "Cassin - Blanda"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=546",
+                            Name = "Bode, Kohler and Abernathy"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=78",
-                            Name = "Schimmel Inc"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=84",
+                            Name = "Murphy, Bahringer and Witting"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "The Football Is Good For Training And Recreational Purposes",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1019",
-                            Name = "Stracke - Gleason"
+                            Description = "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
+                            ImageUrl = "https://picsum.photos/350/500/?image=637",
+                            Name = "Reinger - Armstrong"
                         },
                         new
                         {
                             Id = 6,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=534",
-                            Name = "Mitchell, Dibbert and Jacobson"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=467",
+                            Name = "Ruecker Group"
                         },
                         new
                         {
                             Id = 7,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=834",
-                            Name = "Ortiz Group"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=755",
+                            Name = "Carter Group"
                         },
                         new
                         {
                             Id = 8,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=835",
-                            Name = "Conroy LLC"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=230",
+                            Name = "Erdman LLC"
                         },
                         new
                         {
                             Id = 9,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=119",
-                            Name = "Bosco, Johns and Johns"
+                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
+                            ImageUrl = "https://picsum.photos/350/500/?image=677",
+                            Name = "McDermott, Larkin and Langworth"
                         },
                         new
                         {
                             Id = 10,
-                            Description = "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles",
-                            ImageUrl = "https://picsum.photos/350/500/?image=78",
-                            Name = "Klocko, Zboncak and Fahey"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=935",
+                            Name = "Luettgen - Braun"
                         },
                         new
                         {
                             Id = 11,
-                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
-                            ImageUrl = "https://picsum.photos/350/500/?image=910",
-                            Name = "Keebler LLC"
+                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
+                            ImageUrl = "https://picsum.photos/350/500/?image=202",
+                            Name = "Torphy - Lehner"
                         },
                         new
                         {
                             Id = 12,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=34",
-                            Name = "Champlin - Heller"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=342",
+                            Name = "Shanahan, Hahn and Cartwright"
                         },
                         new
                         {
                             Id = 13,
-                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
-                            ImageUrl = "https://picsum.photos/350/500/?image=986",
-                            Name = "Rippin Group"
+                            Description = "Carbonite web goalkeeper gloves are ergonomically designed to give easy fit",
+                            ImageUrl = "https://picsum.photos/350/500/?image=36",
+                            Name = "Johns LLC"
                         },
                         new
                         {
                             Id = 14,
-                            Description = "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality",
-                            ImageUrl = "https://picsum.photos/350/500/?image=641",
-                            Name = "Kertzmann - Armstrong"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=954",
+                            Name = "Orn, Heller and Grady"
                         },
                         new
                         {
                             Id = 15,
-                            Description = "Ergonomic executive chair upholstered in bonded black leather and PVC padded seat and back for all-day comfort and support",
-                            ImageUrl = "https://picsum.photos/350/500/?image=209",
-                            Name = "Schneider LLC"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=678",
+                            Name = "Rempel - Fay"
                         },
                         new
                         {
                             Id = 16,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=1030",
-                            Name = "Dibbert - Wuckert"
+                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
+                            ImageUrl = "https://picsum.photos/350/500/?image=431",
+                            Name = "Kiehn and Sons"
                         },
                         new
                         {
                             Id = 17,
                             Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=455",
-                            Name = "Schinner LLC"
+                            ImageUrl = "https://picsum.photos/350/500/?image=250",
+                            Name = "Stracke - Schimmel"
                         },
                         new
                         {
                             Id = 18,
-                            Description = "Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",
-                            ImageUrl = "https://picsum.photos/350/500/?image=110",
-                            Name = "Weber LLC"
+                            Description = "The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",
+                            ImageUrl = "https://picsum.photos/350/500/?image=625",
+                            Name = "Adams - Collins"
                         },
                         new
                         {
                             Id = 19,
-                            Description = "New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016",
-                            ImageUrl = "https://picsum.photos/350/500/?image=8",
-                            Name = "Little, Herzog and Mraz"
+                            Description = "The Football Is Good For Training And Recreational Purposes",
+                            ImageUrl = "https://picsum.photos/350/500/?image=695",
+                            Name = "Hickle - Hane"
                         },
                         new
                         {
                             Id = 20,
-                            Description = "New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart",
-                            ImageUrl = "https://picsum.photos/350/500/?image=524",
-                            Name = "Yundt, Zemlak and Graham"
+                            Description = "The beautiful range of Apple Naturalé that has an exciting mix of natural ingredients. With the Goodness of 100% Natural Ingredients",
+                            ImageUrl = "https://picsum.photos/350/500/?image=886",
+                            Name = "Sauer - Willms"
                         });
                 });
 
@@ -2543,6 +2546,7 @@ namespace MoonReads.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int?>("ReviewId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
@@ -2816,7 +2820,9 @@ namespace MoonReads.Migrations
 
                     b.HasOne("MoonReads.Models.Review", "Review")
                         .WithOne("Rating")
-                        .HasForeignKey("MoonReads.Models.Rating", "ReviewId");
+                        .HasForeignKey("MoonReads.Models.Rating", "ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MoonReads.Models.User", "User")
                         .WithMany()

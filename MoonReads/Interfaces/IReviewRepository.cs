@@ -1,17 +1,9 @@
-using MoonReads.Dto;
 using MoonReads.Models;
 
-namespace MoonReads.Interfaces
+namespace MoonReads.Interfaces;
+
+public interface IReviewRepository
 {
-    public interface IReviewRepository
-    {
-        Review GetReview(int id);
-        ICollection<ReviewDto> GetReviews(int bookId);
-        ICollection<ReviewDto> GetUserReviews(User user);
-        bool CreateReview(Review review);
-        bool UpdateReview(Review review);
-        bool DeleteReview(Review review);
-        bool ReviewExists(int id);
-        bool Save();
-    }
+    Review GetReview(int id);
+    bool ReviewExists(int reviewId);
 }

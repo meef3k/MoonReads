@@ -12,6 +12,5 @@ namespace MoonReads.Models
 		public string ImageUrl { get; set; }
 		public ICollection<AuthorCategory> AuthorCategories { get; set; }
 		public ICollection<BookAuthor> BookAuthors { get; set; }
-		public ICollection<Rating> Rating { get; set; }
 	}
 }

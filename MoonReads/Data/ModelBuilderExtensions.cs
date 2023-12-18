@@ -41,9 +41,9 @@ namespace MoonReads.Data
             var books = bookFaker.Generate(50);
             modelBuilder.Entity<Book>().HasData(books);
             
-            var ratingFaker = SeedRatingTable(books);
+            /*var ratingFaker = SeedRatingTable(books);
             var ratings = ratingFaker.Generate(200);
-            modelBuilder.Entity<Rating>().HasData(ratings);
+            modelBuilder.Entity<Rating>().HasData(ratings);*/
 
             var authorCategoryFaker = SeedAuthorCategoryTable(authors, categories);
             var authorCategories = authorCategoryFaker.Generate(50)
@@ -105,13 +105,13 @@ namespace MoonReads.Data
                 .RuleFor(b => b.PublisherId, f => f.PickRandom(publishers).Id);
         }
         
-        private static Faker<Rating> SeedRatingTable(List<Book> books)
+        /*private static Faker<Rating> SeedRatingTable(List<Book> books)
         {
             return new Faker<Rating>()
                 .RuleFor(r => r.Id, f => f.IndexFaker + 1)
                 .RuleFor(r => r.Rate, f => f.Random.Int(1, 5))
                 .RuleFor(r => r.BookId, f => f.PickRandom(books).Id);
-        }
+        }*/
         
         private static Faker<AuthorCategory> SeedAuthorCategoryTable(List<Author> authors, List<Category> categories)
         {
