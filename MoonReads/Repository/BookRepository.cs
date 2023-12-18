@@ -26,6 +26,7 @@ namespace MoonReads.Repository
         {
             return _context
                 .Books
+                .Where(b => b.Pending == false)
                 .Select(b => new BookDetailDto
                 {
                     Id = b.Id,

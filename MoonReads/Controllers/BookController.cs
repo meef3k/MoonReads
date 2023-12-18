@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -26,7 +26,6 @@ namespace MoonReads.Controllers
         private readonly IRatingRepository _ratingRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IReactionRepository _reactionRepository;
-        private readonly DataContext _context;
 
         public BookController(IBookRepository bookRepository,
             IPublisherRepository publisherRepository,
@@ -34,8 +33,7 @@ namespace MoonReads.Controllers
             UserManager<User> userManager,
             IRatingRepository ratingRepository,
             IReviewRepository reviewRepository,
-            IReactionRepository reactionRepository,
-            DataContext context)
+            IReactionRepository reactionRepository)
 		{
 			_bookRepository = bookRepository;
             _publisherRepository = publisherRepository;
@@ -44,7 +42,6 @@ namespace MoonReads.Controllers
             _ratingRepository = ratingRepository;
             _reviewRepository = reviewRepository;
             _reactionRepository = reactionRepository;
-            _context = context;
         }
 
 		[HttpGet]
@@ -65,11 +62,14 @@ namespace MoonReads.Controllers
 		public IActionResult GetBook(int bookId)
 		{
 			if (!_bookRepository.BookExists(bookId))
-				return NotFound();
+				return NotFound(InternalStatusCodes.EntityNotExist);
 
 			var book = _mapper.Map<BookDetailDto>(_bookRepository.GetBookDetails(bookId));
 
-			if (!ModelState.IsValid)
+            if (book == null)
+                return Unauthorized();
+
+            if (!ModelState.IsValid)
 				return BadRequest(InternalStatusCodes.InvalidPayload);
 
 			return Ok(book);
@@ -277,11 +277,9 @@ namespace MoonReads.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateRating(int rateId, [FromBody] JsonPatchDocument<Rating>? updatedRating)
+        public IActionResult UpdateRating(int rateId, [FromBody] JsonPatchDocument<Rating>? updatedRating)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            
-            var user = await _userManager.FindByIdAsync(userId);
             
             var rating = _ratingRepository.GetRating(rateId);
             
@@ -291,11 +289,8 @@ namespace MoonReads.Controllers
             if (!_ratingRepository.RatingExists(rateId))
                 return NotFound(InternalStatusCodes.EntityNotExist);
             
-            if (await _userManager.IsInRoleAsync(user!, UserRoles.User))
-            {
-                if (rating.UserId != userId)
-                    return BadRequest(InternalStatusCodes.InvalidUser);
-            }
+            if (rating.UserId != userId)
+                return BadRequest(InternalStatusCodes.InvalidUser);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
