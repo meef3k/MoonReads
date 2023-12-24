@@ -100,13 +100,10 @@ namespace MoonReads.Controllers
             }
 
             var authorMap = _mapper.Map<Author>(authorCreate);
+            
+            var id = _authorRepository.CreateAuthor(authorMap);
 
-            if (!_authorRepository.CreateAuthor(authorMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
-
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
 
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]

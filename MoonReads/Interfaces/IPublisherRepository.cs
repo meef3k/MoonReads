@@ -8,7 +8,7 @@ namespace MoonReads.Interfaces
         Publisher GetPublisher(int id);
         ICollection<Publisher> GetPublishers();
         ICollection<BookDetailDto> GetBookByPublisher(int publisherId);
-        bool CreatePublisher(Publisher publisher);
+        int CreatePublisher(Publisher publisher);
         bool UpdatePublisher(Publisher publisher);
         bool DeletePublisher(Publisher publisher);
         bool PublisherExists(int publisherId);

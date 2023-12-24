@@ -104,12 +104,9 @@ namespace MoonReads.Controllers
 
             var categoryMap = _mapper.Map<Category>(categoryCreate);
 
-            if (!_categoryRepository.CreateCategory(categoryMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
+            var id = _categoryRepository.CreateCategory(categoryMap);
 
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
 
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]

@@ -330,20 +330,20 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpGet("rate/review/{reviewId}/reaction/user")]
+        [HttpGet("{bookId}/reaction/user")]
         [ProducesResponseType(200, Type = typeof(ReactionDto))]
-        public IActionResult GetUserReaction(int reviewId)
+        public async Task<IActionResult> GetUserReaction(int bookId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             
-            var reaction = _reactionRepository.GetReaction(reviewId, userId);
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var reaction = _reactionRepository.GetBookReactions(bookId, user!);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var reactionDto = _mapper.Map<ReactionDto>(reaction);
-
-            return Ok(reactionDto);
+            return Ok(reaction);
         }
 
         [Authorize]

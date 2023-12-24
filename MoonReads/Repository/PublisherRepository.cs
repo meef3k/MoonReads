@@ -59,11 +59,11 @@ namespace MoonReads.Repository
                 .ToList();
         }
 
-        public bool CreatePublisher(Publisher publisher)
+        public int CreatePublisher(Publisher publisher)
         {
             _context.Add(publisher);
 
-            return Save();
+            return Save() ? publisher.Id : 0;
         }
 
         public bool DeletePublisher(Publisher publisher)

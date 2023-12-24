@@ -94,11 +94,11 @@ namespace MoonReads.Repository
                 .ToList();
         }
 
-        public bool CreateAuthor(Author author)
+        public int CreateAuthor(Author author)
         {
             _context.Add(author);
 
-            return Save();
+            return Save() ? author.Id : 0;
         }
 
         public bool Save()

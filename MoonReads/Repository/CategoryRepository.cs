@@ -64,11 +64,11 @@ namespace MoonReads.Repository
                 .ToList();
         }
         
-        public bool CreateCategory(Category category)
+        public int CreateCategory(Category category)
         {
             _context.Add(category);
 
-            return Save();
+            return Save() ? category.Id : 0;
         }
 
         public bool UpdateCategory(Category category)

@@ -101,12 +101,9 @@ namespace MoonReads.Controllers
 
             var publisherMap = _mapper.Map<Publisher>(publisherCreate);
 
-            if (!_publisherRepository.CreatePublisher(publisherMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
+            var id = _publisherRepository.CreatePublisher(publisherMap);
 
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
 
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
