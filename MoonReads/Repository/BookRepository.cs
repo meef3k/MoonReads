@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using MoonReads.Data;
+﻿using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -24,73 +23,17 @@ namespace MoonReads.Repository
 
         public BookDetailDto GetBookDetails(int id)
         {
-            return _context
-                .Books
-                .Where(b => b.Pending == false)
-                .Select(b => new BookDetailDto
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Description = b.Description,
-                    ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                    Pages = b.Pages,
-                    Isbn = b.Isbn,
-                    Publisher = new PublisherShortDto
-                    {
-                        Id = b.Publisher!.Id,
-                        Name = b.Publisher!.Name
-                    },
-                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                    {
-                        Id = a.AuthorId,
-                        Name = a.Author!.Name
-                    }).ToList(),
-                    Categories = b.BookCategories.Select(c => new CategoryDto
-                    {
-                        Id = c.CategoryId,
-                        Name = c.Category!.Name
-                    }).ToList()
-                })
+            return MapToBookDetailDto(_context.Books.Where(b => b.Pending == false))
                 .FirstOrDefault(b => b.Id == id)!;
         }
         
         public ICollection<BookDetailDto> GetBooks(bool pending)
 		{
-            return _context
-                .Books
-                .Where(b => b.Pending == pending)
-                .Select(b => new BookDetailDto
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Description = b.Description,
-                    ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                    Pages = b.Pages,
-                    Isbn = b.Isbn,
-                    Publisher = new PublisherShortDto
-                    {
-                        Id = b.Publisher!.Id,
-                        Name = b.Publisher!.Name
-                    },
-                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                    {
-                        Id = a.AuthorId,
-                        Name = a.Author!.Name
-                    }).ToList(),
-                    Categories = b.BookCategories.Select(c => new CategoryDto
-                    {
-                        Id = c.CategoryId,
-                        Name = c.Category!.Name
-                    }).ToList()
-                })
+            return MapToBookDetailDto(_context.Books.Where(b => b.Pending == pending))
                 .ToList();
 		}
 
-        public bool CreateBook(int[] authorsIds, int[] categoriesIds, Book book)
+        public int CreateBook(int[] authorsIds, int[] categoriesIds, Book book)
         {
             AddBookAuthors(authorsIds, book);
             
@@ -98,7 +41,7 @@ namespace MoonReads.Repository
 
             _context.Add(book);
 
-            return Save();
+            return Save() ? book.Id : 0;
         }
 
         public bool UpdateBook(int publisherId, int[] authorsIds, int[] categoriesIds, Book book)
@@ -161,7 +104,7 @@ namespace MoonReads.Repository
                 var author = _context.Authors.FirstOrDefault(a => a.Id == authorId);
                 var bookAuthor = new BookAuthor()
                 {
-                    Author = author,
+                    Author = author!,
                     Book = book
                 };
                 _context.Add(bookAuthor);
@@ -175,7 +118,7 @@ namespace MoonReads.Repository
                 var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
                 var bookCategory = new BookCategory()
                 {
-                    Category = category,
+                    Category = category!,
                     Book = book
                 };
 
@@ -205,6 +148,38 @@ namespace MoonReads.Repository
             {
                 _context.BookCategories.Remove(bookCategoryRecord);
             }
+        }
+        
+        private static IQueryable<BookDetailDto> MapToBookDetailDto(IQueryable<Book> books)
+        {
+            return books.Select(b => new BookDetailDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Description = b.Description,
+                ImageUrl = b.ImageUrl,
+                ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
+                Pages = b.Pages,
+                Isbn = b.Isbn,
+                Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                TotalRatings = b.Rating.Any() ? b.Rating.Count : 0,
+                TotalReviews = b.Rating.Count(r => r.ReviewId != null),
+                Publisher = new PublisherShortDto
+                {
+                    Id = b.Publisher.Id,
+                    Name = b.Publisher.Name
+                },
+                Authors = b.BookAuthors.Select(a => new AuthorShortDto
+                {
+                    Id = a.AuthorId,
+                    Name = a.Author.Name
+                }).ToList(),
+                Categories = b.BookCategories.Select(c => new CategoryDto
+                {
+                    Id = c.CategoryId,
+                    Name = c.Category.Name
+                }).ToList()
+            });
         }
     }
 }

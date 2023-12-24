@@ -4,6 +4,7 @@ using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
+using Newtonsoft.Json;
 
 namespace MoonReads.Repository;
 
@@ -37,6 +38,7 @@ public class RatingRepository : IRatingRepository
                 Rate = r.Rate,
                 UserName = r.User.UserName!,
                 UserId = r.UserId,
+                UserAvatar = r.User.Avatar!,
                 Review = new ReviewDetailDto
                 {
                     Id = r.Review!.Id,
@@ -63,7 +65,7 @@ public class RatingRepository : IRatingRepository
             .FirstOrDefault();
     }
 
-    public bool CreateRating(Rating rating)
+    public int CreateRating(Rating rating)
     {
         if (rating.Review != null)
         {
@@ -73,30 +75,34 @@ public class RatingRepository : IRatingRepository
         
         _context.Add(rating);
 
-        return Save();
+        return Save() ? rating.Id : 0;
     }
 
     public bool UpdateRating(JsonPatchDocument<Rating> updatedRating, Rating rating)
     {
-        if (updatedRating.Operations.Any(o => o.path == "/Review"))
-        {
-            var review = _context.Reviews.Where(r => r.Id == rating.ReviewId);
+        var reviewPath = updatedRating.Operations.FirstOrDefault(op => op.path.Equals("Review", StringComparison.OrdinalIgnoreCase));
+        var ratePath = updatedRating.Operations.FirstOrDefault(op => op.path.Equals("Rate", StringComparison.OrdinalIgnoreCase));
 
-            
-            foreach (var op in updatedRating.Operations.Where(op => op.path.StartsWith("/Review/")))
+        if (reviewPath != null)
+        {
+            if (rating.Review == null)
             {
-                var propertyName = op.path.Substring("/Review/".Length);
-                var property = typeof(Review).GetProperty(propertyName);
-                
-                if (property != null)
-                {
-                    property.SetValue(review, op.value);
-                }
+                updatedRating.ApplyTo(rating);
+                rating.Review!.CreationDateTime = DateTime.UtcNow;
+            }
+            else
+            {
+                var reviewPatch = reviewPath.value.ToString();
+                JsonConvert.PopulateObject(reviewPatch!, rating.Review);
             }
         }
         
-        updatedRating.ApplyTo(rating);
-
+        if (ratePath != null)
+        {
+            var rateValue = (int)(long)ratePath.value;
+            rating.Rate = rateValue;
+        }
+        
         return Save();
     }
 

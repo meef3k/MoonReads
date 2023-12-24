@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -112,7 +111,7 @@ namespace MoonReads.Controllers
 
         [Authorize]
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public IActionResult CreateBook([FromQuery] int publisherId, [FromQuery] int[] authorsIds, [FromQuery] int[] categoriesIds, [FromBody] BookDto? bookCreate)
         {
@@ -121,7 +120,7 @@ namespace MoonReads.Controllers
 
             var books = _bookRepository
                 .GetBooks(false)
-                .FirstOrDefault(b => b.Title.Trim().ToUpper() == bookCreate.Title.TrimEnd().ToUpper());
+                .FirstOrDefault(b => string.Equals(b.Title.Trim(), bookCreate.Title.TrimEnd(), StringComparison.CurrentCultureIgnoreCase));
 
             if (books != null)
             {
@@ -146,13 +145,10 @@ namespace MoonReads.Controllers
             bookMap.Pending = User.IsInRole(UserRoles.User);
 
             bookMap.Publisher = _publisherRepository.GetPublisher(publisherId);
+            
+            var id = _bookRepository.CreateBook(authorsIds, categoriesIds, bookMap);
 
-            if (!_bookRepository.CreateBook(authorsIds, categoriesIds, bookMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
-
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
 
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
@@ -237,7 +233,7 @@ namespace MoonReads.Controllers
 
         [Authorize]
         [HttpPost("{bookId}/rate")]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateRating(int bookId, [FromBody] RatingDto? ratingCreate)
         {
@@ -263,13 +259,10 @@ namespace MoonReads.Controllers
             
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            var id = _ratingRepository.CreateRating(ratingMap);
 
-            if (!_ratingRepository.CreateRating(ratingMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
-
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
         
         [Authorize]
@@ -335,10 +328,27 @@ namespace MoonReads.Controllers
 
             return NoContent();
         }
+        
+        [Authorize]
+        [HttpGet("rate/review/{reviewId}/reaction/user")]
+        [ProducesResponseType(200, Type = typeof(ReactionDto))]
+        public IActionResult GetUserReaction(int reviewId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var reaction = _reactionRepository.GetReaction(reviewId, userId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            var reactionDto = _mapper.Map<ReactionDto>(reaction);
+
+            return Ok(reactionDto);
+        }
 
         [Authorize]
         [HttpPost("rate/review/{reviewId}/reaction")]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateReaction([FromRoute] int reviewId, [FromBody] ReactionDto? reactionCreate)
         {
@@ -365,12 +375,9 @@ namespace MoonReads.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
             
-            if (!_reactionRepository.CreateReaction(reactionMap))
-            {
-                return StatusCode(500, InternalStatusCodes.CreateError);
-            }
+            var id = _reactionRepository.CreateReaction(reactionMap);
 
-            return NoContent();
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
         
         [Authorize]

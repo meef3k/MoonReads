@@ -21,11 +21,11 @@ public class ReactionRepository : IReactionRepository
             .FirstOrDefault(r => r.User!.Id == userId);
     }
     
-    public bool CreateReaction(Reaction reaction)
+    public int CreateReaction(Reaction reaction)
     {
         _context.Add(reaction);
 
-        return Save();
+        return Save() ? reaction.Id : 0;
     }
 
     public bool UpdateReaction(Reaction reaction, int reviewId, string userId)

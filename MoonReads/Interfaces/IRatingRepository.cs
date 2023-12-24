@@ -10,7 +10,7 @@ public interface IRatingRepository
     Rating GetRatingByUser(int bookId, string userId);
     ICollection<RatingDetailDto> GetRatings(int bookId);
     RatingShortDto? GetUserRating(int bookId, string userId);
-    bool CreateRating(Rating rating);
+    int CreateRating(Rating rating);
     bool UpdateRating(JsonPatchDocument<Rating> updatedRating, Rating rating);
     bool DeleteRating(Rating rating);
     bool RatingExists(int id);
