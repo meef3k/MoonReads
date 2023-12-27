@@ -208,6 +208,30 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
+        [HttpGet("{bookId}/bookshelf/user")]
+        [ProducesResponseType(200, Type = typeof(BookshelfShortDto))]
+        public async Task<IActionResult> GetUserBookshelf(int bookId)
+        {
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+            
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var bookshelf = _bookshelfRepository.GetBookshelf(book, user!);
+
+            var bookshelfMap = _mapper.Map<BookshelfShortDto>(bookshelf);
+
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            return Ok(bookshelfMap);
+        }
+        
+        [Authorize]
         [HttpPost("{bookId}/bookshelf")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
