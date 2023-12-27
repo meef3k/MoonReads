@@ -44,6 +44,8 @@ namespace MoonReads.Helper
 			CreateMap<Reaction, ReactionDto>();
 			CreateMap<RatingShortDto, Rating>();
 			CreateMap<Rating, RatingShortDto>();
+			CreateMap<BookshelfDto, Bookshelf>();
+			CreateMap<Bookshelf, BookshelfDto>();
 			CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
 			CreateMap(typeof(Operation<>), typeof(Operation<>));
 		}

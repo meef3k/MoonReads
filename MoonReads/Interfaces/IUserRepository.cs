@@ -6,6 +6,7 @@ namespace MoonReads.Interfaces
 {
     public interface IUserRepository
     {
+        public UserInfoDto? GetUserInfo(string userId);
         public Task<(int, string)> Register(UserRegisterDto user, string role);
         public Task<UserTokenDto> Login(UserLoginDto user);
         public Task<UserTokenDto> GetRefreshToken(UserRefreshTokenDto refreshToken, ClaimsPrincipal userClaims);

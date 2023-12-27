@@ -25,6 +25,7 @@ namespace MoonReads.Controllers
         private readonly IRatingRepository _ratingRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IReactionRepository _reactionRepository;
+        private readonly IBookshelfRepository _bookshelfRepository;
 
         public BookController(IBookRepository bookRepository,
             IPublisherRepository publisherRepository,
@@ -32,7 +33,8 @@ namespace MoonReads.Controllers
             UserManager<User> userManager,
             IRatingRepository ratingRepository,
             IReviewRepository reviewRepository,
-            IReactionRepository reactionRepository)
+            IReactionRepository reactionRepository,
+            IBookshelfRepository bookshelfRepository)
 		{
 			_bookRepository = bookRepository;
             _publisherRepository = publisherRepository;
@@ -41,6 +43,7 @@ namespace MoonReads.Controllers
             _ratingRepository = ratingRepository;
             _reviewRepository = reviewRepository;
             _reactionRepository = reactionRepository;
+            _bookshelfRepository = bookshelfRepository;
         }
 
 		[HttpGet]
@@ -197,6 +200,112 @@ namespace MoonReads.Controllers
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
             if (!_bookRepository.DeleteBook(book))
+            {
+                return BadRequest(InternalStatusCodes.DeleteError);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpPost("{bookId}/bookshelf")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateBookshelf(int bookId, [FromBody] BookshelfDto? bookshelfCreate)
+        {
+            if (bookshelfCreate == null)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (_bookshelfRepository.BookshelfExists(book, user!))
+                return BadRequest(InternalStatusCodes.EntityExist);
+
+            var bookshelfMap = _mapper.Map<Bookshelf>(bookshelfCreate);
+
+            bookshelfMap.User = user!;
+            bookshelfMap.Book = book;
+            
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            var id = _bookshelfRepository.CreateBookshelf(bookshelfMap);
+
+            return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
+        }
+        
+        [Authorize]
+        [HttpPut("{bookId}/bookshelf")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UpdateBookshelf(int bookId, [FromBody] BookshelfDto? updatedBookshelf)
+        {
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var bookshelf = _bookshelfRepository.GetBookshelf(book, user!);
+            
+            if (updatedBookshelf == null)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!_bookshelfRepository.BookshelfExists(book, user!))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+            
+            if (bookshelf!.User != user)
+                return BadRequest(InternalStatusCodes.InvalidUser);
+
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            bookshelf.Status = updatedBookshelf.Status;
+
+            if (!_bookshelfRepository.UpdateBookshelf(bookshelf))
+            {
+                return StatusCode(500, InternalStatusCodes.EditError);
+            }
+
+            return NoContent();
+        }
+        
+        [Authorize]
+        [HttpDelete("{bookId}/bookshelf")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteBookshelf(int bookId)
+        {
+            var book = _bookRepository.GetBook(bookId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var bookshelf = _bookshelfRepository.GetBookshelf(book, user!);
+            
+            if (!_bookshelfRepository.BookshelfExists(book, user!))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+            
+            if (await _userManager.IsInRoleAsync(user!, UserRoles.User))
+            {
+                if (bookshelf!.User != user)
+                    return BadRequest(InternalStatusCodes.InvalidUser);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+
+            if (!_bookshelfRepository.DeleteBookshelf(bookshelf!))
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }

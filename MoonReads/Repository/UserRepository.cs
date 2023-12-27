@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -16,13 +17,39 @@ namespace MoonReads.Repository
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly DataContext _context;
+        private readonly IBookshelfRepository _bookshelfRepository;
+        private readonly IRatingRepository _ratingRepository;
 
         public UserRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration, DataContext context, IBookshelfRepository bookshelfRepository, IRatingRepository ratingRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _context = context;
+            _bookshelfRepository = bookshelfRepository;
+            _ratingRepository = ratingRepository;
+        }
+        
+        
+        public UserInfoDto? GetUserInfo(string userId)
+        {
+            return _context
+                .Users
+                .Where(u => u.Id == userId)
+                .Select(u => new UserInfoDto
+                {
+                    UserName = u.UserName!,
+                    Email = u.Email!,
+                    Description = u.Description!,
+                    Avatar = u.Avatar!,
+                    Ratings = _ratingRepository.GetUserRatings(userId),
+                    Read = _bookshelfRepository.GetBookshelves(userId, Statuses.Read),
+                    Reading = _bookshelfRepository.GetBookshelves(userId, Statuses.Reading),
+                    ToRead = _bookshelfRepository.GetBookshelves(userId, Statuses.ToRead)
+                })
+                .FirstOrDefault();
         }
 
         public async Task<(int, string)> Register(UserRegisterDto user, string role)

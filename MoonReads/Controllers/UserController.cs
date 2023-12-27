@@ -132,23 +132,12 @@ namespace MoonReads.Controllers
             return Ok();
         }
         
-        [Authorize]
-        [HttpGet("details")]
-        [ProducesResponseType(200, Type = typeof(User))]
+        [HttpGet("details/{userId}")]
+        [ProducesResponseType(200, Type = typeof(UserInfoDto))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> GetUserInfo()
+        public IActionResult GetUserInfo(string userId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            var userInfo = new
-            {
-                user!.UserName,
-                user.Email,
-                user.Description,
-                user.Avatar
-            };
+            var userInfo = _userRepository.GetUserInfo(userId);
 
             return Ok(userInfo);
         }

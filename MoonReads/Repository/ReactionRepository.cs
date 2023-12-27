@@ -72,7 +72,7 @@ public class ReactionRepository : IReactionRepository
     
     public bool Save()
     {
-        //_context.DataVersions.FirstOrDefault(d => d.Table == "Reactions")!.Version++;
+        _context.DataVersions.FirstOrDefault(d => d.Table == "Reactions")!.Version++;
 
         var saved = _context.SaveChanges();
 

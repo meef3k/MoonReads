@@ -51,6 +51,28 @@ public class RatingRepository : IRatingRepository
             .OrderByDescending(r => r.Review!.Reactions)
             .ToList();
     }
+
+    public ICollection<RatingReviewDto> GetUserRatings(string userId)
+    {
+        return _context
+            .Ratings
+            .Where(r => r.UserId == userId && r.Review != null)
+            .Select(r => new RatingReviewDto
+            {
+                Id = r.Id,
+                Rate = r.Rate,
+                Review = new ReviewDetailDto
+                {
+                    Id = r.Review!.Id,
+                    Title = r.Review.Title,
+                    Description = r.Review.Description,
+                    CreationDateTime = r.Review.CreationDateTime,
+                    Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
+                }
+            })
+            .OrderByDescending(r => r.Review!.Reactions)
+            .ToList();
+    }
     
     public RatingShortDto? GetUserRating(int bookId, string userId)
     {
