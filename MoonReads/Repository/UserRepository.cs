@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
@@ -50,6 +51,30 @@ namespace MoonReads.Repository
                     ToRead = _bookshelfRepository.GetBookshelves(userId, Statuses.ToRead)
                 })
                 .FirstOrDefault();
+        }
+        
+        public async Task<List<UserDto>> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+
+            var usersDto = new List<UserDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var userDto = new UserDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    Email = user.Email!,
+                    Roles = roles.ToList()
+                };
+
+                usersDto.Add(userDto);
+            }
+
+            return usersDto;
         }
 
         public async Task<(int, string)> Register(UserRegisterDto user, string role)

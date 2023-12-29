@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,20 +15,17 @@ namespace MoonReads.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserController> _logger;
-        private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
         public UserController(
             IUserRepository userRepository,
             ILogger<UserController> logger,
-            IMapper mapper,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -77,7 +73,7 @@ namespace MoonReads.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(InternalStatusCodes.InvalidPayload);
-                var (status, message) = await _userRepository.Register(user, "User");
+                var (status, message) = await _userRepository.Register(user, UserRoles.User);
                 if (status == 0)
                     return BadRequest(message);
                 return CreatedAtAction(nameof(Register), user);
@@ -140,6 +136,39 @@ namespace MoonReads.Controllers
             var userInfo = _userRepository.GetUserInfo(userId);
 
             return Ok(userInfo);
+        }
+        
+        [Authorize(Roles = $"{UserRoles.Admin}")]
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(UserDto))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userRepository.GetUsers();
+
+            return Ok(users);
+        }
+        
+        [Authorize(Roles = $"{UserRoles.Admin}")]
+        [HttpPut("{userId}/role")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> EditUserRole(string userId, [FromBody] UserRoleDto userRole)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var role = userRole.Role.First().ToString().ToUpper() + userRole.Role[1..].ToLower();
+
+            if (!await _userRepository.RoleExists(role))
+                return NotFound(InternalStatusCodes.EntityNotExist);
+
+            if (await _userRepository.AddToRole(user!, role))
+            {
+                return NoContent();
+            }
+
+            return BadRequest(InternalStatusCodes.EditError);
         }
         
         [Authorize]
