@@ -17,7 +17,7 @@ namespace MoonReads.Controllers
 	public class BookController : Controller
 	{
         private const string DefaultDescription = "Ta książka nie ma jeszcze opisu";
-        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/512/10701/10701484.png";
+        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/256/11509/11509955.png";
 		private readonly IBookRepository _bookRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;

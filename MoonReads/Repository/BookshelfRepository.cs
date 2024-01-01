@@ -48,6 +48,8 @@ public class BookshelfRepository : IBookshelfRepository
                 Title = b.Book.Title,
                 ImageUrl = b.Book.ImageUrl,
                 Rating = b.Book.Rating.Select(r => r.Rate).Any() ? b.Book.Rating.Select(r => r.Rate).Average() : 0,
+                TotalRatings = b.Book.Rating.Any() ? b.Book.Rating.Count : 0,
+                ReleaseDate = b.Book.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
                 Authors = b.Book.BookAuthors.Select(a => new AuthorShortDto
                 {
                     Id = a.AuthorId,

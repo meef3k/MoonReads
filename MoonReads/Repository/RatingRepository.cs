@@ -68,6 +68,17 @@ public class RatingRepository : IRatingRepository
                     Description = r.Review.Description,
                     CreationDateTime = r.Review.CreationDateTime,
                     Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
+                },
+                Book = new BookShortDto
+                {
+                    Id = r.BookId,
+                    Title = r.Book.Title,
+                    ImageUrl = r.Book.ImageUrl,
+                    Authors = r.Book.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author.Name
+                    }).ToList(),
                 }
             })
             .OrderByDescending(r => r.Review!.Reactions)

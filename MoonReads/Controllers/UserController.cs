@@ -178,6 +178,9 @@ namespace MoonReads.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> EditUserInfo([FromBody] UserDetailDto userEdit)
         {
+            if (await _userRepository.UserExists(userEdit.UserName))
+                return BadRequest(InternalStatusCodes.EntityExist);
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var user = await _userManager.FindByIdAsync(userId);
@@ -232,6 +235,9 @@ namespace MoonReads.Controllers
         [HttpPut("details/email")]
         public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
         {
+            if (await _userRepository.UserExists(userEmail.NewEmail))
+                return BadRequest(InternalStatusCodes.EntityExist);
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             var user = await _userManager.FindByIdAsync(userId);

@@ -15,6 +15,8 @@ namespace MoonReads.Repository
 {
     public class UserRepository : IUserRepository
     {
+        private const string DefaultDescription = "Ten użytkownik nie ma jeszcze opisu";
+        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/256/847/847969.png";
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
@@ -41,6 +43,7 @@ namespace MoonReads.Repository
                 .Where(u => u.Id == userId)
                 .Select(u => new UserInfoDto
                 {
+                    Id = u.Id,
                     UserName = u.UserName!,
                     Email = u.Email!,
                     Description = u.Description!,
@@ -177,7 +180,7 @@ namespace MoonReads.Repository
 
         public async Task<bool> UserExists(string userName)
         {
-            var userExists = await _userManager.FindByNameAsync(userName);
+            var userExists = await _userManager.FindByNameAsync(userName) ?? await _userManager.FindByEmailAsync(userName);
             return userExists != null;
         }
 
@@ -187,17 +190,21 @@ namespace MoonReads.Repository
             {
                 Email = user.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = user.UserName
+                UserName = user.UserName,
+                Avatar = DefaultImageUrl,
+                Description = DefaultDescription
             };
 
             var createUserResult = await _userManager.CreateAsync(createUser, user.Password);
             if (!createUserResult.Succeeded) return false;
-            return await AddToRole(createUser, "User");
+            return await AddToRole(createUser, UserRoles.User);
         }
 
         public async Task<bool> AddToRole(User user, string role)
         {
             if (!await RoleExists(role)) return false;
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
             var addToRole = await _userManager.AddToRoleAsync(user, role);
             return addToRole.Succeeded;
         }
