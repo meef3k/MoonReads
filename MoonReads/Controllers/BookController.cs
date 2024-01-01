@@ -16,8 +16,6 @@ namespace MoonReads.Controllers
 	[ApiController]
 	public class BookController : Controller
 	{
-        private const string DefaultDescription = "Ta książka nie ma jeszcze opisu";
-        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/256/11509/11509955.png";
 		private readonly IBookRepository _bookRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
@@ -135,12 +133,12 @@ namespace MoonReads.Controllers
             
             if (bookCreate.Description.IsNullOrEmpty())
             {
-                bookCreate.Description = DefaultDescription;
+                bookCreate.Description = Defaults.BookDescription;
             }
 
             if (bookCreate.ImageUrl.IsNullOrEmpty())
             {
-                bookCreate.ImageUrl = DefaultImageUrl;
+                bookCreate.ImageUrl = Defaults.BookPhoto;
             }
 
             var bookMap = _mapper.Map<Book>(bookCreate);

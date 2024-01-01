@@ -15,8 +15,6 @@ namespace MoonReads.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private const string DefaultDescription = "Ten użytkownik nie ma jeszcze opisu";
-        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/256/847/847969.png";
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
@@ -191,8 +189,8 @@ namespace MoonReads.Repository
                 Email = user.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = user.UserName,
-                Avatar = DefaultImageUrl,
-                Description = DefaultDescription
+                Avatar = Defaults.UserPhoto,
+                Description = Defaults.UserDescription
             };
 
             var createUserResult = await _userManager.CreateAsync(createUser, user.Password);
