@@ -6,6 +6,8 @@ namespace MoonReads.Data
 {
     public static class Seeds
     {
+        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/256/847/847969.png";
+        
         public static async Task SeedRoles(WebApplication app)
         {
             using var scope = app.Services.CreateScope();
@@ -53,6 +55,7 @@ namespace MoonReads.Data
                 {
                     Email = userSeed.Email,
                     UserName = userSeed.UserName,
+                    Avatar = DefaultImageUrl
                 };
 
                 await userManager.CreateAsync(user, userSeed.Password);
