@@ -82,7 +82,7 @@ namespace MoonReads.Repository
 
         public async Task<(int, string)> Register(UserRegisterDto user, string role)
         {
-            if (await UserExists(user.UserName))
+            if (await UserExists(user.UserName) || await UserExists(user.Email))
                 return (0, InternalStatusCodes.EntityExist);
 
             if (await CreateUser(user))
