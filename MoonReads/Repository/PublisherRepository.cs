@@ -1,4 +1,5 @@
-﻿using MoonReads.Data;
+﻿using System.Linq.Expressions;
+using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -19,9 +20,36 @@ namespace MoonReads.Repository
             return _context.Publishers.FirstOrDefault(p => p.Id == id)!;
         }
         
-        public ICollection<Publisher> GetPublishers()
+        public PagedList<Publisher> GetPublishers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            return _context.Publishers.OrderBy(p => p.Id).ToList();
+            IQueryable<Publisher> publishersQuery = _context.Publishers;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                publishersQuery = publishersQuery.Where(p =>
+                    p.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            Expression<Func<Publisher, object>> keySelector = sortColumn?.ToLower() switch
+            {
+                "name" => publisher => publisher.Name,
+                "description" => publisher => publisher.Description,
+                _ => publisher => publisher.Id
+            };
+
+            publishersQuery = sortOrder?.ToLower() == "desc" ? publishersQuery.OrderByDescending(keySelector) : publishersQuery.OrderBy(keySelector);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<Publisher>.Create(publishersQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<Publisher>.Create(publishersQuery, 1, _context.Publishers.Count());
         }
         
         public ICollection<BookDetailDto> GetBookByPublisher(int publisherId)
@@ -83,6 +111,11 @@ namespace MoonReads.Repository
         public bool PublisherExists(int publisherId)
         {
             return _context.Publishers.Any(p => p.Id == publisherId);
+        }
+        
+        public bool PublisherExists(string publisherName)
+        {
+            return _context.Publishers.Any(p => p.Name == publisherName);
         }
         
         public bool Save()

@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
@@ -54,28 +54,56 @@ namespace MoonReads.Repository
                 .FirstOrDefault();
         }
         
-        public async Task<List<UserDto>> GetUsers()
+        public PagedList<UserDto> GetUsers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var users = await _context.Users.ToListAsync();
-
-            var usersDto = new List<UserDto>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                var userDto = new UserDto
+            var usersQuery = _context.Users
+                .Join(_context.UserRoles, 
+                    u => u.Id, 
+                    ur => ur.UserId, 
+                    (u, ur) => new { u, ur })
+                .Join(_context.Roles, 
+                    ur => ur.ur.RoleId, 
+                    r => r.Id, 
+                    (ur, r) => new { ur, r }) 
+                .Select(c => new UserDto
                 {
-                    Id = user.Id,
-                    UserName = user.UserName!,
-                    Email = user.Email!,
-                    Roles = roles.ToList()
-                };
+                    Id = c.ur.u.Id,
+                    UserName = c.ur.u.UserName!,
+                    Email = c.ur.u.Email!,
+                    Role = c.r.Name!
+                }).AsQueryable();
 
-                usersDto.Add(userDto);
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                usersQuery = usersQuery.Where(u =>
+                    u.UserName.ToLower().Contains(searchTerm.ToLower()) ||
+                    u.Email.ToLower().Contains(searchTerm.ToLower()) ||
+                    u.Role.ToLower().Contains(searchTerm.ToLower()));
             }
 
-            return usersDto;
+            Expression<Func<UserDto, object>> keySelectorString = sortColumn?.ToLower() switch
+            {
+                "username" => user => user.UserName,
+                "email" => user => user.Email,
+                "role" => user => user.Role,
+                _ => user => user.Id
+            };
+
+            usersQuery = sortOrder?.ToLower() == "desc"
+                ? usersQuery.OrderByDescending(keySelectorString)
+                : usersQuery.OrderBy(keySelectorString);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<UserDto>.Create(usersQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<UserDto>.Create(usersQuery, 1, _context.Users.Count());
         }
 
         public async Task<(int, string)> Register(UserRegisterDto user, string role)

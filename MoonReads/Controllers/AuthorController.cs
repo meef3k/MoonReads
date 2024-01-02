@@ -25,10 +25,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDetailDto>))]
-        public IActionResult GetAuthors()
+        [ProducesResponseType(200, Type = typeof(PagedList<AuthorDetailDto>))]
+        public IActionResult GetAuthors(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var authors = _authorRepository.GetAuthors();
+            var authors = _authorRepository.GetAuthors(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -77,11 +87,7 @@ namespace MoonReads.Controllers
             if (authorCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var author = _authorRepository
-                .GetAuthors()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == authorCreate.Name.TrimEnd().ToUpper());
-
-            if (author != null)
+            if (_authorRepository.AuthorExists(authorCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }

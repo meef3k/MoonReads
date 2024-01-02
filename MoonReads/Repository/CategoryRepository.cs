@@ -1,4 +1,5 @@
-﻿using MoonReads.Data;
+﻿using System.Linq.Expressions;
+using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -19,9 +20,35 @@ namespace MoonReads.Repository
             return _context.Categories.FirstOrDefault(c => c.Id == id)!;
         }
         
-        public ICollection<Category> GetCategories()
+        public PagedList<Category> GetCategories(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            return _context.Categories.OrderBy(c => c.Id).ToList();
+            IQueryable<Category> categoriesQuery = _context.Categories;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                categoriesQuery = categoriesQuery.Where(p =>
+                    p.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            Expression<Func<Category, object>> keySelector = sortColumn?.ToLower() switch
+            {
+                "name" => category => category.Name,
+                _ => category => category.Id
+            };
+
+            categoriesQuery = sortOrder?.ToLower() == "desc" ? categoriesQuery.OrderByDescending(keySelector) : categoriesQuery.OrderBy(keySelector);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<Category>.Create(categoriesQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<Category>.Create(categoriesQuery, 1, _context.Categories.Count());
         }
 
         public ICollection<Author> GetAuthorByCategory(int categoryId)
@@ -88,6 +115,11 @@ namespace MoonReads.Repository
         public bool CategoryExists(int categoryId)
         {
             return _context.Categories.Any(c => c.Id == categoryId);
+        }
+        
+        public bool CategoryExists(string categoryName)
+        {
+            return _context.Categories.Any(c => c.Name == categoryName);
         }
         
         public bool Save()

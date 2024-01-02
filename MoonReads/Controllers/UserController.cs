@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,17 +18,20 @@ namespace MoonReads.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IMapper _mapper;
 
         public UserController(
             IUserRepository userRepository,
             ILogger<UserController> logger,
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            IMapper mapper)
         {
             _userRepository = userRepository;
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -142,9 +146,19 @@ namespace MoonReads.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UserDto))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> GetUsers()
+        public IActionResult GetUsers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var users = await _userRepository.GetUsers();
+            var users = _userRepository.GetUsers(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             return Ok(users);
         }

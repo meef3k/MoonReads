@@ -45,10 +45,21 @@ namespace MoonReads.Controllers
         }
 
 		[HttpGet]
-		[ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
-        public IActionResult GetBooks()
+		[ProducesResponseType(200, Type = typeof(PagedList<BookDetailDto>))]
+        public IActionResult GetBooks(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
 		{
-			var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(false));
+			var books = _bookRepository.GetBooks(
+                false,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
 			if (!ModelState.IsValid)
 				return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -78,9 +89,20 @@ namespace MoonReads.Controllers
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpGet("pending")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
-        public IActionResult GetPendingBooks()
+        public IActionResult GetPendingBooks(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var books = _mapper.Map<List<BookDetailDto>>(_bookRepository.GetBooks(true));
+            var books = _bookRepository.GetBooks(
+                true,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -119,11 +141,7 @@ namespace MoonReads.Controllers
             if (bookCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var books = _bookRepository
-                .GetBooks(false)
-                .FirstOrDefault(b => string.Equals(b.Title.Trim(), bookCreate.Title.TrimEnd(), StringComparison.CurrentCultureIgnoreCase));
-
-            if (books != null)
+            if (_bookRepository.BookExists(bookCreate.Title))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }
@@ -368,10 +386,22 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet("{bookId}/rate")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<RatingDetailDto>))]
-        public IActionResult GetRatings(int bookId)
+        [ProducesResponseType(200, Type = typeof(PagedList<RatingDetailDto>))]
+        public IActionResult GetRatings(
+            int bookId,
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var ratings = _ratingRepository.GetRatings(bookId);
+            var ratings = _ratingRepository.GetRatings(
+                bookId,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);

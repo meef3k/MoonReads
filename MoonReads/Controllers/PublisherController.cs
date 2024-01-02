@@ -25,10 +25,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Publisher>))]
-        public IActionResult GetPublishers()
+        [ProducesResponseType(200, Type = typeof(PagedList<PublisherDto>))]
+        public IActionResult GetPublishers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var publishers = _mapper.Map<List<PublisherDto>>(_publisherRepository.GetPublishers());
+            var publishers = _mapper.Map<PagedList<PublisherDto>>(_publisherRepository.GetPublishers(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -77,11 +87,7 @@ namespace MoonReads.Controllers
             if (publisherCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var publisher = _publisherRepository
-                .GetPublishers()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == publisherCreate.Name.TrimEnd().ToUpper());
-
-            if (publisher != null)
+            if (_publisherRepository.PublisherExists(publisherCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }

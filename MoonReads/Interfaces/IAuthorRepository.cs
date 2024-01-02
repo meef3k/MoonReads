@@ -7,12 +7,18 @@ namespace MoonReads.Interfaces
     {
         Author GetAuthor(int id);
         AuthorDetailDto GetAuthorDetail(int id);
-        ICollection<AuthorDetailDto> GetAuthors();
+        PagedList<AuthorDetailDto> GetAuthors(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize);
         ICollection<BookDetailDto> GetBookByAuthor(int authorId);
         int CreateAuthor(Author author);
         bool UpdateAuthor(Author author);
         bool DeleteAuthor(Author author);
         bool AuthorExists(int authorId);
+        bool AuthorExists(string authorName);
         bool Save();
         bool HasBooks(Author author);
     }

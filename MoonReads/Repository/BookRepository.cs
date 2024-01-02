@@ -1,4 +1,5 @@
-﻿using MoonReads.Data;
+﻿using System.Linq.Expressions;
+using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -23,15 +24,49 @@ namespace MoonReads.Repository
 
         public BookDetailDto GetBookDetails(int id)
         {
-            return MapToBookDetailDto(_context.Books.Where(b => b.Pending == false))
-                .FirstOrDefault(b => b.Id == id)!;
+            return MapToBookDetailDto(false).FirstOrDefault(b => b.Id == id)!;
         }
         
-        public ICollection<BookDetailDto> GetBooks(bool pending)
-		{
-            return MapToBookDetailDto(_context.Books.Where(b => b.Pending == pending))
-                .ToList();
-		}
+        public PagedList<BookDetailDto> GetBooks(
+            bool pending,
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
+        {
+            var booksQuery = MapToBookDetailDto(pending);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                booksQuery = booksQuery.Where(p =>
+                    p.Title.ToLower().Contains(searchTerm.ToLower()) ||
+                    p.Authors.Any(a => a.Name.ToLower().Contains(searchTerm.ToLower())) ||
+                    p.Publisher.Name.ToLower().Contains(searchTerm.ToLower()) ||
+                    p.Categories.Any(a => a.Name.ToLower().Contains(searchTerm.ToLower())) ||
+                    p.Isbn.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            Expression<Func<BookDetailDto, object>> keySelector = sortColumn?.ToLower() switch
+            {
+                "title" => book => book.Title,
+                "releasedate" => book => book.ReleaseDate,
+                "authors" => book => book.Authors.FirstOrDefault()!.Name,
+                "publisher" => book => book.Publisher.Name,
+                "categories" => book => book.Categories.FirstOrDefault()!.Name,
+                "isbn" => book => book.Isbn,
+                _ => book => book.Id
+            };
+
+            booksQuery = sortOrder?.ToLower() == "desc" ? booksQuery.OrderByDescending(keySelector) : booksQuery.OrderBy(keySelector);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<BookDetailDto>.Create(booksQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<BookDetailDto>.Create(booksQuery, 1, _context.Books.Count());
+        }
 
         public int CreateBook(int[] authorsIds, int[] categoriesIds, Book book)
         {
@@ -84,6 +119,11 @@ namespace MoonReads.Repository
         public bool BookExists(int bookId)
         {
             return _context.Books.Any(b => b.Id == bookId);
+        }
+        
+        public bool BookExists(string bookTitle)
+        {
+            return _context.Books.Any(b => b.Title == bookTitle);
         }
         
         public bool Save()
@@ -150,36 +190,38 @@ namespace MoonReads.Repository
             }
         }
         
-        private static IQueryable<BookDetailDto> MapToBookDetailDto(IQueryable<Book> books)
+        private IQueryable<BookDetailDto> MapToBookDetailDto(bool pending)
         {
-            return books.Select(b => new BookDetailDto
-            {
-                Id = b.Id,
-                Title = b.Title,
-                Description = b.Description,
-                ImageUrl = b.ImageUrl,
-                ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                Pages = b.Pages,
-                Isbn = b.Isbn,
-                Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                TotalRatings = b.Rating.Any() ? b.Rating.Count : 0,
-                TotalReviews = b.Rating.Count(r => r.ReviewId != null),
-                Publisher = new PublisherShortDto
+            return _context.Books
+                .Where(b => b.Pending == pending)
+                .Select(b => new BookDetailDto
                 {
-                    Id = b.Publisher.Id,
-                    Name = b.Publisher.Name
-                },
-                Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                {
-                    Id = a.AuthorId,
-                    Name = a.Author.Name
-                }).ToList(),
-                Categories = b.BookCategories.Select(c => new CategoryDto
-                {
-                    Id = c.CategoryId,
-                    Name = c.Category.Name
-                }).ToList()
-            });
+                    Id = b.Id,
+                    Title = b.Title,
+                    Description = b.Description,
+                    ImageUrl = b.ImageUrl,
+                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
+                    Pages = b.Pages,
+                    Isbn = b.Isbn,
+                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
+                    TotalRatings = b.Rating.Any() ? b.Rating.Count : 0,
+                    TotalReviews = b.Rating.Count(r => r.ReviewId != null),
+                    Publisher = new PublisherShortDto
+                    {
+                        Id = b.Publisher.Id,
+                        Name = b.Publisher.Name
+                    },
+                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author.Name
+                    }).ToList(),
+                    Categories = b.BookCategories.Select(c => new CategoryDto
+                    {
+                        Id = c.CategoryId,
+                        Name = c.Category.Name
+                    }).ToList()
+                });
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using MoonReads.Data;
@@ -27,10 +28,15 @@ public class RatingRepository : IRatingRepository
         return _context.Ratings.Where(r => r.BookId == bookId).FirstOrDefault(r => r.UserId == userId)!;
     }
 
-    public ICollection<RatingDetailDto> GetRatings(int bookId)
+    public PagedList<RatingDetailDto> GetRatings(
+        int bookId,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
     {
-        return _context
-            .Ratings
+        var ratingsQuery = _context.Ratings
             .Where(r => r.BookId == bookId && r.Review != null)
             .Select(r => new RatingDetailDto
             {
@@ -47,9 +53,33 @@ public class RatingRepository : IRatingRepository
                     CreationDateTime = r.Review.CreationDateTime,
                     Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
                 }
-            })
-            .OrderByDescending(r => r.Review!.Reactions)
-            .ToList();
+            }).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            ratingsQuery = ratingsQuery.Where(p =>
+                p.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
+                p.UserName.ToLower().Contains(searchTerm.ToLower()));
+        }
+
+        Expression<Func<RatingDetailDto, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "username" => rating => rating.UserName,
+            "rate" => rating => rating.Rate,
+            "title" => rating => rating.Review!.Title,
+            "creationdatetime" => rating => rating.Review!.CreationDateTime,
+            "reactions" => rating => rating.Review!.Reactions,
+            _ => rating => rating.Id
+        };
+
+        ratingsQuery = sortOrder?.ToLower() == "desc" ? ratingsQuery.OrderByDescending(keySelector) : ratingsQuery.OrderBy(keySelector);
+
+        if (page != null && pageSize != null)
+        {
+            return PagedList<RatingDetailDto>.Create(ratingsQuery, (int)page, (int)pageSize);
+        }
+            
+        return PagedList<RatingDetailDto>.Create(ratingsQuery, 1, _context.Ratings.Count());
     }
 
     public ICollection<RatingReviewDto> GetUserRatings(string userId)

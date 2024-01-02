@@ -8,7 +8,13 @@ public interface IRatingRepository
 {
     Rating GetRating(int id);
     Rating GetRatingByUser(int bookId, string userId);
-    ICollection<RatingDetailDto> GetRatings(int bookId);
+    PagedList<RatingDetailDto> GetRatings(
+        int bookId,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
     ICollection<RatingReviewDto> GetUserRatings(string userId);
     RatingShortDto? GetUserRating(int bookId, string userId);
     int CreateRating(Rating rating);

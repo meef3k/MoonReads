@@ -22,10 +22,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public IActionResult GetCategories()
+        [ProducesResponseType(200, Type = typeof(PagedList<CategoryDto>))]
+        public IActionResult GetCategories(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
+            var categories = _mapper.Map<PagedList<CategoryDto>>(_categoryRepository.GetCategories(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -90,11 +100,7 @@ namespace MoonReads.Controllers
             if (categoryCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var category = _categoryRepository
-                .GetCategories()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper());
-
-            if (category != null)
+            if (_categoryRepository.CategoryExists(categoryCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }
