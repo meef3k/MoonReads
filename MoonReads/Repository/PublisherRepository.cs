@@ -69,19 +69,19 @@ namespace MoonReads.Repository
                     Isbn = b.Isbn,
                     Publisher = new PublisherShortDto
                     {
-                        Id = b.Publisher!.Id,
-                        Name = b.Publisher!.Name
+                        Id = b.Publisher.Id,
+                        Name = b.Publisher.Name
                     },
                     Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
                     Authors = b.BookAuthors.Select(a => new AuthorShortDto
                     {
                         Id = a.AuthorId,
-                        Name = a.Author!.Name
+                        Name = a.Author.Name
                     }).ToList(),
                     Categories = b.BookCategories.Select(c => new CategoryDto
                     {
                         Id = c.CategoryId,
-                        Name = c.Category!.Name
+                        Name = c.Category.Name
                     }).ToList()
                 })
                 .ToList();

@@ -9,6 +9,7 @@ namespace MoonReads.Interfaces
 		BookDetailDto GetBookDetails(int id);
 		PagedList<BookDetailDto> GetBooks(bool pending,
 			string? searchTerm,
+			string? rangeTerm,
 			string? sortColumn,
 			string? sortOrder,
 			int? page,

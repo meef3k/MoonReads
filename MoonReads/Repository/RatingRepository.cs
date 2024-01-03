@@ -57,9 +57,9 @@ public class RatingRepository : IRatingRepository
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            ratingsQuery = ratingsQuery.Where(p =>
-                p.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
-                p.UserName.ToLower().Contains(searchTerm.ToLower()));
+            ratingsQuery = ratingsQuery.Where(r =>
+                r.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
+                r.UserName.ToLower().Contains(searchTerm.ToLower()));
         }
 
         Expression<Func<RatingDetailDto, object>> keySelector = sortColumn?.ToLower() switch

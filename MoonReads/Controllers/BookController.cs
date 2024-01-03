@@ -48,6 +48,7 @@ namespace MoonReads.Controllers
 		[ProducesResponseType(200, Type = typeof(PagedList<BookDetailDto>))]
         public IActionResult GetBooks(
             string? searchTerm,
+            string? rangeTerm,
             string? sortColumn,
             string? sortOrder,
             int? page,
@@ -56,6 +57,7 @@ namespace MoonReads.Controllers
 			var books = _bookRepository.GetBooks(
                 false,
                 searchTerm,
+                rangeTerm,
                 sortColumn,
                 sortOrder,
                 page,
@@ -91,6 +93,7 @@ namespace MoonReads.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
         public IActionResult GetPendingBooks(
             string? searchTerm,
+            string? rangeTerm,
             string? sortColumn,
             string? sortOrder,
             int? page,
@@ -99,6 +102,7 @@ namespace MoonReads.Controllers
             var books = _bookRepository.GetBooks(
                 true,
                 searchTerm,
+                rangeTerm,
                 sortColumn,
                 sortOrder,
                 page,
