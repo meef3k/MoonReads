@@ -170,6 +170,7 @@ public class RatingRepository : IRatingRepository
     public bool Save()
     {
         _context.DataVersions.FirstOrDefault(d => d.Table == "Ratings")!.Version++;
+        _context.DataVersions.FirstOrDefault(d => d.Table == "Books")!.Version++;
 
         var saved = _context.SaveChanges();
 
