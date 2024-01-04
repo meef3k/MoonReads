@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using MoonReads.Data;
-using MoonReads.Dto;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -50,41 +49,6 @@ namespace MoonReads.Repository
             }
             
             return PagedList<Publisher>.Create(publishersQuery, 1, _context.Publishers.Count());
-        }
-        
-        public ICollection<BookDetailDto> GetBookByPublisher(int publisherId)
-        {
-            var books = _context.Books.Where(b => b.Publisher.Id == publisherId).Select(b => b.Id).ToList();
-            return _context
-                .Books
-                .Where(b => books.Contains(b.Id))
-                .Select(b => new BookDetailDto
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Description = b.Description,
-                    ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                    Pages = b.Pages,
-                    Isbn = b.Isbn,
-                    Publisher = new PublisherShortDto
-                    {
-                        Id = b.Publisher.Id,
-                        Name = b.Publisher.Name
-                    },
-                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                    {
-                        Id = a.AuthorId,
-                        Name = a.Author.Name
-                    }).ToList(),
-                    Categories = b.BookCategories.Select(c => new CategoryDto
-                    {
-                        Id = c.CategoryId,
-                        Name = c.Category.Name
-                    }).ToList()
-                })
-                .ToList();
         }
 
         public int CreatePublisher(Publisher publisher)

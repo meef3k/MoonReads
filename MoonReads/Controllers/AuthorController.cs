@@ -62,22 +62,6 @@ namespace MoonReads.Controllers
             return Ok(author);
         }
 
-        [HttpGet("{authorId}/Book")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetBookByAuthor(int authorId)
-        {
-            if (!_authorRepository.AuthorExists(authorId))
-                return NotFound();
-
-            var books = _mapper.Map<List<BookDetailDto>>(_authorRepository.GetBookByAuthor(authorId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(books);
-        }
-
         [Authorize]
         [HttpPost]
         [ProducesResponseType(204)]

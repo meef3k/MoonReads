@@ -12,8 +12,6 @@ namespace MoonReads.Interfaces
             string? sortOrder,
             int? page,
             int? pageSize);
-        ICollection<BookDetailDto> GetBookByCategory(int categoryId);
-        ICollection<Author> GetAuthorByCategory(int categoryId);
         int CreateCategory(Category category);
         bool UpdateCategory(Category category);
         bool DeleteCategory(Category category);

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -39,79 +40,105 @@ public class BookRepository : IBookRepository
     public PagedList<BookDetailDto> GetBooks(
         bool pending,
         string? searchTerm,
-        string? rangeTerm,
+        Dictionary<string, string>? filterTerms,
         string? sortColumn,
         string? sortOrder,
         int? page,
         int? pageSize)
     {
-        IQueryable<Book> booksQuery = _context.Books
+        IQueryable<Book> query = _context.Books
             .Include(b => b.BookAuthors)
             .ThenInclude(ba => ba.Author)
             .Include(b => b.Publisher)
             .Include(b => b.Rating)
             .Include(b => b.BookCategories)
             .ThenInclude(bc => bc.Category);
+        
+        var booksQuery = MapToBookDetailDto(query, pending);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             booksQuery = booksQuery
                 .Where(b =>
                     b.Title.ToLower().Contains(searchTerm.ToLower()) ||
-                    b.BookAuthors.Any(a => a.Author.Name.ToLower().Contains(searchTerm.ToLower())) ||
+                    b.Authors.Any(a => a.Name.ToLower().Contains(searchTerm.ToLower())) ||
                     b.Publisher.Name.ToLower().Contains(searchTerm.ToLower()) ||
-                    b.BookCategories.Any(a => a.Category.Name.ToLower().Contains(searchTerm.ToLower())) ||
+                    b.Categories.Any(a => a.Name.ToLower().Contains(searchTerm.ToLower())) ||
                     b.Isbn.ToLower().Contains(searchTerm.ToLower()));
         }
-        
-        if (!string.IsNullOrWhiteSpace(rangeTerm))
-        {
-            var termParts = rangeTerm.Split(';')
-                .Select(part => part.Split(':'))
-                .ToDictionary(parts => parts[0].ToLower(), parts => parts[1]);
 
+        if (!filterTerms.IsNullOrEmpty())
+        {
             var startDate = DateOnly.MinValue;
             var endDate = DateOnly.MaxValue;
             var minRating = 0.0;
             var maxRating = 5.0;
+            int? authorId = null;
+            int? categoryId = null;
+            int? publisherId = null;
 
-            if (termParts.TryGetValue("startdate", out var startDateStr))
+            foreach (var filterTerm in filterTerms!)
             {
-                DateOnly.TryParse(startDateStr, out startDate);
-            }
+                switch (filterTerm.Key)
+                {
+                    case "startDate":
+                        DateOnly.TryParse(filterTerm.Value, out startDate);
+                        break;
 
-            if (termParts.TryGetValue("enddate", out var endDateStr))
-            {
-                DateOnly.TryParse(endDateStr, out endDate);
-            }
+                    case "endDate":
+                        DateOnly.TryParse(filterTerm.Value, out endDate);
+                        break;
 
-            if (termParts.TryGetValue("minrating", out var minRatingStr))
-            {
-                double.TryParse(minRatingStr, out minRating);
-            }
-            
-            if (termParts.TryGetValue("maxrating", out var maxRatingStr))
-            {
-                double.TryParse(maxRatingStr, out maxRating);
+                    case "minRating":
+                        double.TryParse(filterTerm.Value, out minRating);
+                        break;
+
+                    case "maxRating":
+                        double.TryParse(filterTerm.Value, out maxRating);
+                        break;
+
+                    case "authorId":
+                        int.TryParse(filterTerm.Value, out var parsedAuthorId);
+                        authorId = parsedAuthorId;
+                        break;
+
+                    case "categoryId":
+                        int.TryParse(filterTerm.Value, out var parsedCategoryId);
+                        categoryId = parsedCategoryId;
+                        break;
+
+                    case "publisherId":
+                        int.TryParse(filterTerm.Value, out var parsedPublisherId);
+                        publisherId = parsedPublisherId;
+                        break;
+                }
             }
 
             booksQuery = booksQuery
-                .Where(b => 
-                    b.ReleaseDate >= startDate && 
-                    b.ReleaseDate <= endDate &&
-                    (b.Rating.Any() ? b.Rating.Average(r => r.Rate) : 0) >= minRating &&
-                    (b.Rating.Any() ? b.Rating.Average(r => r.Rate) : 0) <= maxRating);
+                .AsEnumerable()
+                .Where(b =>
+                    (startDate == DateOnly.MinValue || DateOnly.Parse(b.ReleaseDate) >= startDate) &&
+                    (endDate == DateOnly.MaxValue || DateOnly.Parse(b.ReleaseDate) <= endDate) &&
+                    b.Rating >= minRating &&
+                    b.Rating <= maxRating &&
+                    (authorId == null || b.Authors.Any(a => a.Id == authorId)) &&
+                    (categoryId == null || b.Categories.Any(c => c.Id == categoryId)) &&
+                    (publisherId == null || b.Publisher.Id == publisherId)
+                )
+                .AsQueryable();
         }
 
-        Expression<Func<Book, object>> keySelector = sortColumn?.ToLower() switch
+        Expression<Func<BookDetailDto, object>> keySelector = sortColumn?.ToLower() switch
         {
             "title" => book => book.Title,
             "releasedate" => book => book.ReleaseDate,
-            "authors" => book => book.BookAuthors.FirstOrDefault()!.Author.Name,
+            "authors" => book => book.Authors,
             "publisher" => book => book.Publisher.Name,
-            "categories" => book => book.BookCategories.FirstOrDefault()!.Category.Name,
+            "categories" => book => book.Categories,
             "isbn" => book => book.Isbn,
-            "rating" => book => (book.Rating.Any() ? book.Rating.Average(r => r.Rate) : 0),
+            "rating" => book => book.Rating,
+            "totalratings" => book => book.TotalRatings,
+            "totalreviews" => book => book.TotalReviews,
             _ => book => book.Id
         };
 
@@ -119,10 +146,10 @@ public class BookRepository : IBookRepository
 
         if (page != null && pageSize != null)
         {
-            return PagedList<BookDetailDto>.Create(MapToBookDetailDto(booksQuery, pending), (int)page, (int)pageSize);
+            return PagedList<BookDetailDto>.Create(booksQuery, (int)page, (int)pageSize);
         }
             
-        return PagedList<BookDetailDto>.Create(MapToBookDetailDto(booksQuery, pending), 1, _context.Books.Count());
+        return PagedList<BookDetailDto>.Create(booksQuery, 1, _context.Books.Count());
     }
 
     public int CreateBook(int[] authorsIds, int[] categoriesIds, Book book)

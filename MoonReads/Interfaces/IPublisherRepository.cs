@@ -12,7 +12,6 @@ namespace MoonReads.Interfaces
             string? sortOrder,
             int? page,
             int? pageSize);
-        ICollection<BookDetailDto> GetBookByPublisher(int publisherId);
         int CreatePublisher(Publisher publisher);
         bool UpdatePublisher(Publisher publisher);
         bool DeletePublisher(Publisher publisher);

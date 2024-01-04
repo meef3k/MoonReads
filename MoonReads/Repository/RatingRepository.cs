@@ -123,7 +123,8 @@ public class RatingRepository : IRatingRepository
             .Select(r => new RatingShortDto
             {
                 Id = r.Id,
-                Rate = r.Rate
+                Rate = r.Rate,
+                HasReview = r.ReviewId.HasValue
             })
             .FirstOrDefault();
     }

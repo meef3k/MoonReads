@@ -92,41 +92,6 @@ namespace MoonReads.Repository
             return PagedList<AuthorDetailDto>.Create(authorsQuery, 1, _context.Authors.Count());
         }
 
-        public ICollection<BookDetailDto> GetBookByAuthor(int authorId)
-        {
-            var books = _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book.Id).ToList();
-            return _context
-                .Books
-                .Where(b => books.Contains(b.Id))
-                .Select(b => new BookDetailDto
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Description = b.Description,
-                    ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                    Pages = b.Pages,
-                    Isbn = b.Isbn,
-                    Publisher = new PublisherShortDto
-                    {
-                        Id = b.Publisher.Id,
-                        Name = b.Publisher.Name
-                    },
-                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                    {
-                        Id = a.AuthorId,
-                        Name = a.Author.Name
-                    }).ToList(),
-                    Categories = b.BookCategories.Select(c => new CategoryDto
-                    {
-                        Id = c.CategoryId,
-                        Name = c.Category.Name
-                    }).ToList()
-                })
-                .ToList();
-        }
-
         public int CreateAuthor(Author author)
         {
             _context.Add(author);

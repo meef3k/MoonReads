@@ -13,7 +13,6 @@ namespace MoonReads.Interfaces
             string? sortOrder,
             int? page,
             int? pageSize);
-        ICollection<BookDetailDto> GetBookByAuthor(int authorId);
         int CreateAuthor(Author author);
         bool UpdateAuthor(Author author);
         bool DeleteAuthor(Author author);

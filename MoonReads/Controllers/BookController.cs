@@ -47,17 +47,18 @@ namespace MoonReads.Controllers
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(PagedList<BookDetailDto>))]
         public IActionResult GetBooks(
-            string? searchTerm,
-            string? rangeTerm,
+            bool pending,
+            string searchTerm,
+            [FromQuery] Dictionary<string, string>? filterTerms,
             string? sortColumn,
             string? sortOrder,
             int? page,
             int? pageSize)
 		{
 			var books = _bookRepository.GetBooks(
-                false,
+                pending,
                 searchTerm,
-                rangeTerm,
+                filterTerms,
                 sortColumn,
                 sortOrder,
                 page,
@@ -87,32 +88,6 @@ namespace MoonReads.Controllers
 
 			return Ok(book);
 		}
-        
-        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
-        [HttpGet("pending")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
-        public IActionResult GetPendingBooks(
-            string? searchTerm,
-            string? rangeTerm,
-            string? sortColumn,
-            string? sortOrder,
-            int? page,
-            int? pageSize)
-        {
-            var books = _bookRepository.GetBooks(
-                true,
-                searchTerm,
-                rangeTerm,
-                sortColumn,
-                sortOrder,
-                page,
-                pageSize);
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(books);
-        }
         
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPut("{bookId}/accept")]
@@ -386,6 +361,9 @@ namespace MoonReads.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
+            if (rating == null)
+                return NotFound(InternalStatusCodes.EntityNotExist);
+
             return Ok(rating);
         }
 
@@ -524,6 +502,9 @@ namespace MoonReads.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (reaction.IsNullOrEmpty())
+                return NotFound(InternalStatusCodes.EntityNotExist);
 
             return Ok(reaction);
         }
