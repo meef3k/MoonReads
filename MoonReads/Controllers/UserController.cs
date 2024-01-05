@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,20 +17,17 @@ namespace MoonReads.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IMapper _mapper;
 
         public UserController(
             IUserRepository userRepository,
             ILogger<UserController> logger,
             UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IMapper mapper)
+            SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _mapper = mapper;
         }
 
         [HttpPost]
@@ -132,7 +128,7 @@ namespace MoonReads.Controllers
             return Ok();
         }
         
-        [HttpGet("details/{userId}")]
+        [HttpGet("{userId}/details")]
         [ProducesResponseType(200, Type = typeof(UserInfoDto))]
         [ProducesResponseType(400)]
         public IActionResult GetUserInfo(string userId)
@@ -186,7 +182,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/edit")]
+        [HttpPut("edit/details")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
@@ -214,7 +210,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/password")]
+        [HttpPut("edit/password")]
         public async Task<IActionResult> EditUserPassword([FromBody] UserDetailPasswordDto userPassword)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -246,7 +242,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/email")]
+        [HttpPut("edit/email")]
         public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
         {
             if (await _userRepository.UserExists(userEmail.NewEmail))

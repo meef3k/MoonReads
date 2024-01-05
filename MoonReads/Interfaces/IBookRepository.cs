@@ -9,7 +9,7 @@ namespace MoonReads.Interfaces
 		BookDetailDto GetBookDetails(int id);
 		PagedList<BookDetailDto> GetBooks(bool pending,
 			string? searchTerms,
-			Dictionary<string, string>? filterTerms,
+			Dictionary<string, string[]>? filterTerms,
 			string? sortColumn,
 			string? sortOrder,
 			int? page,

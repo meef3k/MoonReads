@@ -40,7 +40,7 @@ public class BookRepository : IBookRepository
     public PagedList<BookDetailDto> GetBooks(
         bool pending,
         string? searchTerm,
-        Dictionary<string, string>? filterTerms,
+        Dictionary<string, string[]>? filterTerms,
         string? sortColumn,
         string? sortOrder,
         int? page,
@@ -73,43 +73,40 @@ public class BookRepository : IBookRepository
             var endDate = DateOnly.MaxValue;
             var minRating = 0.0;
             var maxRating = 5.0;
-            int? authorId = null;
-            int? categoryId = null;
-            int? publisherId = null;
+            var authorIds = Array.Empty<int>();
+            var categoryIds = Array.Empty<int>();
+            var publisherIds = Array.Empty<int>();
 
             foreach (var filterTerm in filterTerms!)
             {
                 switch (filterTerm.Key)
                 {
                     case "startDate":
-                        DateOnly.TryParse(filterTerm.Value, out startDate);
+                        DateOnly.TryParse(filterTerm.Value.FirstOrDefault(), out startDate);
                         break;
 
                     case "endDate":
-                        DateOnly.TryParse(filterTerm.Value, out endDate);
+                        DateOnly.TryParse(filterTerm.Value.FirstOrDefault(), out endDate);
                         break;
 
                     case "minRating":
-                        double.TryParse(filterTerm.Value, out minRating);
+                        double.TryParse(filterTerm.Value.FirstOrDefault(), out minRating);
                         break;
 
                     case "maxRating":
-                        double.TryParse(filterTerm.Value, out maxRating);
+                        double.TryParse(filterTerm.Value.FirstOrDefault(), out maxRating);
                         break;
 
-                    case "authorId":
-                        int.TryParse(filterTerm.Value, out var parsedAuthorId);
-                        authorId = parsedAuthorId;
+                    case "authorIds":
+                        authorIds = filterTerm.Value.Select(id => int.TryParse(id, out var parsedId) ? parsedId : 0).ToArray();
                         break;
 
-                    case "categoryId":
-                        int.TryParse(filterTerm.Value, out var parsedCategoryId);
-                        categoryId = parsedCategoryId;
+                    case "categoryIds":
+                        categoryIds = filterTerm.Value.Select(id => int.TryParse(id, out var parsedId) ? parsedId : 0).ToArray();
                         break;
 
-                    case "publisherId":
-                        int.TryParse(filterTerm.Value, out var parsedPublisherId);
-                        publisherId = parsedPublisherId;
+                    case "publisherIds":
+                        publisherIds = filterTerm.Value.Select(id => int.TryParse(id, out var parsedId) ? parsedId : 0).ToArray();
                         break;
                 }
             }
@@ -121,9 +118,9 @@ public class BookRepository : IBookRepository
                     (endDate == DateOnly.MaxValue || DateOnly.Parse(b.ReleaseDate) <= endDate) &&
                     b.Rating >= minRating &&
                     b.Rating <= maxRating &&
-                    (authorId == null || b.Authors.Any(a => a.Id == authorId)) &&
-                    (categoryId == null || b.Categories.Any(c => c.Id == categoryId)) &&
-                    (publisherId == null || b.Publisher.Id == publisherId)
+                    (authorIds.Length == 0 || authorIds.Any(aid => b.Authors.Any(a => a.Id == aid))) ||
+                    (categoryIds.Length == 0 || categoryIds.Any(cid => b.Categories.Any(c => c.Id == cid))) ||
+                    (publisherIds.Length == 0 || publisherIds.Any(pid => b.Publisher.Id == pid))
                 )
                 .AsQueryable();
         }
