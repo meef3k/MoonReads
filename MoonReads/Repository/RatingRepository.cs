@@ -43,10 +43,23 @@ public class RatingRepository : IRatingRepository
             {
                 Id = r.Id,
                 Rate = r.Rate,
-                BookId = r.BookId,
-                UserName = r.User.UserName!,
-                UserId = r.UserId,
-                UserAvatar = r.User.Avatar!,
+                Book = new BookShortDto
+                {
+                    Id = r.Book.Id,
+                    Title = r.Book.Title,
+                    ImageUrl = r.Book.ImageUrl,
+                    Authors = r.Book.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author.Name
+                    }).ToList(),
+                },
+                User = new UserShortDto
+                {
+                    Id = r.User.Id,
+                    UserName = r.User.UserName!,
+                    ImageUrl = r.User.Avatar!
+                },
                 Review = new ReviewDetailDto
                 {
                     Id = r.Review!.Id,
@@ -61,7 +74,7 @@ public class RatingRepository : IRatingRepository
         {
             ratingsQuery = ratingsQuery.Where(r =>
                 r.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
-                r.UserName.ToLower().Contains(searchTerm.ToLower()));
+                r.User.UserName.ToLower().Contains(searchTerm.ToLower()));
         }
         
         if (!filterTerms.IsNullOrEmpty())
@@ -86,13 +99,13 @@ public class RatingRepository : IRatingRepository
 
             ratingsQuery = ratingsQuery
                 .Where(r =>
-                    (string.IsNullOrEmpty(userId) || r.UserId == userId) &&
-                    (bookId == null || r.BookId == bookId));
+                    (string.IsNullOrEmpty(userId) || r.User.Id == userId) &&
+                    (bookId == null || r.Book.Id == bookId));
         }
 
         Expression<Func<RatingDetailDto, object>> keySelector = sortColumn?.ToLower() switch
         {
-            "username" => rating => rating.UserName,
+            "username" => rating => rating.User.UserName,
             "rate" => rating => rating.Rate,
             "title" => rating => rating.Review!.Title,
             "creationdatetime" => rating => rating.Review!.CreationDateTime,
