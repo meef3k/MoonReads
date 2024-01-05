@@ -56,23 +56,6 @@ public class BookshelfController : Controller
     }
     
     [Authorize]
-    [HttpGet("user")]
-    [ProducesResponseType(200, Type = typeof(ICollection<BookshelfShortDto>))]
-    public async Task<IActionResult> GetBooksBookshelf()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            
-        var user = await _userManager.FindByIdAsync(userId);
-
-        var books = _bookshelfRepository.GetBookBookshelves(user!);
-
-        if (!ModelState.IsValid)
-            return BadRequest(InternalStatusCodes.InvalidPayload);
-
-        return Ok(books);
-    }
-    
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]

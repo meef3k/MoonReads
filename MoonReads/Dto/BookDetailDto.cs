@@ -12,6 +12,7 @@
         public double Rating { get; set; }
         public int TotalRatings { get; set; }
         public int TotalReviews { get; set; }
+        public string Bookshelf { get; set; }
         public PublisherShortDto Publisher { get; set; }
         public required List<AuthorShortDto> Authors { get; set; }
         public required List<CategoryDto> Categories { get; set; }

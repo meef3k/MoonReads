@@ -24,20 +24,6 @@ public class BookshelfRepository : IBookshelfRepository
             .FirstOrDefault(b => b.Book == book);
     }
     
-    public ICollection<BookshelfShortDto> GetBookBookshelves(User user)
-    {
-        return _context
-            .Bookshelves
-            .Where(b => b.User == user)
-            .Select(b => new BookshelfShortDto
-            {
-                Id = b.Id,
-                Status = b.Status,
-                BookId = b.Book.Id
-            })
-            .ToList();
-    }
-    
     public PagedList<BookshelfHelperDto> GetBookshelves(
         string? searchTerm,
         Dictionary<string, string>? filterTerms,

@@ -9,8 +9,8 @@ public interface IRatingRepository
     Rating GetRating(int id);
     Rating GetRatingByUser(int bookId, string userId);
     PagedList<RatingDetailDto> GetRatings(
-        int bookId,
         string? searchTerm,
+        Dictionary<string, string>? filterTerms,
         string? sortColumn,
         string? sortOrder,
         int? page,

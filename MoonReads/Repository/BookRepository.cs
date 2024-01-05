@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
@@ -24,17 +23,9 @@ public class BookRepository : IBookRepository
             .FirstOrDefault(b => b.Id == id)!;
     }
 
-    public BookDetailDto GetBookDetails(int id)
+    public BookDetailDto GetBookDetails(int id, string? userId)
     {
-        IQueryable<Book> booksQuery = _context.Books
-            .Include(b => b.BookAuthors)
-            .ThenInclude(ba => ba.Author)
-            .Include(b => b.Publisher)
-            .Include(b => b.Rating)
-            .Include(b => b.BookCategories)
-            .ThenInclude(bc => bc.Category);
-        
-        return MapToBookDetailDto(booksQuery, false).FirstOrDefault(b => b.Id == id)!;
+        return MapToBookDetailDto(_context, false, userId).FirstOrDefault(b => b.Id == id)!;
     }
         
     public PagedList<BookDetailDto> GetBooks(
@@ -44,17 +35,10 @@ public class BookRepository : IBookRepository
         string? sortColumn,
         string? sortOrder,
         int? page,
-        int? pageSize)
+        int? pageSize,
+        string? userId)
     {
-        IQueryable<Book> query = _context.Books
-            .Include(b => b.BookAuthors)
-            .ThenInclude(ba => ba.Author)
-            .Include(b => b.Publisher)
-            .Include(b => b.Rating)
-            .Include(b => b.BookCategories)
-            .ThenInclude(bc => bc.Category);
-        
-        var booksQuery = MapToBookDetailDto(query, pending);
+        var booksQuery = MapToBookDetailDto(_context, pending, userId);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
@@ -118,8 +102,8 @@ public class BookRepository : IBookRepository
                     (endDate == DateOnly.MaxValue || DateOnly.Parse(b.ReleaseDate) <= endDate) &&
                     b.Rating >= minRating &&
                     b.Rating <= maxRating &&
-                    (authorIds.Length == 0 || authorIds.Any(aid => b.Authors.Any(a => a.Id == aid))) ||
-                    (categoryIds.Length == 0 || categoryIds.Any(cid => b.Categories.Any(c => c.Id == cid))) ||
+                    (authorIds.Length == 0 || authorIds.Any(aid => b.Authors.Any(a => a.Id == aid))) && 
+                    (categoryIds.Length == 0 || categoryIds.Any(cid => b.Categories.Any(c => c.Id == cid))) && 
                     (publisherIds.Length == 0 || publisherIds.Any(pid => b.Publisher.Id == pid))
                 )
                 .AsQueryable();
@@ -271,9 +255,10 @@ public class BookRepository : IBookRepository
         }
     }
         
-    private static IQueryable<BookDetailDto> MapToBookDetailDto(IQueryable<Book> books, bool pending)
+    private static IQueryable<BookDetailDto> MapToBookDetailDto(DataContext context, bool pending, string? userId)
     {
-        return books
+        return context
+            .Books
             .Where(b => b.Pending == pending)
             .Select(b => new BookDetailDto
             {
@@ -287,6 +272,9 @@ public class BookRepository : IBookRepository
                 Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
                 TotalRatings = b.Rating.Any() ? b.Rating.Count : 0,
                 TotalReviews = b.Rating.Count(r => r.ReviewId != null),
+                Bookshelf = context.Bookshelves.Where(bs => bs.User.Id == userId).Any(bs => bs.Book.Id == b.Id)
+                    ? context.Bookshelves.Where(bs => bs.User.Id == userId).FirstOrDefault(bs => bs.Book.Id == b.Id)!.Status 
+                    : "none",
                 Publisher = new PublisherShortDto
                 {
                     Id = b.Publisher.Id,

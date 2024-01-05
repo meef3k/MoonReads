@@ -6,7 +6,6 @@ namespace MoonReads.Interfaces;
 public interface IBookshelfRepository
 {
     Bookshelf? GetBookshelf(Book book, User user);
-    ICollection<BookshelfShortDto> GetBookBookshelves(User user);
     PagedList<BookshelfHelperDto> GetBookshelves(
         string? searchTerm,
         Dictionary<string, string>? filterTerms,

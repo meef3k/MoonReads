@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
 using MoonReads.Interfaces;
@@ -29,19 +30,20 @@ public class RatingRepository : IRatingRepository
     }
 
     public PagedList<RatingDetailDto> GetRatings(
-        int bookId,
         string? searchTerm,
+        Dictionary<string, string>? filterTerms,
         string? sortColumn,
         string? sortOrder,
         int? page,
         int? pageSize)
     {
         var ratingsQuery = _context.Ratings
-            .Where(r => r.BookId == bookId && r.Review != null)
+            .Where(r => r.Review != null)
             .Select(r => new RatingDetailDto
             {
                 Id = r.Id,
                 Rate = r.Rate,
+                BookId = r.BookId,
                 UserName = r.User.UserName!,
                 UserId = r.UserId,
                 UserAvatar = r.User.Avatar!,
@@ -53,13 +55,39 @@ public class RatingRepository : IRatingRepository
                     CreationDateTime = r.Review.CreationDateTime,
                     Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
                 }
-            }).AsQueryable();
+            });
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             ratingsQuery = ratingsQuery.Where(r =>
                 r.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
                 r.UserName.ToLower().Contains(searchTerm.ToLower()));
+        }
+        
+        if (!filterTerms.IsNullOrEmpty())
+        {
+            var userId = string.Empty;
+            int? bookId = null;
+
+            foreach (var filterTerm in filterTerms!)
+            {
+                switch (filterTerm.Key)
+                {
+                    case "userId":
+                        userId = filterTerm.Value;
+                        break;
+
+                    case "bookId":
+                        int.TryParse(filterTerm.Value, out var bookParsedId);
+                        bookId = bookParsedId;
+                        break;
+                }
+            }
+
+            ratingsQuery = ratingsQuery
+                .Where(r =>
+                    (string.IsNullOrEmpty(userId) || r.UserId == userId) &&
+                    (bookId == null || r.BookId == bookId));
         }
 
         Expression<Func<RatingDetailDto, object>> keySelector = sortColumn?.ToLower() switch
@@ -78,8 +106,8 @@ public class RatingRepository : IRatingRepository
         {
             return PagedList<RatingDetailDto>.Create(ratingsQuery, (int)page, (int)pageSize);
         }
-            
-        return PagedList<RatingDetailDto>.Create(ratingsQuery, 1, _context.Ratings.Count());
+
+        return PagedList<RatingDetailDto>.Create(ratingsQuery, 1, _context.Reviews.Count());
     }
 
     public ICollection<RatingReviewDto> GetUserRatings(string userId)

@@ -11,6 +11,7 @@ using MoonReads.Models;
 
 namespace MoonReads.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BookController : Controller
@@ -22,6 +23,7 @@ public class BookController : Controller
     private readonly IBookshelfRepository _bookshelfRepository;
     private readonly IRatingRepository _ratingRepository;
     private readonly IReactionRepository _reactionRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public BookController(IMapper mapper,
         UserManager<User> userManager,
@@ -29,7 +31,8 @@ public class BookController : Controller
         IPublisherRepository publisherRepository,
         IBookshelfRepository bookshelfRepository,
         IRatingRepository ratingRepository,
-        IReactionRepository reactionRepository)
+        IReactionRepository reactionRepository,
+        IHttpContextAccessor httpContextAccessor)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -38,8 +41,10 @@ public class BookController : Controller
         _bookshelfRepository = bookshelfRepository;
         _ratingRepository = ratingRepository;
         _reactionRepository = reactionRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(PagedList<BookDetailDto>))]
     public IActionResult GetBooks(
@@ -51,6 +56,8 @@ public class BookController : Controller
         int? page,
         int? pageSize)
     {
+        var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         var books = _bookRepository.GetBooks(
             pending,
             searchTerm,
@@ -58,14 +65,16 @@ public class BookController : Controller
             sortColumn,
             sortOrder,
             page,
-            pageSize);
+            pageSize,
+            userId);
 
         if (!ModelState.IsValid)
             return BadRequest(InternalStatusCodes.InvalidPayload);
 
         return Ok(books);
     }
-        
+       
+    [AllowAnonymous]
     [HttpGet("{bookId}")]
     [ProducesResponseType(200, Type = typeof(BookDetailDto))]
     [ProducesResponseType(400)]
@@ -73,8 +82,10 @@ public class BookController : Controller
     {
         if (!_bookRepository.BookExists(bookId))
             return NotFound(InternalStatusCodes.EntityNotExist);
+        
+        var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var book = _mapper.Map<BookDetailDto>(_bookRepository.GetBookDetails(bookId));
+        var book = _mapper.Map<BookDetailDto>(_bookRepository.GetBookDetails(bookId, userId));
 
         if (book == null)
             return Unauthorized();
@@ -85,7 +96,6 @@ public class BookController : Controller
         return Ok(book);
     }
     
-    [Authorize]
     [HttpGet("{bookId}/user")]
     [ProducesResponseType(200, Type = typeof(BookUserDetailDto))]
     public async Task<IActionResult> GetUserBookshelf(int bookId)
@@ -141,8 +151,7 @@ public class BookController : Controller
 
         return NoContent();
     }
-
-    [Authorize]
+    
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]

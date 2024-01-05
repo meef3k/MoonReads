@@ -35,16 +35,16 @@ public class RatingController : Controller
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(PagedList<RatingDetailDto>))]
     public IActionResult GetRatings(
-        [FromQuery][Required] int bookId,
         string? searchTerm,
+        [FromQuery] Dictionary<string, string>? filterTerms,
         string? sortColumn,
         string? sortOrder,
         int? page,
         int? pageSize)
     {
         var ratings = _ratingRepository.GetRatings(
-            bookId,
             searchTerm,
+            filterTerms,
             sortColumn,
             sortOrder,
             page,
