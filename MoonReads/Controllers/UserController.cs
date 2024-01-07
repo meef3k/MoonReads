@@ -128,7 +128,7 @@ namespace MoonReads.Controllers
             return Ok();
         }
         
-        [HttpGet("details/{userId}")]
+        [HttpGet("{userId}/details")]
         [ProducesResponseType(200, Type = typeof(UserInfoDto))]
         [ProducesResponseType(400)]
         public IActionResult GetUserInfo(string userId)
@@ -142,9 +142,19 @@ namespace MoonReads.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UserDto))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> GetUsers()
+        public IActionResult GetUsers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var users = await _userRepository.GetUsers();
+            var users = _userRepository.GetUsers(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             return Ok(users);
         }
@@ -172,7 +182,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/edit")]
+        [HttpPut("edit/details")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
@@ -200,7 +210,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/password")]
+        [HttpPut("edit/password")]
         public async Task<IActionResult> EditUserPassword([FromBody] UserDetailPasswordDto userPassword)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -232,7 +242,7 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/email")]
+        [HttpPut("edit/email")]
         public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
         {
             if (await _userRepository.UserExists(userEmail.NewEmail))

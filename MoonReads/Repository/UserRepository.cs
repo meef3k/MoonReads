@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
@@ -19,17 +19,15 @@ namespace MoonReads.Repository
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly DataContext _context;
-        private readonly IBookshelfRepository _bookshelfRepository;
         private readonly IRatingRepository _ratingRepository;
 
         public UserRepository(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration, DataContext context, IBookshelfRepository bookshelfRepository, IRatingRepository ratingRepository)
+            IConfiguration configuration, DataContext context, IRatingRepository ratingRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _context = context;
-            _bookshelfRepository = bookshelfRepository;
             _ratingRepository = ratingRepository;
         }
         
@@ -46,36 +44,61 @@ namespace MoonReads.Repository
                     Email = u.Email!,
                     Description = u.Description!,
                     Avatar = u.Avatar!,
-                    Ratings = _ratingRepository.GetUserRatings(userId),
-                    Read = _bookshelfRepository.GetBookshelves(userId, Statuses.Read),
-                    Reading = _bookshelfRepository.GetBookshelves(userId, Statuses.Reading),
-                    ToRead = _bookshelfRepository.GetBookshelves(userId, Statuses.ToRead)
+                    Ratings = _ratingRepository.GetUserRatings(userId)
                 })
                 .FirstOrDefault();
         }
         
-        public async Task<List<UserDto>> GetUsers()
+        public PagedList<UserDto> GetUsers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var users = await _context.Users.ToListAsync();
-
-            var usersDto = new List<UserDto>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                var userDto = new UserDto
+            var usersQuery = _context.Users
+                .Join(_context.UserRoles, 
+                    u => u.Id, 
+                    ur => ur.UserId, 
+                    (u, ur) => new { u, ur })
+                .Join(_context.Roles, 
+                    ur => ur.ur.RoleId, 
+                    r => r.Id, 
+                    (ur, r) => new { ur, r }) 
+                .Select(c => new UserDto
                 {
-                    Id = user.Id,
-                    UserName = user.UserName!,
-                    Email = user.Email!,
-                    Roles = roles.ToList()
-                };
+                    Id = c.ur.u.Id,
+                    UserName = c.ur.u.UserName!,
+                    Email = c.ur.u.Email!,
+                    Role = c.r.Name!
+                }).AsQueryable();
 
-                usersDto.Add(userDto);
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                usersQuery = usersQuery.Where(u =>
+                    u.UserName.ToLower().Contains(searchTerm.ToLower()) ||
+                    u.Email.ToLower().Contains(searchTerm.ToLower()) ||
+                    u.Role.ToLower().Contains(searchTerm.ToLower()));
             }
 
-            return usersDto;
+            Expression<Func<UserDto, object>> keySelectorString = sortColumn?.ToLower() switch
+            {
+                "username" => user => user.UserName,
+                "email" => user => user.Email,
+                "role" => user => user.Role,
+                _ => user => user.Id
+            };
+
+            usersQuery = sortOrder?.ToLower() == "desc"
+                ? usersQuery.OrderByDescending(keySelectorString)
+                : usersQuery.OrderBy(keySelectorString);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<UserDto>.Create(usersQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<UserDto>.Create(usersQuery, 1, _context.Users.Count());
         }
 
         public async Task<(int, string)> Register(UserRegisterDto user, string role)
