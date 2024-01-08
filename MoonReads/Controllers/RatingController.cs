@@ -20,16 +20,19 @@ public class RatingController : Controller
     private readonly UserManager<User> _userManager;
     private readonly IBookRepository _bookRepository;
     private readonly IRatingRepository _ratingRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public RatingController(IMapper mapper,
         UserManager<User> userManager,
         IBookRepository bookRepository,
-        IRatingRepository ratingRepository)
+        IRatingRepository ratingRepository,
+        IHttpContextAccessor httpContextAccessor)
     {
         _mapper = mapper;
         _userManager = userManager;
         _bookRepository = bookRepository;
         _ratingRepository = ratingRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [HttpGet]
@@ -42,13 +45,16 @@ public class RatingController : Controller
         int? page,
         int? pageSize)
     {
+        var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         var ratings = _ratingRepository.GetRatings(
             searchTerm,
             filterTerms,
             sortColumn,
             sortOrder,
             page,
-            pageSize);
+            pageSize,
+            currentUserId);
 
         if (!ModelState.IsValid)
             return BadRequest(InternalStatusCodes.InvalidPayload);

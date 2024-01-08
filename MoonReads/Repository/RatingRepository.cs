@@ -35,9 +35,21 @@ public class RatingRepository : IRatingRepository
         string? sortColumn,
         string? sortOrder,
         int? page,
-        int? pageSize)
+        int? pageSize,
+        string? currentUserId)
     {
-        var ratingsQuery = _context.Ratings
+        var query = _context.Ratings.AsQueryable();
+        
+        if (filterTerms!.TryGetValue("reported", out var reportedValue))
+        {
+            if (bool.TryParse(reportedValue, out var booleanValue))
+            {
+                query = query
+                    .Where(r => r.Review!.Reported == booleanValue);
+            }
+        }
+        
+        var ratingsQuery = query
             .Where(r => r.Review != null)
             .Select(r => new RatingDetailDto
             {
@@ -66,7 +78,9 @@ public class RatingRepository : IRatingRepository
                     Title = r.Review.Title,
                     Description = r.Review.Description,
                     CreationDateTime = r.Review.CreationDateTime,
-                    Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
+                    Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false),
+                    UserReaction = r.Review.Reactions.Any(rr => rr.User!.Id == currentUserId && rr.Like) ? "like" : 
+                        r.Review.Reactions.Any(rr => rr.User!.Id == currentUserId && !rr.Like) ? "dislike" : "none"
                 }
             });
 
@@ -82,7 +96,7 @@ public class RatingRepository : IRatingRepository
             var userId = string.Empty;
             int? bookId = null;
 
-            foreach (var filterTerm in filterTerms!)
+            foreach (var filterTerm in filterTerms)
             {
                 switch (filterTerm.Key)
                 {

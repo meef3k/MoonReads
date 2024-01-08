@@ -102,9 +102,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await Seeds.SeedRoles(app);
-
-await Seeds.SeedUsers(app);
+await Seeds.SeedDataAsync(app);
 
 app.Run();
 

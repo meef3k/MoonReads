@@ -72,7 +72,7 @@ public class BookshelfRepository : IBookshelfRepository
                         break;
 
                     case "status":
-                        status = filterTerm.Value;
+                        status = filterTerm.Value.ToLower();
                         break;
                 }
             }
@@ -80,7 +80,7 @@ public class BookshelfRepository : IBookshelfRepository
             bookshelfQuery = bookshelfQuery
                 .Where(b =>
                     b.UserId == userId &&
-                    (string.IsNullOrEmpty(status) || b.Status == status));
+                    (string.IsNullOrEmpty(status) || b.Status.ToLower() == status));
         }
 
         Expression<Func<BookshelfHelperDto, object>> keySelector = sortColumn?.ToLower() switch

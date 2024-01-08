@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
 using MoonReads.Helper;
@@ -182,31 +183,29 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("edit/details")]
+        [HttpPatch("edit")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> EditUserInfo([FromBody] UserDetailDto userEdit)
+        public async Task<IActionResult> UpdateUser([FromBody] JsonPatchDocument<UserPatchDto>? updatedUser)
         {
-            if (await _userRepository.UserExists(userEdit.UserName))
-                return BadRequest(InternalStatusCodes.EntityExist);
+            if (updatedUser == null)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!TryValidateModel(updatedUser))
+                return StatusCode(500, InternalStatusCodes.EditError);
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var user = await _userManager.FindByIdAsync(userId);
             
-            user!.UserName = userEdit.UserName;
-            user.Description = userEdit.Description;
-            user.Avatar = userEdit.Avatar;
-            
-            var result = await _userManager.UpdateAsync(user);
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            if (result.Succeeded)
+            if (!await _userRepository.UpdateUser(updatedUser, userId))
             {
-                return NoContent();
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
-            return BadRequest(InternalStatusCodes.EditError);
+            return NoContent();
         }
         
         [Authorize]
@@ -232,36 +231,6 @@ namespace MoonReads.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
 
             var result = await _userManager.ResetPasswordAsync(user!, token, userPassword.NewPassword);
-
-            if (result.Succeeded)
-            {
-                return NoContent();
-            }
-
-            return BadRequest(InternalStatusCodes.EditError);
-        }
-        
-        [Authorize]
-        [HttpPut("edit/email")]
-        public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
-        {
-            if (await _userRepository.UserExists(userEmail.NewEmail))
-                return BadRequest(InternalStatusCodes.EntityExist);
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            var passwordSignInResult = await _signInManager.CheckPasswordSignInAsync(user!, userEmail.Password, false);
-
-            if (!passwordSignInResult.Succeeded)
-            {
-                return BadRequest(InternalStatusCodes.InvalidPassword);
-            }
-            
-            user!.Email = userEmail.NewEmail;
-            
-            var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {

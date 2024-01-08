@@ -14,7 +14,8 @@ public interface IRatingRepository
         string? sortColumn,
         string? sortOrder,
         int? page,
-        int? pageSize);
+        int? pageSize,
+        string? currentUserId);
     ICollection<RatingReviewDto> GetUserRatings(string userId);
     RatingShortDto? GetUserRating(int bookId, string userId);
     int CreateRating(Rating rating);

@@ -132,7 +132,7 @@ public class BookController : Controller
         
     [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
     [HttpPut("{bookId}/accept")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<BookDetailDto>))]
+    [ProducesResponseType(200)]
     public IActionResult AcceptPendingBook(int bookId)
     {
         if (!_bookRepository.BookExists(bookId))

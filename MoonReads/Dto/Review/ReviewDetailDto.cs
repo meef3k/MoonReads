@@ -7,4 +7,5 @@ public class ReviewDetailDto
     public string Description { get; set; }
     public DateTime CreationDateTime { get; set; }
     public int Reactions { get; set; }
+    public string UserReaction { get; set; }
 }

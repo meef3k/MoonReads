@@ -65,8 +65,6 @@ namespace MoonReads.Data
                 .IsRequired(false);
             
             modelBuilder.SeedDataVersionTable();
-            
-            modelBuilder.SeedTables();
         }
     }
 }
