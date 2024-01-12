@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.User;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;

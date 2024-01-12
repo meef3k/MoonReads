@@ -1,4 +1,4 @@
-namespace MoonReads.Dto;
+namespace MoonReads.Dto.Bookshelf;
 
 public class BookshelfDto
 {

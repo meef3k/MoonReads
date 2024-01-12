@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
+using MoonReads.Dto.Bookshelf;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 

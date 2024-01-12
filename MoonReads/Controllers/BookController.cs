@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Dto.Book;
+using MoonReads.Dto.Bookshelf;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;

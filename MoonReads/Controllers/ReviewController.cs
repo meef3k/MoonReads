@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MoonReads.Dto.Review;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 
@@ -19,8 +20,11 @@ public class ReviewController : Controller
     [Authorize]
     [HttpPut("{reviewId}/report")]
     [ProducesResponseType(200)]
-    public IActionResult ReportReview(int reviewId)
+    public IActionResult ReportReview(int reviewId, [FromBody] ReviewReportDto? updatedReview)
     {
+        if (updatedReview == null)
+            return BadRequest(InternalStatusCodes.InvalidPayload);
+        
         if (!_reviewRepository.ReviewExists(reviewId))
             return NotFound();
 
@@ -28,7 +32,7 @@ public class ReviewController : Controller
             return BadRequest(InternalStatusCodes.InvalidPayload);
 
         var review = _reviewRepository.GetReview(reviewId);
-        review.Reported = true;
+        review.Reported = updatedReview.Reported;
 
         if (!_reviewRepository.UpdateReview(review))
         {

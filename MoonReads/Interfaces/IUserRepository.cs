@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.JsonPatch;
 using MoonReads.Dto;
+using MoonReads.Dto.User;
 using MoonReads.Models;
 
 namespace MoonReads.Interfaces

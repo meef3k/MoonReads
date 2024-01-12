@@ -1,4 +1,6 @@
-namespace MoonReads.Dto;
+using MoonReads.Dto.Author;
+
+namespace MoonReads.Dto.Book;
 
 public class BookShortDto
 {

@@ -2,6 +2,10 @@
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
+using MoonReads.Dto.Book;
+using MoonReads.Dto.Category;
+using MoonReads.Dto.Publisher;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 

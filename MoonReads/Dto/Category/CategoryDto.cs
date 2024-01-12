@@ -1,8 +1,7 @@
-﻿namespace MoonReads.Dto
+﻿namespace MoonReads.Dto.Category;
+
+public class CategoryDto
 {
-	public class CategoryDto
-	{
-        public int Id { get; set; }
-        public required string Name { get; set; }
-    }
+	public int Id { get; set; }
+	public required string Name { get; set; }
 }

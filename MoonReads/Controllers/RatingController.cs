@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Dto.Rating;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;

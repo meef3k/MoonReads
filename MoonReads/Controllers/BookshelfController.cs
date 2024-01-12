@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Dto.Bookshelf;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;

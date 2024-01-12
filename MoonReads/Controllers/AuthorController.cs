@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;

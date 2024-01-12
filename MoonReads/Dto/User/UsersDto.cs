@@ -1,4 +1,4 @@
-namespace MoonReads.Dto;
+namespace MoonReads.Dto.User;
 
 public class UserDto
 {

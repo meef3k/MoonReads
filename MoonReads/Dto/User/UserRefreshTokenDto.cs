@@ -1,7 +1,6 @@
-namespace MoonReads.Dto
+namespace MoonReads.Dto.User;
+
+public class UserRefreshTokenDto
 {
-    public class UserRefreshTokenDto
-    {
-        public string RefreshToken { get; set; }
-    }
+    public string RefreshToken { get; set; }
 }

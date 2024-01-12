@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.JsonPatch;
 using MoonReads.Dto;
+using MoonReads.Dto.Rating;
 using MoonReads.Models;
 
 namespace MoonReads.Interfaces;

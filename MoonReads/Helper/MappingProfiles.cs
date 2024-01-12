@@ -2,6 +2,16 @@
 using Azure;
 using Microsoft.AspNetCore.JsonPatch;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
+using MoonReads.Dto.Book;
+using MoonReads.Dto.Bookshelf;
+using MoonReads.Dto.Category;
+using MoonReads.Dto.DataVersion;
+using MoonReads.Dto.Publisher;
+using MoonReads.Dto.Rating;
+using MoonReads.Dto.Reaction;
+using MoonReads.Dto.Review;
+using MoonReads.Dto.User;
 using MoonReads.Models;
 
 namespace MoonReads.Helper

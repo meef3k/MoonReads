@@ -1,7 +1,7 @@
 using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MoonReads.Dto;
+using MoonReads.Dto.User;
 using MoonReads.Helper;
 using MoonReads.Models;
 
@@ -204,12 +204,13 @@ public static class Seeds
             var bookFaker = new Faker<Book>()
                 .UseSeed(DefaultSeed)
                 .RuleFor(b => b.Title, f => f.Commerce.ProductName())
-                .RuleFor(b => b.Description, f => f.Commerce.ProductDescription())
+                .RuleFor(b => b.Description, f => f.Lorem.Paragraphs(3, 6))
                 .RuleFor(b => b.ImageUrl, f => f.Image.PicsumUrl(width: 350, height: 500))
                 .RuleFor(b => b.ReleaseDate, f => f.Date.BetweenDateOnly(DateOnly.FromDateTime(DateTime.Now.AddYears(-50)), DateOnly.FromDateTime(DateTime.Now.AddYears(1))))
                 .RuleFor(b => b.Pages, f => f.Random.Number(100, 900))
                 .RuleFor(b => b.Isbn, f => f.Random.Long(1000000000, 9999999999).ToString())
-                .RuleFor(b => b.PublisherId, f => f.PickRandom(publishers));
+                .RuleFor(b => b.PublisherId, f => f.PickRandom(publishers))
+                .RuleFor(r => r.Pending, f => f.Random.Bool(0.01f));
             
             var existingAuthors = await context.Authors.ToListAsync();
             var existingCategories = await context.Categories.ToListAsync();
@@ -267,9 +268,9 @@ public static class Seeds
             var reviewFaker = new Faker<Review>()
                 .UseSeed(DefaultSeed)
                 .RuleFor(r => r.Title, f => f.Lorem.Sentence())
-                .RuleFor(r => r.Description, f => f.Lorem.Paragraph())
+                .RuleFor(r => r.Description, f => f.Lorem.Paragraphs(1, 3))
                 .RuleFor(r => r.CreationDateTime, f => f.Date.Past().ToUniversalTime())
-                .RuleFor(r => r.Reported, f => f.Random.Bool(0.05f));
+                .RuleFor(r => r.Reported, f => f.Random.Bool(0.01f));
 
             var ratingFaker = new Faker<Rating>()
                 .UseSeed(DefaultSeed)

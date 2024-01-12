@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MoonReads.Dto
+namespace MoonReads.Dto.User;
+
+public class UserRemoveDto
 {
-    public class UserRemoveDto
-    {
-        [Required]
-        public string Password { get; set; }
-    }
+    [Required]
+    public string Password { get; set; }
 }

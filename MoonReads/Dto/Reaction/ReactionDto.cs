@@ -1,4 +1,4 @@
-namespace MoonReads.Dto;
+namespace MoonReads.Dto.Reaction;
 
 public class ReactionDto
 {

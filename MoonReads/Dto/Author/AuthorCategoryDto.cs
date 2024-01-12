@@ -1,8 +1,7 @@
-namespace MoonReads.Dto
+namespace MoonReads.Dto.Author;
+
+public class AuthorCategoryDto
 {
-    public class AuthorCategoryDto
-    {
-        public int AuthorId { get; set; }
-        public int CategoryId { get; set; }
-    }
+    public int AuthorId { get; set; }
+    public int CategoryId { get; set; }
 }

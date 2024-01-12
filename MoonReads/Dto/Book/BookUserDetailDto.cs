@@ -1,4 +1,7 @@
-namespace MoonReads.Dto;
+using MoonReads.Dto.Bookshelf;
+using MoonReads.Dto.Rating;
+
+namespace MoonReads.Dto.Book;
 
 public class BookUserDetailDto
 {

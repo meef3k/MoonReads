@@ -1,4 +1,6 @@
-namespace MoonReads.Dto;
+using MoonReads.Dto.Rating;
+
+namespace MoonReads.Dto.User;
 
 public class UserInfoDto
 {

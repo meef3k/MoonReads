@@ -1,8 +1,7 @@
-namespace MoonReads.Dto
+namespace MoonReads.Dto.Book;
+
+public class BookCategoryDto
 {
-    public class BookCategoryDto
-    {
-        public int BookId { get; set; }
-        public int CategoryId { get; set; }
-    }
+    public int BookId { get; set; }
+    public int CategoryId { get; set; }
 }

@@ -1,4 +1,5 @@
 using MoonReads.Dto;
+using MoonReads.Dto.Book;
 using MoonReads.Models;
 
 namespace MoonReads.Interfaces;
