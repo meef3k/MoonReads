@@ -1,5 +1,6 @@
 using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.Book;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -28,7 +29,7 @@ public class ReactionRepository : IReactionRepository
             .Ratings
             .Where(r => r.BookId == bookId)
             .Select(r => r.Review)
-            .SelectMany(r => r.Reactions)
+            .SelectMany(r => r!.Reactions)
             .Where(reaction => reaction.User == user)
             .Select(reaction => new BookReactionsDto
             {

@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Dto.User;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -128,7 +130,7 @@ namespace MoonReads.Controllers
             return Ok();
         }
         
-        [HttpGet("details/{userId}")]
+        [HttpGet("{userId}/details")]
         [ProducesResponseType(200, Type = typeof(UserInfoDto))]
         [ProducesResponseType(400)]
         public IActionResult GetUserInfo(string userId)
@@ -142,9 +144,19 @@ namespace MoonReads.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UserDto))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> GetUsers()
+        public IActionResult GetUsers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var users = await _userRepository.GetUsers();
+            var users = _userRepository.GetUsers(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             return Ok(users);
         }
@@ -172,35 +184,33 @@ namespace MoonReads.Controllers
         }
         
         [Authorize]
-        [HttpPut("details/edit")]
+        [HttpPatch("edit")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> EditUserInfo([FromBody] UserDetailDto userEdit)
+        public async Task<IActionResult> UpdateUser([FromBody] JsonPatchDocument<UserPatchDto>? updatedUser)
         {
-            if (await _userRepository.UserExists(userEdit.UserName))
-                return BadRequest(InternalStatusCodes.EntityExist);
+            if (updatedUser == null)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
+            
+            if (!TryValidateModel(updatedUser))
+                return StatusCode(500, InternalStatusCodes.EditError);
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var user = await _userManager.FindByIdAsync(userId);
             
-            user!.UserName = userEdit.UserName;
-            user.Description = userEdit.Description;
-            user.Avatar = userEdit.Avatar;
-            
-            var result = await _userManager.UpdateAsync(user);
+            if (!ModelState.IsValid)
+                return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            if (result.Succeeded)
+            if (!await _userRepository.UpdateUser(updatedUser, userId))
             {
-                return NoContent();
+                return StatusCode(500, InternalStatusCodes.EditError);
             }
 
-            return BadRequest(InternalStatusCodes.EditError);
+            return NoContent();
         }
         
         [Authorize]
-        [HttpPut("details/password")]
+        [HttpPut("edit/password")]
         public async Task<IActionResult> EditUserPassword([FromBody] UserDetailPasswordDto userPassword)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -222,36 +232,6 @@ namespace MoonReads.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
 
             var result = await _userManager.ResetPasswordAsync(user!, token, userPassword.NewPassword);
-
-            if (result.Succeeded)
-            {
-                return NoContent();
-            }
-
-            return BadRequest(InternalStatusCodes.EditError);
-        }
-        
-        [Authorize]
-        [HttpPut("details/email")]
-        public async Task<IActionResult> EditUserEmail([FromBody] UserDetailEmailDto userEmail)
-        {
-            if (await _userRepository.UserExists(userEmail.NewEmail))
-                return BadRequest(InternalStatusCodes.EntityExist);
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var user = await _userManager.FindByIdAsync(userId);
-            
-            var passwordSignInResult = await _signInManager.CheckPasswordSignInAsync(user!, userEmail.Password, false);
-
-            if (!passwordSignInResult.Succeeded)
-            {
-                return BadRequest(InternalStatusCodes.InvalidPassword);
-            }
-            
-            user!.Email = userEmail.NewEmail;
-            
-            var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {

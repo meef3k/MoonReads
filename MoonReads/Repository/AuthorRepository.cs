@@ -1,5 +1,7 @@
-﻿using MoonReads.Data;
+﻿using System.Linq.Expressions;
+using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 
@@ -14,9 +16,14 @@ namespace MoonReads.Repository
             _context = context;
         }
         
-        public bool AuthorExists(int bookId)
+        public bool AuthorExists(int authorId)
         {
-            return _context.Authors.Any(a => a.Id == bookId);
+            return _context.Authors.Any(a => a.Id == authorId);
+        }
+        
+        public bool AuthorExists(string authorName)
+        {
+            return _context.Authors.Any(a => a.Name == authorName);
         }
 
         public Author GetAuthor(int id)
@@ -43,55 +50,47 @@ namespace MoonReads.Repository
                 .FirstOrDefault(a => a.Id == id)!;
         }
 
-        public ICollection<AuthorDetailDto> GetAuthors()
+        public PagedList<AuthorDetailDto> GetAuthors(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            return _context
-                .Authors
-                .OrderBy(a => a.Id)
-                .Select(a=> new AuthorDetailDto
+            var authorsQuery = _context.Authors
+                .Select(a => new AuthorDetailDto
                 {
                     Id = a.Id,
                     Name = a.Name,
                     Description = a.Description,
                     ImageUrl = a.ImageUrl,
-                    Rating = a.BookAuthors.SelectMany(ba => ba.Book.Rating).Any() ? a.BookAuthors.SelectMany(ba => ba.Book.Rating).Average(r => r.Rate) : 0
-                })
-                .ToList();
-        }
+                    Rating = a.BookAuthors.SelectMany(ba => ba.Book.Rating).Any() 
+                        ? a.BookAuthors.SelectMany(ba => ba.Book.Rating).Average(r => r.Rate) 
+                        : 0
+                }).AsQueryable();
 
-        public ICollection<BookDetailDto> GetBookByAuthor(int authorId)
-        {
-            var books = _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book.Id).ToList();
-            return _context
-                .Books
-                .Where(b => books.Contains(b.Id))
-                .Select(b => new BookDetailDto
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Description = b.Description,
-                    ImageUrl = b.ImageUrl,
-                    ReleaseDate = b.ReleaseDate.ToString("yyyy'-'MM'-'dd"),
-                    Pages = b.Pages,
-                    Isbn = b.Isbn,
-                    Publisher = new PublisherShortDto
-                    {
-                        Id = b.Publisher!.Id,
-                        Name = b.Publisher!.Name
-                    },
-                    Rating = b.Rating.Select(r => r.Rate).Any() ? b.Rating.Select(r => r.Rate).Average() : 0,
-                    Authors = b.BookAuthors.Select(a => new AuthorShortDto
-                    {
-                        Id = a.AuthorId,
-                        Name = a.Author!.Name
-                    }).ToList(),
-                    Categories = b.BookCategories.Select(c => new CategoryDto
-                    {
-                        Id = c.CategoryId,
-                        Name = c.Category!.Name
-                    }).ToList()
-                })
-                .ToList();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                authorsQuery = authorsQuery.Where(a =>
+                    a.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            Expression<Func<AuthorDetailDto, object>> keySelector = sortColumn?.ToLower() switch
+            {
+                "name" => author => author.Name,
+                "description" => author => author.Description,
+                "rating" => author => author.Rating,
+                _ => publisher => publisher.Id
+            };
+
+            authorsQuery = sortOrder?.ToLower() == "desc" ? authorsQuery.OrderByDescending(keySelector) : authorsQuery.OrderBy(keySelector);
+
+            if (page != null && pageSize != null)
+            {
+                return PagedList<AuthorDetailDto>.Create(authorsQuery, (int)page, (int)pageSize);
+            }
+            
+            return PagedList<AuthorDetailDto>.Create(authorsQuery, 1, _context.Authors.Count());
         }
 
         public int CreateAuthor(Author author)

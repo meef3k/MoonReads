@@ -2,6 +2,16 @@
 using Azure;
 using Microsoft.AspNetCore.JsonPatch;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
+using MoonReads.Dto.Book;
+using MoonReads.Dto.Bookshelf;
+using MoonReads.Dto.Category;
+using MoonReads.Dto.DataVersion;
+using MoonReads.Dto.Publisher;
+using MoonReads.Dto.Rating;
+using MoonReads.Dto.Reaction;
+using MoonReads.Dto.Review;
+using MoonReads.Dto.User;
 using MoonReads.Models;
 
 namespace MoonReads.Helper
@@ -48,10 +58,15 @@ namespace MoonReads.Helper
 			CreateMap<Bookshelf, BookshelfDto>();
 			CreateMap<BookshelfShortDto, Bookshelf>();
 			CreateMap<Bookshelf, BookshelfShortDto>();
-			CreateMap<BookshelfDetailDto, Bookshelf>();
-			CreateMap<Bookshelf, BookshelfDetailDto>();
+			CreateMap<BookshelfHelperDto, Bookshelf>();
+			CreateMap<Bookshelf, BookshelfHelperDto>();
+			CreateMap<BookshelfHelperDto, BookshelfDetailDto>();
+			CreateMap<BookshelfDetailDto, BookshelfHelperDto>();
+			CreateMap<UserDto, User>();
+			CreateMap<User, UserDto>();
 			CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
 			CreateMap(typeof(Operation<>), typeof(Operation<>));
+			CreateMap(typeof(PagedList<>), typeof(PagedList<>));
 		}
 	}
 }

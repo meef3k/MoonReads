@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MoonReads.Dto;
+using MoonReads.Dto.Category;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -22,10 +23,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public IActionResult GetCategories()
+        [ProducesResponseType(200, Type = typeof(PagedList<CategoryDto>))]
+        public IActionResult GetCategories(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
+            var categories = _mapper.Map<PagedList<CategoryDto>>(_categoryRepository.GetCategories(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -49,38 +60,6 @@ namespace MoonReads.Controllers
             return Ok(category);
         }
 
-        [HttpGet("{categoryId}/Book")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetBookByCategory(int categoryId)
-        {
-            if (!_categoryRepository.CategoryExists(categoryId))
-                return NotFound();
-
-            var books = _mapper.Map<List<BookDetailDto>>(_categoryRepository.GetBookByCategory(categoryId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(books);
-        }
-
-        [HttpGet("{categoryId}/Author")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Author>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetAuthorByCategory(int categoryId)
-        {
-            if (!_categoryRepository.CategoryExists(categoryId))
-                return NotFound();
-
-            var authors = _mapper.Map<List<AuthorDto>>(_categoryRepository.GetAuthorByCategory(categoryId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(authors);
-        }
-
         [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Moderator}")]
         [HttpPost]
         [ProducesResponseType(204)]
@@ -90,11 +69,7 @@ namespace MoonReads.Controllers
             if (categoryCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var category = _categoryRepository
-                .GetCategories()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper());
-
-            if (category != null)
+            if (_categoryRepository.CategoryExists(categoryCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }

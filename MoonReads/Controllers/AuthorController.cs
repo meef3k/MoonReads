@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -25,10 +26,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDetailDto>))]
-        public IActionResult GetAuthors()
+        [ProducesResponseType(200, Type = typeof(PagedList<AuthorDetailDto>))]
+        public IActionResult GetAuthors(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var authors = _authorRepository.GetAuthors();
+            var authors = _authorRepository.GetAuthors(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -52,22 +63,6 @@ namespace MoonReads.Controllers
             return Ok(author);
         }
 
-        [HttpGet("{authorId}/Book")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetBookByAuthor(int authorId)
-        {
-            if (!_authorRepository.AuthorExists(authorId))
-                return NotFound();
-
-            var books = _mapper.Map<List<BookDetailDto>>(_authorRepository.GetBookByAuthor(authorId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(books);
-        }
-
         [Authorize]
         [HttpPost]
         [ProducesResponseType(204)]
@@ -77,11 +72,7 @@ namespace MoonReads.Controllers
             if (authorCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var author = _authorRepository
-                .GetAuthors()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == authorCreate.Name.TrimEnd().ToUpper());
-
-            if (author != null)
+            if (_authorRepository.AuthorExists(authorCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }

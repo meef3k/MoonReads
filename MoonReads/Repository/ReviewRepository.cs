@@ -22,4 +22,20 @@ public class ReviewRepository : IReviewRepository
     {
         return _context.Ratings.Any(r => r.ReviewId == reviewId);
     }
+
+    public bool UpdateReview(Review review)
+    {
+        _context.Update(review);
+
+        return Save();
+    }
+    
+    public bool Save()
+    {
+        _context.DataVersions.FirstOrDefault(d => d.Table == "Reviews")!.Version++;
+
+        var saved = _context.SaveChanges();
+
+        return saved > 0;
+    }
 }

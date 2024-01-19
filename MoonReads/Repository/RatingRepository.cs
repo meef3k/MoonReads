@@ -1,7 +1,14 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MoonReads.Data;
 using MoonReads.Dto;
+using MoonReads.Dto.Author;
+using MoonReads.Dto.Book;
+using MoonReads.Dto.Rating;
+using MoonReads.Dto.Review;
+using MoonReads.Dto.User;
 using MoonReads.Interfaces;
 using MoonReads.Models;
 using Newtonsoft.Json;
@@ -27,29 +34,112 @@ public class RatingRepository : IRatingRepository
         return _context.Ratings.Where(r => r.BookId == bookId).FirstOrDefault(r => r.UserId == userId)!;
     }
 
-    public ICollection<RatingDetailDto> GetRatings(int bookId)
+    public PagedList<RatingDetailDto> GetRatings(
+        string? searchTerm,
+        Dictionary<string, string>? filterTerms,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize,
+        string? currentUserId)
     {
-        return _context
-            .Ratings
-            .Where(r => r.BookId == bookId && r.Review != null)
+        var query = _context.Ratings.AsQueryable();
+        
+        if (filterTerms!.TryGetValue("reported", out var reportedValue))
+        {
+            if (bool.TryParse(reportedValue, out var booleanValue))
+            {
+                query = query
+                    .Where(r => r.Review!.Reported == booleanValue);
+            }
+        }
+        
+        var ratingsQuery = query
+            .Where(r => r.Review != null)
             .Select(r => new RatingDetailDto
             {
                 Id = r.Id,
                 Rate = r.Rate,
-                UserName = r.User.UserName!,
-                UserId = r.UserId,
-                UserAvatar = r.User.Avatar!,
+                Book = new BookShortDto
+                {
+                    Id = r.Book.Id,
+                    Title = r.Book.Title,
+                    ImageUrl = r.Book.ImageUrl,
+                    Authors = r.Book.BookAuthors.Select(a => new AuthorShortDto
+                    {
+                        Id = a.AuthorId,
+                        Name = a.Author.Name
+                    }).ToList(),
+                },
+                User = new UserShortDto
+                {
+                    Id = r.User.Id,
+                    UserName = r.User.UserName!,
+                    ImageUrl = r.User.Avatar!
+                },
                 Review = new ReviewDetailDto
                 {
                     Id = r.Review!.Id,
                     Title = r.Review.Title,
                     Description = r.Review.Description,
                     CreationDateTime = r.Review.CreationDateTime,
-                    Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false)
+                    Reactions = r.Review.Reactions.Count(rr => rr.Like == true) - r.Review.Reactions.Count(rr => rr.Like == false),
+                    UserReaction = r.Review.Reactions.Any(rr => rr.User!.Id == currentUserId && rr.Like) ? "like" : 
+                        r.Review.Reactions.Any(rr => rr.User!.Id == currentUserId && !rr.Like) ? "dislike" : "none"
                 }
-            })
-            .OrderByDescending(r => r.Review!.Reactions)
-            .ToList();
+            });
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            ratingsQuery = ratingsQuery.Where(r =>
+                r.Review!.Title.ToLower().Contains(searchTerm.ToLower()) ||
+                r.User.UserName.ToLower().Contains(searchTerm.ToLower()));
+        }
+        
+        if (!filterTerms.IsNullOrEmpty())
+        {
+            var userId = string.Empty;
+            int? bookId = null;
+
+            foreach (var filterTerm in filterTerms)
+            {
+                switch (filterTerm.Key)
+                {
+                    case "userId":
+                        userId = filterTerm.Value;
+                        break;
+
+                    case "bookId":
+                        int.TryParse(filterTerm.Value, out var bookParsedId);
+                        bookId = bookParsedId;
+                        break;
+                }
+            }
+
+            ratingsQuery = ratingsQuery
+                .Where(r =>
+                    (string.IsNullOrEmpty(userId) || r.User.Id == userId) &&
+                    (bookId == null || r.Book.Id == bookId));
+        }
+
+        Expression<Func<RatingDetailDto, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "username" => rating => rating.User.UserName,
+            "rate" => rating => rating.Rate,
+            "title" => rating => rating.Review!.Title,
+            "creationdatetime" => rating => rating.Review!.CreationDateTime,
+            "reactions" => rating => rating.Review!.Reactions,
+            _ => rating => rating.Id
+        };
+
+        ratingsQuery = sortOrder?.ToLower() == "desc" ? ratingsQuery.OrderByDescending(keySelector) : ratingsQuery.OrderBy(keySelector);
+
+        if (page != null && pageSize != null)
+        {
+            return PagedList<RatingDetailDto>.Create(ratingsQuery, (int)page, (int)pageSize);
+        }
+
+        return PagedList<RatingDetailDto>.Create(ratingsQuery, 1, _context.Reviews.Count());
     }
 
     public ICollection<RatingReviewDto> GetUserRatings(string userId)
@@ -93,7 +183,8 @@ public class RatingRepository : IRatingRepository
             .Select(r => new RatingShortDto
             {
                 Id = r.Id,
-                Rate = r.Rate
+                Rate = r.Rate,
+                HasReview = r.ReviewId.HasValue
             })
             .FirstOrDefault();
     }

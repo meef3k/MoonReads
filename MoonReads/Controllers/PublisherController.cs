@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoonReads.Dto;
+using MoonReads.Dto.Publisher;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
 using MoonReads.Models;
@@ -25,10 +26,20 @@ namespace MoonReads.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Publisher>))]
-        public IActionResult GetPublishers()
+        [ProducesResponseType(200, Type = typeof(PagedList<PublisherDto>))]
+        public IActionResult GetPublishers(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int? page,
+            int? pageSize)
         {
-            var publishers = _mapper.Map<List<PublisherDto>>(_publisherRepository.GetPublishers());
+            var publishers = _mapper.Map<PagedList<PublisherDto>>(_publisherRepository.GetPublishers(
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -52,22 +63,6 @@ namespace MoonReads.Controllers
             return Ok(publisher);
         }
 
-        [HttpGet("{publisherId}/Book")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Book>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetBookByPublisher(int publisherId)
-        {
-            if (!_publisherRepository.PublisherExists(publisherId))
-                return NotFound();
-
-            var books = _mapper.Map<List<BookDetailDto>>(_publisherRepository.GetBookByPublisher(publisherId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(InternalStatusCodes.InvalidPayload);
-
-            return Ok(books);
-        }
-
         [Authorize]
         [HttpPost]
         [ProducesResponseType(204)]
@@ -77,11 +72,7 @@ namespace MoonReads.Controllers
             if (publisherCreate == null)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
 
-            var publisher = _publisherRepository
-                .GetPublishers()
-                .FirstOrDefault(c => c.Name.Trim().ToUpper() == publisherCreate.Name.TrimEnd().ToUpper());
-
-            if (publisher != null)
+            if (_publisherRepository.PublisherExists(publisherCreate.Name))
             {
                 return StatusCode(422, InternalStatusCodes.EntityExist);
             }

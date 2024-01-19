@@ -12,6 +12,7 @@ public class Review
     [Required]
     public string Description { get; set; }
     public DateTime CreationDateTime { get; set; }
+    public bool Reported { get; set; }
     public virtual Rating Rating { get; set; }
     public ICollection<Reaction> Reactions { get; set; }
 }
