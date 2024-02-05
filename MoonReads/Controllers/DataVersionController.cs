@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.DataVersion;
 using MoonReads.Helper;
 using MoonReads.Interfaces;

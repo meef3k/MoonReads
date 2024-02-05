@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace MoonReads.Models;
 
 public class PagedList<T>
 {
-    private PagedList(List<T> items, int page, int pageSize, int totalCount)
+    [JsonConstructor]
+    public PagedList(List<T> items, int page, int pageSize, int totalCount)
     {
         Items = items;
         Page = page;

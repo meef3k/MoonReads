@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.Author;
 using MoonReads.Dto.Book;
 using MoonReads.Helper;

@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MoonReads.Dto;
 using MoonReads.Dto.Book;
 using MoonReads.Dto.Bookshelf;
 using MoonReads.Helper;
@@ -26,6 +26,7 @@ public class BookController : Controller
     private readonly IRatingRepository _ratingRepository;
     private readonly IReactionRepository _reactionRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICacheRepository _cacheRepository;
 
     public BookController(IMapper mapper,
         UserManager<User> userManager,
@@ -34,7 +35,8 @@ public class BookController : Controller
         IBookshelfRepository bookshelfRepository,
         IRatingRepository ratingRepository,
         IReactionRepository reactionRepository,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        ICacheRepository cacheRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -44,6 +46,7 @@ public class BookController : Controller
         _ratingRepository = ratingRepository;
         _reactionRepository = reactionRepository;
         _httpContextAccessor = httpContextAccessor;
+        _cacheRepository = cacheRepository;
     }
 
     [AllowAnonymous]
@@ -60,6 +63,13 @@ public class BookController : Controller
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         
+        var path = HttpContext.Request.GetEncodedUrl();
+            
+        var cacheData = _cacheRepository.GetData<PagedList<BookDetailDto>>(path);
+
+        if (cacheData is { Items.Count: > 0 })
+            return Ok(cacheData);
+        
         var books = _bookRepository.GetBooks(
             pending,
             searchTerm,
@@ -69,6 +79,8 @@ public class BookController : Controller
             page,
             pageSize,
             userId);
+        
+        _cacheRepository.SetData(path, books, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
         if (!ModelState.IsValid)
             return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -150,6 +162,8 @@ public class BookController : Controller
         {
             return StatusCode(500, InternalStatusCodes.EditError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }
@@ -187,6 +201,8 @@ public class BookController : Controller
         bookMap.Publisher = _publisherRepository.GetPublisher(publisherId);
             
         var id = _bookRepository.CreateBook(authorsIds, categoriesIds, bookMap);
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
     }
@@ -217,6 +233,8 @@ public class BookController : Controller
         {
             return StatusCode(500, InternalStatusCodes.EditError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }
@@ -240,6 +258,8 @@ public class BookController : Controller
         {
             return BadRequest(InternalStatusCodes.DeleteError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }

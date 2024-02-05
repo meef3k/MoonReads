@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.Bookshelf;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -20,16 +20,19 @@ public class BookshelfController : Controller
     private readonly UserManager<User> _userManager;
     private readonly IBookRepository _bookRepository;
     private readonly IBookshelfRepository _bookshelfRepository;
+    private readonly ICacheRepository _cacheRepository;
     
     public BookshelfController(IMapper mapper,
         UserManager<User> userManager,
         IBookRepository bookRepository,
-        IBookshelfRepository bookshelfRepository)
+        IBookshelfRepository bookshelfRepository,
+        ICacheRepository cacheRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
         _bookRepository = bookRepository;
         _bookshelfRepository = bookshelfRepository;
+        _cacheRepository = cacheRepository;
     }
 
     [HttpGet]
@@ -42,6 +45,13 @@ public class BookshelfController : Controller
         int? page,
         int? pageSize)
     {
+        var path = HttpContext.Request.GetEncodedUrl();
+            
+        var cacheData = _cacheRepository.GetData<PagedList<BookshelfDetailDto>>(path);
+
+        if (cacheData is { Items.Count: > 0 })
+            return Ok(cacheData);
+        
         var bookshelf = _mapper.Map<PagedList<BookshelfDetailDto>>(_bookshelfRepository.GetBookshelves(
             searchTerm,
             filterTerms,
@@ -49,6 +59,8 @@ public class BookshelfController : Controller
             sortOrder,
             page,
             pageSize));
+        
+        _cacheRepository.SetData(path, bookshelf, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
         
         if (!ModelState.IsValid)
             return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -86,6 +98,8 @@ public class BookshelfController : Controller
             return BadRequest(InternalStatusCodes.InvalidPayload);
             
         var id = _bookshelfRepository.CreateBookshelf(bookshelfMap);
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
     }
@@ -123,6 +137,8 @@ public class BookshelfController : Controller
         {
             return StatusCode(500, InternalStatusCodes.EditError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }
@@ -158,6 +174,8 @@ public class BookshelfController : Controller
         {
             return BadRequest(InternalStatusCodes.DeleteError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }

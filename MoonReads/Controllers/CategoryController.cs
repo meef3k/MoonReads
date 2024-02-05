@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.Category;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -15,11 +15,13 @@ namespace MoonReads.Controllers
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly ICacheRepository _cacheRepository;
 
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper, ICacheRepository cacheRepository)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _cacheRepository = cacheRepository;
         }
 
         [HttpGet]
@@ -31,12 +33,21 @@ namespace MoonReads.Controllers
             int? page,
             int? pageSize)
         {
+            var path = HttpContext.Request.GetEncodedUrl();
+            
+            var cacheData = _cacheRepository.GetData<PagedList<CategoryDto>>(path);
+
+            if (cacheData is { Items.Count: > 0 })
+                return Ok(cacheData);
+            
             var categories = _mapper.Map<PagedList<CategoryDto>>(_categoryRepository.GetCategories(
                 searchTerm,
                 sortColumn,
                 sortOrder,
                 page,
                 pageSize));
+            
+            _cacheRepository.SetData(path, categories, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -80,6 +91,8 @@ namespace MoonReads.Controllers
             var categoryMap = _mapper.Map<Category>(categoryCreate);
 
             var id = _categoryRepository.CreateCategory(categoryMap);
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
@@ -109,6 +122,8 @@ namespace MoonReads.Controllers
             {
                 return StatusCode(500, InternalStatusCodes.EditError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }
@@ -139,6 +154,8 @@ namespace MoonReads.Controllers
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }

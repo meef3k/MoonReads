@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.User;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -19,17 +19,20 @@ namespace MoonReads.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly ICacheRepository _cacheRepository;
 
         public UserController(
             IUserRepository userRepository,
             ILogger<UserController> logger,
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            ICacheRepository cacheRepository)
         {
             _userRepository = userRepository;
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
+            _cacheRepository = cacheRepository;
         }
 
         [HttpPost]
@@ -78,6 +81,7 @@ namespace MoonReads.Controllers
                 var (status, message) = await _userRepository.Register(user, UserRoles.User);
                 if (status == 0)
                     return BadRequest(message);
+                _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
                 return CreatedAtAction(nameof(Register), user);
             }
             catch (Exception ex)
@@ -151,12 +155,21 @@ namespace MoonReads.Controllers
             int? page,
             int? pageSize)
         {
+            var path = HttpContext.Request.GetEncodedUrl();
+            
+            var cacheData = _cacheRepository.GetData<PagedList<UserDto>>(path);
+
+            if (cacheData is { Items.Count: > 0 })
+                return Ok(cacheData);
+            
             var users = _userRepository.GetUsers(
                 searchTerm,
                 sortColumn,
                 sortOrder,
                 page,
                 pageSize);
+            
+            _cacheRepository.SetData(path, users, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
             return Ok(users);
         }
@@ -264,6 +277,8 @@ namespace MoonReads.Controllers
 
             if (!result.Succeeded) return BadRequest(InternalStatusCodes.DeleteError);
             await _signInManager.SignOutAsync();
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return Ok();
         }

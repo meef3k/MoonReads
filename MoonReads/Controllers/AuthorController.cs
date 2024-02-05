@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MoonReads.Dto;
 using MoonReads.Dto.Author;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -14,15 +14,15 @@ namespace MoonReads.Controllers
     [ApiController]
     public class AuthorController : Controller
     {
-        private const string DefaultDescription = "Ten autor nie ma jeszcze opisu";
-        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/512/10701/10701484.png";
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly ICacheRepository _cacheRepository;
 
-        public AuthorController(IAuthorRepository authorRepository, IMapper mapper)
+        public AuthorController(IAuthorRepository authorRepository, IMapper mapper, ICacheRepository cacheRepository)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _cacheRepository = cacheRepository;
         }
 
         [HttpGet]
@@ -34,12 +34,21 @@ namespace MoonReads.Controllers
             int? page,
             int? pageSize)
         {
+            var path = HttpContext.Request.GetEncodedUrl();
+            
+            var cacheData = _cacheRepository.GetData<PagedList<AuthorDetailDto>>(path);
+
+            if (cacheData is { Items.Count: > 0 })
+                return Ok(cacheData);
+            
             var authors = _authorRepository.GetAuthors(
                 searchTerm,
                 sortColumn,
                 sortOrder,
                 page,
                 pageSize);
+            
+            _cacheRepository.SetData(path, authors, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -82,17 +91,19 @@ namespace MoonReads.Controllers
 
             if (authorCreate.Description.IsNullOrEmpty())
             {
-                authorCreate.Description = DefaultDescription;
+                authorCreate.Description = Defaults.AuthorDescription;
             }
 
             if (authorCreate.ImageUrl.IsNullOrEmpty())
             {
-                authorCreate.ImageUrl = DefaultImageUrl;
+                authorCreate.ImageUrl = Defaults.AuthorPhoto;
             }
 
             var authorMap = _mapper.Map<Author>(authorCreate);
             
             var id = _authorRepository.CreateAuthor(authorMap);
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
@@ -122,6 +133,8 @@ namespace MoonReads.Controllers
             {
                 return StatusCode(500, InternalStatusCodes.EditError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }
@@ -149,6 +162,8 @@ namespace MoonReads.Controllers
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }

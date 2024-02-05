@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using MoonReads.Dto;
 using MoonReads.Dto.Rating;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -22,18 +22,21 @@ public class RatingController : Controller
     private readonly IBookRepository _bookRepository;
     private readonly IRatingRepository _ratingRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICacheRepository _cacheRepository;
 
     public RatingController(IMapper mapper,
         UserManager<User> userManager,
         IBookRepository bookRepository,
         IRatingRepository ratingRepository,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        ICacheRepository cacheRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
         _bookRepository = bookRepository;
         _ratingRepository = ratingRepository;
         _httpContextAccessor = httpContextAccessor;
+        _cacheRepository = cacheRepository;
     }
 
     [HttpGet]
@@ -48,6 +51,13 @@ public class RatingController : Controller
     {
         var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         
+        var path = HttpContext.Request.GetEncodedUrl();
+            
+        var cacheData = _cacheRepository.GetData<PagedList<RatingDetailDto>>(path);
+
+        if (cacheData is { Items.Count: > 0 })
+            return Ok(cacheData);
+        
         var ratings = _ratingRepository.GetRatings(
             searchTerm,
             filterTerms,
@@ -56,6 +66,8 @@ public class RatingController : Controller
             page,
             pageSize,
             currentUserId);
+        
+        _cacheRepository.SetData(path, ratings, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
         if (!ModelState.IsValid)
             return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -93,6 +105,8 @@ public class RatingController : Controller
             return BadRequest(InternalStatusCodes.InvalidPayload);
             
         var id = _ratingRepository.CreateRating(ratingMap);
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
     }
@@ -124,6 +138,8 @@ public class RatingController : Controller
         {
             return StatusCode(500, InternalStatusCodes.EditError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }
@@ -157,6 +173,8 @@ public class RatingController : Controller
         {
             return BadRequest(InternalStatusCodes.DeleteError);
         }
+        
+        _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
         return NoContent();
     }

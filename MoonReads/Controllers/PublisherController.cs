@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MoonReads.Dto;
 using MoonReads.Dto.Publisher;
 using MoonReads.Helper;
 using MoonReads.Interfaces;
@@ -14,15 +14,15 @@ namespace MoonReads.Controllers
     [ApiController]
     public class PublisherController : Controller
     {
-        private const string DefaultDescription = "Ten wydawca nie ma jeszcze opisu";
-        private const string DefaultImageUrl = "https://cdn-icons-png.flaticon.com/512/10701/10701484.png";
         private readonly IPublisherRepository _publisherRepository;
         private readonly IMapper _mapper;
+        private readonly ICacheRepository _cacheRepository;
 
-        public PublisherController(IPublisherRepository publisherRepository, IMapper mapper)
+        public PublisherController(IPublisherRepository publisherRepository, IMapper mapper, ICacheRepository cacheRepository)
         {
             _publisherRepository = publisherRepository;
             _mapper = mapper;
+            _cacheRepository = cacheRepository;
         }
 
         [HttpGet]
@@ -34,12 +34,21 @@ namespace MoonReads.Controllers
             int? page,
             int? pageSize)
         {
+            var path = HttpContext.Request.GetEncodedUrl();
+            
+            var cacheData = _cacheRepository.GetData<PagedList<PublisherDto>>(path);
+
+            if (cacheData is { Items.Count: > 0 })
+                return Ok(cacheData);
+            
             var publishers = _mapper.Map<PagedList<PublisherDto>>(_publisherRepository.GetPublishers(
                 searchTerm,
                 sortColumn,
                 sortOrder,
                 page,
                 pageSize));
+            
+            _cacheRepository.SetData(path, publishers, DateTimeOffset.Now.AddMinutes(Defaults.CacheExpiryTime));
 
             if (!ModelState.IsValid)
                 return BadRequest(InternalStatusCodes.InvalidPayload);
@@ -82,17 +91,19 @@ namespace MoonReads.Controllers
             
             if (publisherCreate.Description.IsNullOrEmpty())
             {
-                publisherCreate.Description = DefaultDescription;
+                publisherCreate.Description = Defaults.PublisherDescription;
             }
 
             if (publisherCreate.ImageUrl.IsNullOrEmpty())
             {
-                publisherCreate.ImageUrl = DefaultImageUrl;
+                publisherCreate.ImageUrl = Defaults.PublisherPhoto;
             }
 
             var publisherMap = _mapper.Map<Publisher>(publisherCreate);
 
             var id = _publisherRepository.CreatePublisher(publisherMap);
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return id == 0 ? StatusCode(500, InternalStatusCodes.CreateError) : Created(string.Empty, new { id });
         }
@@ -122,6 +133,8 @@ namespace MoonReads.Controllers
             {
                 return StatusCode(500, InternalStatusCodes.EditError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }
@@ -149,6 +162,8 @@ namespace MoonReads.Controllers
             {
                 return BadRequest(InternalStatusCodes.DeleteError);
             }
+            
+            _cacheRepository.RemoveData(ControllerContext.ActionDescriptor.ControllerName);
 
             return NoContent();
         }
